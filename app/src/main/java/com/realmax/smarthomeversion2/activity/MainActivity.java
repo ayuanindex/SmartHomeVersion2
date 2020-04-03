@@ -55,6 +55,7 @@ public class MainActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 // TODO: 2020/4/2
+                jump(SettingActivity.class);
             }
         });
 
@@ -74,8 +75,8 @@ public class MainActivity extends BaseActivity {
                         intent.putExtra("tag", "curtain");
                         break;
                     case 2:
-                        intent = new Intent(MainActivity.this, LightActivity.class);
-                        intent.putExtra("tag", "curtain");
+                        intent = new Intent(MainActivity.this, CameraActivity.class);
+                        intent.putExtra("tag", "camera");
                         break;
                     case 3:
                         intent = new Intent(MainActivity.this, LightActivity.class);

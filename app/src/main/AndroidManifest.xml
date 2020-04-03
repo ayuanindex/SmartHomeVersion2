@@ -18,7 +18,7 @@
         <activity
             android:name=".activity.MainActivity"
             android:launchMode="singleTask"
-            android:screenOrientation="portrait">
+            android:screenOrientation="fullSensor">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -26,16 +26,26 @@
             </intent-filter>
         </activity>
 
+        <!--连接设置界面-->
+        <activity
+            android:name=".activity.SettingActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="fullSensor" />
         <!--电灯详情界面-->
         <activity
             android:name=".activity.LightActivity"
             android:launchMode="singleTask"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="fullSensor" />
         <!--窗帘门窗-->
         <activity
             android:name=".activity.CurtainActivity"
             android:launchMode="singleTask"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="fullSensor" />
+        <!--摄像头-->
+        <activity
+            android:name=".activity.CameraActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="fullSensor" />
     </application>
 
 </manifest>

@@ -232,7 +232,7 @@ public class LightActivity extends BaseActivity {
                     }
 
                     // 发送控制电灯开6关的请求
-                    ValueUtil.sendLightOpenOrCloseCmd(tag, lightBean);
+                    ValueUtil.sendLightOpenOrCloseCmd(lightBean);
                     // 模拟
                     notifyDataSetChanged();
                 }

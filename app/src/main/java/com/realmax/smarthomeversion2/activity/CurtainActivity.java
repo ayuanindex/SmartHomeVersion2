@@ -234,7 +234,7 @@ public class CurtainActivity extends BaseActivity {
                     }
 
                     // 发送控制窗帘开关的请求
-                    ValueUtil.sendCurtainOpenOrCloseCmd(tag, curtainBean);
+                    ValueUtil.sendCurtainOpenOrCloseCmd(curtainBean);
                     // 模拟
                     /*notifyDataSetChanged();*/
                 }

@@ -20,6 +20,11 @@ public class ValueUtil {
      */
     private static HashMap<String, CustomerHandler> handlerHashMap = new HashMap<>();
 
+    /**
+     * 连接状态的集合
+     */
+    private static HashMap<String, Boolean> isConnected = new HashMap<>();
+
     public static String getRoom() {
         return room;
     }
@@ -28,18 +33,19 @@ public class ValueUtil {
         return handlerHashMap;
     }
 
-    public static void setHandlerHashMap(HashMap<String, CustomerHandler> handlerHashMap) {
-        ValueUtil.handlerHashMap = handlerHashMap;
+    public static HashMap<String, Boolean> getIsConnected() {
+        return isConnected;
     }
 
     /**
      * 发送获取摄像头摄像数据的指令
      *
-     * @param deviceType 摄像头的设备ID
-     * @param cameraNum  摄像头编号
+     * @param deviceId 摄像头的设备ID
+     * @param angleA   横向旋转角度---默认0
+     * @param angleB   纵向旋转角度---默认45
      */
-    public static void sendCameraCmd(String deviceType, int cameraNum, String tag) {
-        CustomerHandler customerHandler = getHandlerHashMap().get(tag);
+    public static void sendCameraCmd(int deviceId, float angleA, float angleB) {
+        CustomerHandler customerHandler = getHandlerHashMap().get("camera");
         if (customerHandler == null) {
             return;
         }
@@ -50,19 +56,18 @@ public class ValueUtil {
             return;
         }
 
-        /*String command = "{\"cmd\": \"start\", \"deviceId\": \"" + deviceId + "\", \"angleA\": " + angleA + ", \"angleB\": " + angleB + "}";*/
-        String command = "{\"cmd\": \"start\", \"deviceType\": \"" + deviceType + "\", \"deviceId\": 1, \"cameraNum\": " + cameraNum + "}";
-        handlerContext.writeAndFlush(Unpooled.copiedBuffer(option(EncodeAndDecode.getStrUnicode(command))));
+        String command = "{\"cmd\": \"start\", \"deviceId\": " + deviceId + ", \"angleA\": " + angleA + ", \"angleB\": " + angleB + "}";
+        /*String command = "{\"cmd\": \"start\", \"deviceType\": \"十字交叉路口\", \"deviceId\": 1, \"cameraNum\": 1}";*/
+        handlerContext.writeAndFlush(Unpooled.copiedBuffer(option(EncodeAndDecode.getStrUnicode(command), (byte) 0x82)));
     }
 
     /**
      * 发送开启电灯或关闭电灯的指令
      *
-     * @param tag       标示符用于获取到指定的handler
      * @param lightBean 需要修改的对象
      */
-    public static void sendLightOpenOrCloseCmd(String tag, LightBean lightBean) {
-        CustomerHandler customerHandler = getHandlerHashMap().get(tag);
+    public static void sendLightOpenOrCloseCmd(LightBean lightBean) {
+        CustomerHandler customerHandler = getHandlerHashMap().get("light");
         if (customerHandler == null) {
             return;
         }
@@ -79,17 +84,16 @@ public class ValueUtil {
         JSONObject jsonObject = new JSONObject(hashMap);
         String s = jsonObject.toString();
         L.e(s);
-        handlerContext.writeAndFlush(Unpooled.copiedBuffer(option(EncodeAndDecode.getStrUnicode(s))));
+        handlerContext.writeAndFlush(Unpooled.copiedBuffer(option(EncodeAndDecode.getStrUnicode(s), (byte) 0x02)));
     }
 
     /**
      * 发送开启电灯或关闭电灯的指令
      *
-     * @param tag         标示符用于获取到指定的handler
      * @param curtainBean 需要修改的对象
      */
-    public static void sendCurtainOpenOrCloseCmd(String tag, CurtainBean curtainBean) {
-        CustomerHandler customerHandler = getHandlerHashMap().get(tag);
+    public static void sendCurtainOpenOrCloseCmd(CurtainBean curtainBean) {
+        CustomerHandler customerHandler = getHandlerHashMap().get("curtain");
         if (customerHandler == null) {
             return;
         }
@@ -106,14 +110,14 @@ public class ValueUtil {
         JSONObject jsonObject = new JSONObject(hashMap);
         String s = jsonObject.toString();
         L.e(s);
-        handlerContext.writeAndFlush(Unpooled.copiedBuffer(option(EncodeAndDecode.getStrUnicode(s))));
+        handlerContext.writeAndFlush(Unpooled.copiedBuffer(option(EncodeAndDecode.getStrUnicode(s), (byte) 0x02)));
     }
 
     /**
      * 发送停止获取摄像头拍摄信心的指令
      */
     public static void sendStopCmd(String tag) {
-        CustomerHandler customerHandler = getHandlerHashMap().get(tag);
+        CustomerHandler customerHandler = getHandlerHashMap().get("camera");
         if (customerHandler == null) {
             return;
         }
@@ -125,16 +129,17 @@ public class ValueUtil {
         }
 
         String command = "{\"cmd\": \"start\"}";
-        handlerContext.writeAndFlush(Unpooled.copiedBuffer(option(EncodeAndDecode.getStrUnicode(command))));
+        handlerContext.writeAndFlush(Unpooled.copiedBuffer(option(EncodeAndDecode.getStrUnicode(command), (byte) 0x02)));
     }
 
     /**
      * 将需要发送的消息加工成服务端可识别的数据
      *
      * @param command 需要发送的指令
+     * @param b
      * @return 返回即将要发送的数据的byte数组
      */
-    public static byte[] option(String command) {
+    public static byte[] option(String command, byte b) {
         // 将指令转换成byte数组（此处的指令是已经转换成了Unicode编码，如果不转换长度计算会有问题）
         byte[] commandBytes = command.getBytes();
         // 这里的长度是字节长度（总长度是数据的字节长度+其他数据的长度：帧头、帧尾……）
@@ -146,14 +151,14 @@ public class ValueUtil {
         // 将需要验证的数据合并成一个byte数组
         // 将所有的参数放进去（其中帧头、协议版本号、帧尾是不变的数据）
         // 注意：需要将每个16进制的数据单独当成byte数组的一个元素，例：0xffaa -->  new byte[]{(byte) 0xff, (byte) 0xaa},需要拆分开
-        byte[] combine = combine(new byte[]{(byte) 0xff, (byte) 0xaa, (byte) 0x02}, lens, commandBytes, new byte[]{(byte) 0x00, (byte) 0xff, (byte) 0x55});
+        byte[] combine = combine(new byte[]{(byte) 0xff, (byte) 0xaa, b}, lens, commandBytes, new byte[]{(byte) 0x00, (byte) 0xff, (byte) 0x55});
         // 进行加和校验
         int checkSum = checkSum(combine, size);
         return combine(
                 new byte[]{
                         (byte) 0xff,
                         (byte) 0xaa,
-                        (byte) 0x02,
+                        b,
                         (byte) Integer.parseInt(Integer.toHexString(lens[0]), 16),
                         (byte) Integer.parseInt(Integer.toHexString(lens[1]), 16),
                         (byte) Integer.parseInt(Integer.toHexString(lens[2]), 16),
