@@ -42,8 +42,8 @@ public class CameraActivity extends BaseActivity {
     private ImageView iv_switchRight;
     private TextView tv_currentRoom;
     private String tag;
-    private ArrayList<Integer> cameraId;
     private int currentCamera = 0;
+    private int currentPosition = 0;
     private LinearLayout ll_tip;
     private int delayMillis = 100;
     private RelativeLayout rl_back;
@@ -93,7 +93,7 @@ public class CameraActivity extends BaseActivity {
                         // 拿到手指放下是的坐标
                         initX = event.getX(0);
                         initY = event.getY(0);
-                        MoveCamera.touchStart(cameraId.get(currentCamera));
+                        MoveCamera.touchStart(currentCamera);
                         break;
                     case MotionEvent.ACTION_MOVE:
                         // 获取移动是的坐标
@@ -129,7 +129,7 @@ public class CameraActivity extends BaseActivity {
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
                         ll_tip.setVisibility(View.VISIBLE);
-                        MoveCamera.move(MoveCamera.LEFT, cameraId.get(currentCamera), new MoveCamera.Result() {
+                        MoveCamera.move(MoveCamera.LEFT, currentCamera, new MoveCamera.Result() {
                             @Override
                             public void resultAngle(float a, float b) {
                                 runOnUiThread(new Runnable() {
@@ -162,7 +162,7 @@ public class CameraActivity extends BaseActivity {
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
                         ll_tip.setVisibility(View.VISIBLE);
-                        MoveCamera.move(MoveCamera.RIGHT, cameraId.get(currentCamera), new MoveCamera.Result() {
+                        MoveCamera.move(MoveCamera.RIGHT, currentCamera, new MoveCamera.Result() {
                             @Override
                             public void resultAngle(float a, float b) {
                                 runOnUiThread(new Runnable() {
@@ -274,13 +274,10 @@ public class CameraActivity extends BaseActivity {
     protected void initData() {
         tag = getIntent().getStringExtra("tag");
 
-        // 初始化摄像头编号集合
-        cameraId = new ArrayList<>();
-        for (int i = 0; i < 12; i++) {
-            cameraId.add(i + 1);
+        if (roomBeans.get(currentPosition).getCameraId().length > 0) {
+            currentCamera = roomBeans.get(currentPosition).getCameraId()[0];
+            ValueUtil.sendCameraCmd(currentCamera, 0, 45);
         }
-
-        ValueUtil.sendCameraCmd(cameraId.get(currentCamera).intValue(), 0, 45);
 
         // 获取Netty的Hander
         CustomerHandler customerHandler = getCustomerHandler(tag);
@@ -314,20 +311,25 @@ public class CameraActivity extends BaseActivity {
     private void switchPage(int type) {
         switch (type) {
             case 0:
-                if (currentCamera > 0) {
-                    currentCamera--;
-                    ValueUtil.sendCameraCmd(cameraId.get(currentCamera), 0, 45);
-                    tv_currentRoom.setText("客厅" + ValueUtil.getRoom().charAt(currentCamera));
+                if (currentPosition > 0) {
+                    currentPosition--;
+                    if (roomBeans.get(currentPosition).getCameraId().length > 0) {
+                        currentCamera = roomBeans.get(currentPosition).getCameraId()[0];
+                        ValueUtil.sendCameraCmd(currentCamera, 0, 45);
+                    }
                 }
                 break;
             case 1:
-                if (currentCamera < cameraId.size() - 1) {
-                    currentCamera++;
-                    ValueUtil.sendCameraCmd(cameraId.get(currentCamera), 0, 45);
-                    tv_currentRoom.setText("客厅" + ValueUtil.getRoom().charAt(currentCamera));
+                if (currentPosition < roomBeans.size() - 1) {
+                    currentPosition++;
+                    if (roomBeans.get(currentPosition).getCameraId().length > 0) {
+                        currentCamera = roomBeans.get(currentPosition).getCameraId()[0];
+                        ValueUtil.sendCameraCmd(currentCamera, 0, 45);
+                    }
                 }
                 break;
         }
+        tv_currentRoom.setText(roomBeans.get(currentPosition).getRoomName());
     }
 
     /**
