@@ -25,6 +25,9 @@ import com.realmax.smarthomeversion2.tcp.CustomerHandler;
 import com.realmax.smarthomeversion2.util.L;
 import com.realmax.smarthomeversion2.util.ValueUtil;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 
 /**
@@ -102,7 +105,7 @@ public class LightActivity extends BaseActivity {
             light_c.add(0);
         }*/
         /*lightBean = new LightBean(ligth_s, light_c);*/
-        /*lightBean = new LightBean(new ArrayList<>(), new ArrayList<>());*/
+        lightBean = new LightBean(new ArrayList<>(), new ArrayList<>());
 
         currentLightStatus = new ArrayList<>();
         currentLightControl = new ArrayList<>();
@@ -127,26 +130,34 @@ public class LightActivity extends BaseActivity {
 
                 @Override
                 public void getResultData(String msg) {
-                    if (!TextUtils.isEmpty(msg)) {
-                        lightBean = new Gson().fromJson(msg, LightBean.class);
+                    try {
+                        if (!TextUtils.isEmpty(msg)) {
+                            JSONObject jsonObject = new JSONObject(msg);
+                            // 验证是否是当前电灯的json数据
+                            if (jsonObject.has("Ligth_S") || jsonObject.has("Ligth_C")) {
+                                lightBean = new Gson().fromJson(msg, LightBean.class);
 
-                        // 获取到数据刷新列表
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                currentLightStatus.clear();
-                                currentLightControl.clear();
-                                for (int i : roomBeans.get(currentPosition).getLightId()) {
-                                    if (i - 1 < lightBean.getLigth_S().size()) {
-                                        L.e("i:" + i);
-                                        // 现实中指定客厅的灯
-                                        currentLightStatus.add(lightBean.getLigth_S().get(currentPosition));
-                                        currentLightControl.add(lightBean.getLight_C().get(currentPosition));
+                                // 获取到数据刷新列表
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        currentLightStatus.clear();
+                                        currentLightControl.clear();
+                                        for (int i : roomBeans.get(currentPosition).getLightId()) {
+                                            if (i - 1 < lightBean.getLigth_S().size()) {
+                                                L.e("i:" + i);
+                                                // 现实中指定客厅的灯
+                                                currentLightStatus.add(lightBean.getLigth_S().get(currentPosition));
+                                                currentLightControl.add(lightBean.getLight_C().get(currentPosition));
+                                            }
+                                        }
+                                        customerAdapter.notifyDataSetChanged();
                                     }
-                                }
-                                customerAdapter.notifyDataSetChanged();
+                                });
                             }
-                        });
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
                 }
             });
@@ -184,8 +195,8 @@ public class LightActivity extends BaseActivity {
                     currentLightStatus.clear();
                     currentLightControl.clear();
                     currentPosition++;
-                    int[] lightId = roomBeans.get(currentPosition).getLightId();//17,18
-                    for (int i : lightId) {//17
+                    int[] lightId = roomBeans.get(currentPosition).getLightId();
+                    for (int i : lightId) {
                         L.e("" + i);
                         if (i - 1 < lightBean.getLigth_S().size()) {
                             currentLightStatus.add(lightBean.getLigth_S().get(i - 1));

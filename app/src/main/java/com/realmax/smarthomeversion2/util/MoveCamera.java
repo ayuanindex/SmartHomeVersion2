@@ -71,8 +71,8 @@ public class MoveCamera {
         timerTask = new TimerTask() {
             @Override
             public void run() {
-                if (LONGITUDINAL > -90f) {
-                    LONGITUDINAL--;
+                if (LONGITUDINAL < 90f) {
+                    LONGITUDINAL++;
                     ValueUtil.sendCameraCmd(DEVICEID, HORIZONTAL, LONGITUDINAL);
                     result.resultAngle(HORIZONTAL, LONGITUDINAL);
                 }
@@ -90,8 +90,8 @@ public class MoveCamera {
         timerTask = new TimerTask() {
             @Override
             public void run() {
-                if (LONGITUDINAL < 90f) {
-                    LONGITUDINAL++;
+                if (LONGITUDINAL > -90f) {
+                    LONGITUDINAL--;
                     ValueUtil.sendCameraCmd(DEVICEID, HORIZONTAL, LONGITUDINAL);
                     result.resultAngle(HORIZONTAL, LONGITUDINAL);
                 }

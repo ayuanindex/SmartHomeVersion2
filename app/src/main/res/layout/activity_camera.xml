@@ -36,6 +36,11 @@
         android:layout_height="0dp"
         android:layout_weight="10">
 
+        <ImageView
+            android:id="@+id/iv_camera"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
         <LinearLayout
             android:id="@+id/ll_tip"
             android:layout_width="wrap_content"
@@ -62,11 +67,6 @@
                 android:layout_margin="10dp"
                 android:text="B:-90" />
         </LinearLayout>
-
-        <ImageView
-            android:id="@+id/iv_camera"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
 
         <ImageView
             android:id="@+id/iv_btn_left"
@@ -139,7 +139,7 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:layout_margin="8dp"
-            android:text="客厅A"
+            android:text="客厅"
             android:textSize="16sp" />
     </RelativeLayout>
 </LinearLayout>

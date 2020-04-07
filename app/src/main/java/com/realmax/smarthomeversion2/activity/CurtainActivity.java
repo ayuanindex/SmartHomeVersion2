@@ -26,6 +26,9 @@ import com.realmax.smarthomeversion2.tcp.CustomerHandler;
 import com.realmax.smarthomeversion2.util.L;
 import com.realmax.smarthomeversion2.util.ValueUtil;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 
 /**
@@ -128,20 +131,33 @@ public class CurtainActivity extends BaseActivity {
 
                 @Override
                 public void getResultData(String msg) {
-                    if (!TextUtils.isEmpty(msg)) {
-                        curtainBean = new Gson().fromJson(msg, CurtainBean.class);
+                    try {
+                        if (!TextUtils.isEmpty(msg)) {
+                            JSONObject jsonObject = new JSONObject(msg);
+                            if (jsonObject.has("Curtain_S") || jsonObject.has("Curtain_C")) {
+                                curtainBean = new Gson().fromJson(msg, CurtainBean.class);
 
-                        // 现实中指定客厅的灯
-                        currentCurtainStatus.add(curtainBean.getCurtain_S().get(currentPosition));
-                        currentCurtainControl.add(curtainBean.getCurtain_C().get(currentPosition));
-
-                        // 获取到数据刷新列表
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                customerAdapter.notifyDataSetChanged();
+                                // 获取到数据刷新列表
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        currentCurtainStatus.clear();
+                                        currentCurtainControl.clear();
+                                        for (int i : roomBeans.get(currentPosition).getCurtailId()) {
+                                            if (i - 1 < curtainBean.getCurtain_S().size()) {
+                                                L.e("i:" + i);
+                                                // 现实中指定客厅的灯
+                                                currentCurtainStatus.add(curtainBean.getCurtain_S().get(currentPosition));
+                                                currentCurtainControl.add(curtainBean.getCurtain_C().get(currentPosition));
+                                            }
+                                        }
+                                        customerAdapter.notifyDataSetChanged();
+                                    }
+                                });
                             }
-                        });
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
                 }
             });
@@ -153,29 +169,44 @@ public class CurtainActivity extends BaseActivity {
      */
     @SuppressLint("SetTextI18n")
     private void switchPage(int type) {
+        if (curtainBean == null) {
+            return;
+        }
+
         // 切换客厅
         switch (type) {
             case 0:
                 if (currentPosition > 0) {
+                    currentCurtainStatus.clear();
+                    currentCurtainControl.clear();
                     currentPosition--;
-                    currentCurtainStatus.add(curtainBean.getCurtain_S().get(currentPosition));
-                    currentCurtainControl.add(curtainBean.getCurtain_C().get(currentPosition));
-                    tv_currentRoom.setText("客厅" + ValueUtil.getRoom().charAt(currentPosition));
-                    currentCurtainStatus.remove(0);
-                    currentCurtainControl.remove(0);
+                    int[] curtailId = roomBeans.get(currentPosition).getCurtailId();
+                    for (int i : curtailId) {
+                        L.e("" + i);
+                        if (i - 1 < curtainBean.getCurtain_S().size()) {
+                            currentCurtainStatus.add(curtainBean.getCurtain_S().get(i - 1));
+                            currentCurtainControl.add(curtainBean.getCurtain_C().get(i - 1));
+                        }
+                    }
                 }
                 break;
             case 1:
-                if (currentPosition < curtainBean.getCurtain_S().size() - 1) {
+                if (currentPosition < roomBeans.size() - 1) {
+                    currentCurtainStatus.clear();
+                    currentCurtainControl.clear();
                     currentPosition++;
-                    currentCurtainStatus.add(curtainBean.getCurtain_S().get(currentPosition));
-                    currentCurtainControl.add(curtainBean.getCurtain_C().get(currentPosition));
-                    tv_currentRoom.setText("客厅" + ValueUtil.getRoom().charAt(currentPosition));
-                    currentCurtainStatus.remove(0);
-                    currentCurtainControl.remove(0);
+                    int[] curtailId = roomBeans.get(currentPosition).getCurtailId();
+                    for (int i : curtailId) {
+                        L.e("" + i);
+                        if (i - 1 < curtainBean.getCurtain_S().size()) {
+                            currentCurtainStatus.add(curtainBean.getCurtain_S().get(i - 1));
+                            currentCurtainControl.add(curtainBean.getCurtain_C().get(i - 1));
+                        }
+                    }
                 }
                 break;
         }
+        tv_currentRoom.setText(roomBeans.get(currentPosition).getRoomName());
         customerAdapter.notifyDataSetChanged();
     }
 
@@ -211,9 +242,10 @@ public class CurtainActivity extends BaseActivity {
                 view = convertView;
             }
             initView(view);
-            tvLabel.setText("客厅" + ValueUtil.getRoom().charAt(currentPosition) + (position + 1));
+            int[] curtailId = roomBeans.get(currentPosition).getCurtailId();
+            tvLabel.setText(roomBeans.get(currentPosition).getRoomName() + curtailId[position] + "号窗帘");
 
-            // 设置电灯的状态
+            // 设置窗帘状态
             ivLight.setImageResource(getItem(position) == 1 ? R.drawable.pic_curtain_open : R.drawable.pic_curtain_close);
 
             swToggle.setOnCheckedChangeListener(null);
@@ -224,19 +256,18 @@ public class CurtainActivity extends BaseActivity {
             swToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    ArrayList<Integer> curtain_c = new ArrayList<>(curtainBean.getCurtain_C());
                     // 修改对应位置的值
                     if (isChecked) {
-                        curtainBean.getCurtain_S().set(currentPosition, OPEN);
-                        curtainBean.getCurtain_C().set(currentPosition, OPEN);
+                        curtain_c.set(curtailId[position] - 1, OPEN);
                     } else {
-                        curtainBean.getCurtain_S().set(currentPosition, CLOSE);
-                        curtainBean.getCurtain_C().set(currentPosition, CLOSE);
+                        curtain_c.set(curtailId[position] - 1, CLOSE);
                     }
-
+                    CurtainBean curtainBean = new CurtainBean(new ArrayList<>(), curtain_c);
                     // 发送控制窗帘开关的请求
                     ValueUtil.sendCurtainOpenOrCloseCmd(curtainBean);
                     // 模拟
-                    /*notifyDataSetChanged();*/
+                    notifyDataSetChanged();
                 }
             });
             return view;
