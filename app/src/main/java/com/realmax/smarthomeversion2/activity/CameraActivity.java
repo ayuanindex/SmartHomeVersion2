@@ -265,7 +265,7 @@ public class CameraActivity extends BaseActivity {
         iv_switchRight.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                switchPage(1);
             }
         });
     }

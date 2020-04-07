@@ -95,13 +95,14 @@ public class LightActivity extends BaseActivity {
         tag = getIntent().getStringExtra("tag");
         currentPosition = 0;
 
-       /* ArrayList<Integer> light_c = new ArrayList<>();
+        /*ArrayList<Integer> light_c = new ArrayList<>();
         ArrayList<Integer> ligth_s = new ArrayList<>();
         for (int i = 0; i < 17; i++) {
             ligth_s.add(0);
             light_c.add(0);
         }*/
-        lightBean = new LightBean(new ArrayList<>(), new ArrayList<>());
+        /*lightBean = new LightBean(ligth_s, light_c);*/
+        /*lightBean = new LightBean(new ArrayList<>(), new ArrayList<>());*/
 
         currentLightStatus = new ArrayList<>();
         currentLightControl = new ArrayList<>();
@@ -129,14 +130,20 @@ public class LightActivity extends BaseActivity {
                     if (!TextUtils.isEmpty(msg)) {
                         lightBean = new Gson().fromJson(msg, LightBean.class);
 
-                        // 现实中指定客厅的灯
-                        currentLightStatus.add(lightBean.getLigth_S().get(currentPosition));
-                        currentLightControl.add(lightBean.getLight_C().get(currentPosition));
-
                         // 获取到数据刷新列表
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
+                                currentLightStatus.clear();
+                                currentLightControl.clear();
+                                for (int i : roomBeans.get(currentPosition).getLightId()) {
+                                    if (i - 1 < lightBean.getLigth_S().size()) {
+                                        L.e("i:" + i);
+                                        // 现实中指定客厅的灯
+                                        currentLightStatus.add(lightBean.getLigth_S().get(currentPosition));
+                                        currentLightControl.add(lightBean.getLight_C().get(currentPosition));
+                                    }
+                                }
                                 customerAdapter.notifyDataSetChanged();
                             }
                         });
@@ -151,29 +158,44 @@ public class LightActivity extends BaseActivity {
      */
     @SuppressLint("SetTextI18n")
     private void switchPage(int type) {
+        if (lightBean == null) {
+            return;
+        }
+
         // 切换客厅
         switch (type) {
             case 0:
                 if (currentPosition > 0) {
+                    currentLightStatus.clear();
+                    currentLightControl.clear();
                     currentPosition--;
-                    currentLightStatus.add(lightBean.getLigth_S().get(currentPosition));
-                    currentLightControl.add(lightBean.getLight_C().get(currentPosition));
-                    tv_currentRoom.setText("客厅" + ValueUtil.getRoom().charAt(currentPosition));
-                    currentLightStatus.remove(0);
-                    currentLightControl.remove(0);
+                    int[] lightId = roomBeans.get(currentPosition).getLightId();
+                    for (int i : lightId) {
+                        L.e("" + i);
+                        if (i - 1 < lightBean.getLigth_S().size()) {
+                            currentLightStatus.add(lightBean.getLigth_S().get(i - 1));
+                            currentLightControl.add(lightBean.getLight_C().get(i - 1));
+                        }
+                    }
                 }
                 break;
             case 1:
-                if (currentPosition < lightBean.getLigth_S().size() - 1) {
+                if (currentPosition < roomBeans.size() - 1) {
+                    currentLightStatus.clear();
+                    currentLightControl.clear();
                     currentPosition++;
-                    currentLightStatus.add(lightBean.getLigth_S().get(currentPosition));
-                    currentLightControl.add(lightBean.getLight_C().get(currentPosition));
-                    tv_currentRoom.setText("客厅" + ValueUtil.getRoom().charAt(currentPosition));
-                    currentLightStatus.remove(0);
-                    currentLightControl.remove(0);
+                    int[] lightId = roomBeans.get(currentPosition).getLightId();//17,18
+                    for (int i : lightId) {//17
+                        L.e("" + i);
+                        if (i - 1 < lightBean.getLigth_S().size()) {
+                            currentLightStatus.add(lightBean.getLigth_S().get(i - 1));
+                            currentLightControl.add(lightBean.getLight_C().get(i - 1));
+                        }
+                    }
                 }
                 break;
         }
+        tv_currentRoom.setText(roomBeans.get(currentPosition).getRoomName());
         customerAdapter.notifyDataSetChanged();
     }
 
@@ -186,12 +208,12 @@ public class LightActivity extends BaseActivity {
 
         @Override
         public int getCount() {
-            return currentLightStatus.size();
+            return currentLightControl.size();
         }
 
         @Override
         public Integer getItem(int position) {
-            return currentLightStatus.get(position);
+            return currentLightControl.get(position);
         }
 
         @Override
@@ -209,7 +231,8 @@ public class LightActivity extends BaseActivity {
                 view = convertView;
             }
             initView(view);
-            tvLabel.setText("客厅" + ValueUtil.getRoom().charAt(currentPosition) + (position + 1));
+            int[] lightId = roomBeans.get(currentPosition).getLightId();
+            tvLabel.setText(roomBeans.get(currentPosition).getRoomName() + lightId[position] + "号灯");
 
             // 设置电灯的状态
             ivLight.setImageResource(getItem(position) == 1 ? R.drawable.pic_light_open : R.drawable.pic_light_close);
@@ -222,15 +245,14 @@ public class LightActivity extends BaseActivity {
             swToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    ArrayList<Integer> light_c = new ArrayList<>(lightBean.getLight_C());
                     // 修改对应位置的值
                     if (isChecked) {
-                        lightBean.getLigth_S().set(currentPosition, OPEN);
-                        lightBean.getLight_C().set(currentPosition, OPEN);
+                        light_c.set(lightId[position] - 1, OPEN);
                     } else {
-                        lightBean.getLigth_S().set(currentPosition, CLOSE);
-                        lightBean.getLight_C().set(currentPosition, CLOSE);
+                        light_c.set(lightId[position] - 1, CLOSE);
                     }
-
+                    LightBean lightBean = new LightBean(new ArrayList<>(), light_c);
                     // 发送控制电灯开6关的请求
                     ValueUtil.sendLightOpenOrCloseCmd(lightBean);
                     // 模拟
