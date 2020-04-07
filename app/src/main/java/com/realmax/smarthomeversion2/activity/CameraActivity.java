@@ -195,7 +195,7 @@ public class CameraActivity extends BaseActivity {
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
                         ll_tip.setVisibility(View.VISIBLE);
-                        MoveCamera.move(MoveCamera.UP, cameraId.get(currentCamera), new MoveCamera.Result() {
+                        MoveCamera.move(MoveCamera.UP, currentCamera, new MoveCamera.Result() {
                             @Override
                             public void resultAngle(float a, float b) {
                                 runOnUiThread(new Runnable() {
@@ -228,7 +228,7 @@ public class CameraActivity extends BaseActivity {
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
                         ll_tip.setVisibility(View.VISIBLE);
-                        MoveCamera.move(MoveCamera.DOWN, cameraId.get(currentCamera), new MoveCamera.Result() {
+                        MoveCamera.move(MoveCamera.DOWN, currentCamera, new MoveCamera.Result() {
                             @Override
                             public void resultAngle(float a, float b) {
                                 runOnUiThread(new Runnable() {
