@@ -45,6 +45,7 @@
             android:gravity="center"
             android:padding="10dp">
 
+            <!--开关按钮-->
             <CheckBox
                 android:id="@+id/cb_powerSupply"
                 android:layout_width="46dp"
@@ -70,6 +71,7 @@
             android:gravity="center"
             android:padding="10dp">
 
+            <!--静音按钮-->
             <CheckBox
                 android:id="@+id/cb_mute"
                 android:layout_width="46dp"
@@ -80,28 +82,26 @@
         </LinearLayout>
     </LinearLayout>
 
-    <LinearLayout
+    <!--数字按钮-->
+    <GridView
+        android:id="@+id/gv_numbers"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_marginTop="10dp"
         android:layout_weight="5"
-        android:orientation="vertical">
+        android:horizontalSpacing="0dp"
+        android:numColumns="3"
+        android:verticalSpacing="10dp" />
 
-        <GridView
-            android:id="@+id/gv_numbers"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:horizontalSpacing="0dp"
-            android:numColumns="3"
-            android:verticalSpacing="10dp" />
-    </LinearLayout>
-
+    <!--音量和频道-->
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="2">
 
-        <LinearLayout
+        <!--音量调节-->
+        <RelativeLayout
+            android:id="@+id/rl_mute"
             android:layout_width="70dp"
             android:layout_height="match_parent"
             android:layout_alignParentStart="true"
@@ -109,65 +109,74 @@
             android:layout_centerInParent="true"
             android:layout_marginStart="30dp"
             android:background="@drawable/xml_radio_frame_white"
-            android:gravity="center"
             android:orientation="vertical">
 
+            <!--音量加-->
             <ImageView
                 android:id="@+id/iv_soundAdd"
                 android:layout_width="30dp"
-                android:layout_height="0dp"
-                android:layout_weight="1"
+                android:layout_height="30dp"
+                android:layout_alignParentTop="true"
+                android:layout_centerInParent="true"
+                android:layout_marginTop="10dp"
                 android:src="@drawable/pic_mute_add" />
 
             <ImageView
                 android:layout_width="30dp"
-                android:layout_height="0dp"
-                android:layout_weight="1"
+                android:layout_height="30dp"
+                android:layout_centerInParent="true"
                 android:src="@drawable/pic_mute_open" />
 
+            <!--音量减-->
             <ImageView
                 android:id="@+id/iv_soundReduce"
                 android:layout_width="30dp"
-                android:layout_height="0dp"
-                android:layout_weight="1"
+                android:layout_height="30dp"
+                android:layout_alignParentBottom="true"
+                android:layout_centerInParent="true"
+                android:layout_marginBottom="10dp"
                 android:src="@drawable/pic_mute_remove" />
-        </LinearLayout>
+        </RelativeLayout>
 
-        <LinearLayout
+        <!--频道-->
+        <RelativeLayout
             android:layout_width="70dp"
             android:layout_height="match_parent"
             android:layout_alignParentTop="true"
             android:layout_alignParentEnd="true"
             android:layout_centerInParent="true"
             android:layout_marginEnd="30dp"
-            android:background="@drawable/xml_radio_frame_white"
-            android:gravity="center"
-            android:orientation="vertical">
+            android:background="@drawable/xml_radio_frame_white">
 
+            <!--频道加-->
             <ImageView
                 android:id="@+id/iv_programAdd"
                 android:layout_width="30dp"
-                android:layout_height="0dp"
-                android:layout_weight="1"
+                android:layout_height="30dp"
+                android:layout_alignParentTop="true"
+                android:layout_centerInParent="true"
+                android:layout_marginTop="10dp"
                 android:src="@drawable/pic_mute_add" />
 
             <ImageView
                 android:layout_width="30dp"
-                android:layout_height="0dp"
-                android:layout_weight="1"
+                android:layout_height="30dp"
+                android:layout_centerInParent="true"
                 android:src="@drawable/pic_cycle" />
 
+            <!--频道减-->
             <ImageView
                 android:id="@+id/iv_programReduce"
                 android:layout_width="30dp"
-                android:layout_height="0dp"
-                android:layout_weight="1"
+                android:layout_height="30dp"
+                android:layout_alignParentBottom="true"
+                android:layout_centerInParent="true"
+                android:layout_marginBottom="10dp"
                 android:src="@drawable/pic_mute_remove" />
-        </LinearLayout>
+        </RelativeLayout>
     </RelativeLayout>
 
     <RelativeLayout
-        android:id="@+id/rl_bottom"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="10dp">

@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -18,6 +19,7 @@ import android.widget.TextView;
 import androidx.annotation.Nullable;
 
 import com.realmax.smarthomeversion2.R;
+import com.realmax.smarthomeversion2.util.L;
 
 import java.util.ArrayList;
 
@@ -35,10 +37,10 @@ public class ElectricalActivity extends BaseActivity {
     private ImageView iv_switchLeft;
     private ImageView iv_switchRight;
     private TextView tv_currentRoom;
-    private RelativeLayout rl_bottom;
     private boolean powerIsOpen = false;
     private boolean muteIsOpen = false;
     private int currentPosition = 0;
+    private RelativeLayout rl_mute;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState, @Nullable PersistableBundle persistentState) {
@@ -63,7 +65,7 @@ public class ElectricalActivity extends BaseActivity {
         iv_switchLeft = (ImageView) findViewById(R.id.iv_switchLeft);
         iv_switchRight = (ImageView) findViewById(R.id.iv_switchRight);
         tv_currentRoom = (TextView) findViewById(R.id.tv_currentRoom);
-        rl_bottom = (RelativeLayout) findViewById(R.id.rl_bottom);
+        rl_mute = (RelativeLayout) findViewById(R.id.rl_mute);
     }
 
     @Override
@@ -75,6 +77,20 @@ public class ElectricalActivity extends BaseActivity {
             }
         });
 
+        cb_powerSupply.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                // TODO: 2020/4/8 电源开关
+            }
+        });
+
+        cb_mute.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                // TODO: 2020/4/8 静音开关
+            }
+        });
+
         gv_numbers.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -83,6 +99,8 @@ public class ElectricalActivity extends BaseActivity {
                 if (position == 9 || position == 11) {
                     return;
                 }
+
+                L.e("number：" + customerAdapter.getItem(position));
             }
         });
 
