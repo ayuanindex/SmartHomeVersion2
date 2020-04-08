@@ -92,12 +92,13 @@
             android:src="@drawable/pic_number9" />
 
         <ImageView
+            android:id="@+id/iv_weather"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_alignParentEnd="true"
             android:layout_centerInParent="true"
             android:layout_marginEnd="20dp"
-            android:src="@drawable/pic_baitianduoyun" />
+            android:src="@drawable/pic_weather_duoyun" />
     </RelativeLayout>
 
     <!--中间-->
@@ -114,6 +115,7 @@
         android:orientation="vertical">
 
         <TextView
+            android:id="@+id/tv_temperature"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="left"
@@ -123,6 +125,7 @@
             android:textSize="20sp" />
 
         <TextView
+            android:id="@+id/tv_humidity"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="left"
@@ -132,6 +135,7 @@
             android:textSize="20sp" />
 
         <TextView
+            android:id="@+id/tv_smoke"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="left"
@@ -141,6 +145,7 @@
             android:textSize="20sp" />
 
         <TextView
+            android:id="@+id/tv_character"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="left"

@@ -91,12 +91,13 @@
             android:src="@drawable/pic_number9" />
 
         <ImageView
+            android:id="@+id/iv_weather"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_alignParentEnd="true"
             android:layout_centerInParent="true"
             android:layout_marginEnd="20dp"
-            android:src="@drawable/pic_baitianduoyun" />
+            android:src="@drawable/pic_weather_duoyun" />
     </RelativeLayout>
 
     <!--中间-->
@@ -113,6 +114,7 @@
         android:orientation="vertical">
 
         <TextView
+            android:id="@+id/tv_temperature"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="left"
@@ -123,6 +125,7 @@
             android:textSize="20sp" />
 
         <TextView
+            android:id="@+id/tv_setTemperature"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="left"
@@ -132,6 +135,7 @@
             android:textSize="20sp" />
 
         <TextView
+            android:id="@+id/tv_windSpeed"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="left"
@@ -141,6 +145,7 @@
             android:textSize="20sp" />
 
         <TextView
+            android:id="@+id/tv_mode"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="left"
@@ -168,6 +173,7 @@
             android:gravity="center">
 
             <CheckBox
+                android:id="@+id/cb_powerSwitch"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:background="@drawable/xml_check_select_power_toggle"
@@ -181,11 +187,12 @@
             android:gravity="center">
 
             <ImageView
+                android:id="@+id/iv_cold"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:background="@drawable/xml_cycle_white"
                 android:padding="3dp"
-                android:src="@drawable/pic_daxue" />
+                android:src="@drawable/pic_weather_baofengxue" />
         </LinearLayout>
 
         <LinearLayout
@@ -195,11 +202,12 @@
             android:gravity="center">
 
             <ImageView
+                android:id="@+id/iv_hot"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:background="@drawable/xml_cycle_white"
                 android:padding="3dp"
-                android:src="@drawable/pic_baitianqingtian" />
+                android:src="@drawable/pic_weather_tianqing" />
         </LinearLayout>
     </LinearLayout>
 
@@ -219,6 +227,7 @@
             android:gravity="center">
 
             <ImageView
+                android:id="@+id/iv_plus"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:background="@drawable/xml_cycle_white"
@@ -232,6 +241,7 @@
             android:gravity="center">
 
             <ImageView
+                android:id="@+id/iv_reduce"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:background="@drawable/xml_cycle_white"
@@ -245,6 +255,7 @@
             android:gravity="center">
 
             <ImageView
+                android:id="@+id/iv_up"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:background="@drawable/xml_cycle_white"
@@ -258,6 +269,7 @@
             android:gravity="center">
 
             <ImageView
+                android:id="@+id/iv_down"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:background="@drawable/xml_cycle_white"
