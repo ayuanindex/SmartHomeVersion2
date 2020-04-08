@@ -39,11 +39,12 @@
             android:layout_weight="1"
             android:gravity="center">
 
-            <ImageView
-                android:id="@+id/iv_light"
+            <CheckBox
+                android:id="@+id/cb_check"
                 android:layout_width="40dp"
-                android:layout_height="50dp"
-                android:src="@drawable/pic_light_close" />
+                android:layout_height="40dp"
+                android:background="@drawable/xml_check_select_light"
+                android:button="@null" />
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>

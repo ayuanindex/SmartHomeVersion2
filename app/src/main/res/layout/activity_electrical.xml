@@ -45,12 +45,13 @@
             android:gravity="center"
             android:padding="10dp">
 
-            <ImageView
-                android:id="@+id/iv_power"
+            <CheckBox
+                android:id="@+id/cb_powerSupply"
                 android:layout_width="46dp"
                 android:layout_height="46dp"
-                android:background="@drawable/xml_cycle_white"
-                android:src="@drawable/pic_switch_close" />
+                android:background="@drawable/xml_check_select_power_toggle"
+                android:button="@null"
+                android:checked="false" />
         </LinearLayout>
 
         <LinearLayout
@@ -69,13 +70,13 @@
             android:gravity="center"
             android:padding="10dp">
 
-            <ImageView
-                android:id="@+id/iv_isMute"
+            <CheckBox
+                android:id="@+id/cb_mute"
                 android:layout_width="46dp"
                 android:layout_height="46dp"
-                android:background="@drawable/xml_cycle_white"
-                android:padding="10dp"
-                android:src="@drawable/pic_mute_close" />
+                android:background="@drawable/xml_check_select_mute"
+                android:button="@null"
+                android:checked="false" />
         </LinearLayout>
     </LinearLayout>
 

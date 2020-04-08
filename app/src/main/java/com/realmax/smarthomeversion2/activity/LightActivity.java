@@ -7,6 +7,7 @@ import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -215,7 +216,7 @@ public class LightActivity extends BaseActivity {
         public static final int CLOSE = 0;
         private TextView tvLabel;
         private SwitchCompat swToggle;
-        private ImageView ivLight;
+        private CheckBox cbCheck;
 
         @Override
         public int getCount() {
@@ -245,26 +246,20 @@ public class LightActivity extends BaseActivity {
             int[] lightId = roomBeans.get(currentPosition).getLightId();
             tvLabel.setText(roomBeans.get(currentPosition).getRoomName() + lightId[position] + "号灯");
 
-            // 设置电灯的状态
-            ivLight.setImageResource(getItem(position) == 1 ? R.drawable.pic_light_open : R.drawable.pic_light_close);
+            // 设置当前电灯的状态
+            cbCheck.setChecked(getItem(position) == 1);
 
             swToggle.setOnCheckedChangeListener(null);
 
-            // 返回的数据跟将同步到灯和开关
             swToggle.setChecked(getItem(position) == 1);
 
             swToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                     ArrayList<Integer> light_c = new ArrayList<>(lightBean.getLight_C());
-                    // 修改对应位置的值
-                    if (isChecked) {
-                        light_c.set(lightId[position] - 1, OPEN);
-                    } else {
-                        light_c.set(lightId[position] - 1, CLOSE);
-                    }
+                    light_c.set(lightId[position] - 1, isChecked ? OPEN : CLOSE);
                     LightBean lightBean = new LightBean(new ArrayList<>(), light_c);
-                    // 发送控制电灯开6关的请求
+                    // 发送控制电灯开关的请求
                     ValueUtil.sendLightOpenOrCloseCmd(lightBean);
                     // 模拟
                     notifyDataSetChanged();
@@ -276,7 +271,7 @@ public class LightActivity extends BaseActivity {
         private void initView(View view) {
             tvLabel = (TextView) view.findViewById(R.id.tv_label);
             swToggle = (SwitchCompat) view.findViewById(R.id.sw_toggle);
-            ivLight = (ImageView) view.findViewById(R.id.iv_light);
+            cbCheck = (CheckBox) view.findViewById(R.id.cb_check);
         }
     }
 }

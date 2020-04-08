@@ -7,6 +7,7 @@ import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -215,7 +216,7 @@ public class CurtainActivity extends BaseActivity {
         public static final int CLOSE = 0;
         private TextView tvLabel;
         private SwitchCompat swToggle;
-        private ImageView ivLight;
+        private CheckBox cbCheck;
 
         @Override
         public int getCount() {
@@ -224,7 +225,7 @@ public class CurtainActivity extends BaseActivity {
 
         @Override
         public Integer getItem(int position) {
-            return currentCurtainStatus.get(position);
+            return currentCurtainControl.get(position);
         }
 
         @Override
@@ -245,26 +246,20 @@ public class CurtainActivity extends BaseActivity {
             int[] curtailId = roomBeans.get(currentPosition).getCurtailId();
             tvLabel.setText(roomBeans.get(currentPosition).getRoomName() + curtailId[position] + "号窗帘");
 
-            // 设置窗帘状态
-            ivLight.setImageResource(getItem(position) == 1 ? R.drawable.pic_curtain_open : R.drawable.pic_curtain_close);
+            // 设置当前电灯的状态
+            cbCheck.setChecked(getItem(position) == 1);
 
             swToggle.setOnCheckedChangeListener(null);
 
-            // 返回的数据跟将同步到灯和开关
             swToggle.setChecked(getItem(position) == 1);
 
             swToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    ArrayList<Integer> curtain_c = new ArrayList<>(curtainBean.getCurtain_C());
-                    // 修改对应位置的值
-                    if (isChecked) {
-                        curtain_c.set(curtailId[position] - 1, OPEN);
-                    } else {
-                        curtain_c.set(curtailId[position] - 1, CLOSE);
-                    }
-                    CurtainBean curtainBean = new CurtainBean(new ArrayList<>(), curtain_c);
-                    // 发送控制窗帘开关的请求
+                    ArrayList<Integer> light_c = new ArrayList<>(curtainBean.getCurtain_C());
+                    light_c.set(curtailId[position] - 1, isChecked ? OPEN : CLOSE);
+                    CurtainBean curtainBean = new CurtainBean(new ArrayList<>(), light_c);
+                    // 发送控制窗帘的开关的请求
                     ValueUtil.sendCurtainOpenOrCloseCmd(curtainBean);
                     // 模拟
                     notifyDataSetChanged();
@@ -275,8 +270,8 @@ public class CurtainActivity extends BaseActivity {
 
         private void initView(View view) {
             tvLabel = (TextView) view.findViewById(R.id.tv_label);
+            cbCheck = (CheckBox) view.findViewById(R.id.cb_check);
             swToggle = (SwitchCompat) view.findViewById(R.id.sw_toggle);
-            ivLight = (ImageView) view.findViewById(R.id.iv_light);
         }
     }
 }

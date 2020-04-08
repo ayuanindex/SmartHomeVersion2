@@ -66,27 +66,27 @@ public class MainActivity extends BaseActivity {
                 String tag = "";
                 // 跳转到指定界面
                 switch (position) {
-                    case 0:
+                    case 0:// 灯光
                         intent = new Intent(MainActivity.this, LightActivity.class);
                         intent.putExtra("tag", "light");
                         break;
-                    case 1:
+                    case 1:// 门窗
                         intent = new Intent(MainActivity.this, CurtainActivity.class);
                         intent.putExtra("tag", "curtain");
                         break;
-                    case 2://电器
+                    case 2:// 电器
                         intent = new Intent(MainActivity.this, ElectricalActivity.class);
                         intent.putExtra("tag", "electrical");
                         break;
-                    case 3:
+                    case 3:// 传感器
                         intent = new Intent(MainActivity.this, LightActivity.class);
                         intent.putExtra("tag", "curtain");
                         break;
-                    case 4:
+                    case 4:// 监控
                         intent = new Intent(MainActivity.this, CameraActivity.class);
                         intent.putExtra("tag", "camera");
                         break;
-                    case 5:
+                    case 5:// 空调
                         intent = new Intent(MainActivity.this, LightActivity.class);
                         intent.putExtra("tag", "curtain");
                         break;

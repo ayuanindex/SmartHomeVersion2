@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.CheckBox;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -17,13 +18,12 @@ import android.widget.TextView;
 import androidx.annotation.Nullable;
 
 import com.realmax.smarthomeversion2.R;
-import com.realmax.smarthomeversion2.util.L;
 
 import java.util.ArrayList;
 
 public class ElectricalActivity extends BaseActivity {
-    private ImageView iv_power;
-    private ImageView iv_isMute;
+    private CheckBox cb_powerSupply;
+    private CheckBox cb_mute;
     private GridView gv_numbers;
     private ArrayList<String> numbers;
     private CustomerAdapter customerAdapter;
@@ -52,8 +52,8 @@ public class ElectricalActivity extends BaseActivity {
 
     @Override
     protected void initView() {
-        iv_power = (ImageView) findViewById(R.id.iv_power);
-        iv_isMute = (ImageView) findViewById(R.id.iv_isMute);
+        cb_powerSupply = (CheckBox) findViewById(R.id.cb_powerSupply);
+        cb_mute = (CheckBox) findViewById(R.id.cb_mute);
         gv_numbers = (GridView) findViewById(R.id.gv_numbers);
         rl_back = (RelativeLayout) findViewById(R.id.rl_back);
         iv_soundAdd = (ImageView) findViewById(R.id.iv_soundAdd);
@@ -72,22 +72,6 @@ public class ElectricalActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 finish();
-            }
-        });
-
-        iv_power.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                iv_power.setImageResource(!powerIsOpen ? R.drawable.pic_switch_open : R.drawable.pic_switch_close);
-                powerIsOpen = !powerIsOpen;
-            }
-        });
-
-        iv_isMute.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                iv_isMute.setImageResource(!muteIsOpen ? R.drawable.pic_mute_open : R.drawable.pic_mute_close);
-                muteIsOpen = !muteIsOpen;
             }
         });
 
