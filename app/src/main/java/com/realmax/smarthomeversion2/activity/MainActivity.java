@@ -87,7 +87,7 @@ public class MainActivity extends BaseActivity {
                         intent.putExtra("tag", "camera");
                         break;
                     case 5:// 空调
-                        intent = new Intent(MainActivity.this, LightActivity.class);
+                        intent = new Intent(MainActivity.this, AirConditioningActivity.class);
                         intent.putExtra("tag", "curtain");
                         break;
                 }

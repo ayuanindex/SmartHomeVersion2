@@ -62,6 +62,12 @@
             android:name=".activity.CameraActivity"
             android:launchMode="singleTask"
             android:screenOrientation="fullSensor" />
+        <!--空调-->
+        <activity
+            android:name=".activity.AirConditioningActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity" />
     </application>
 
 </manifest>

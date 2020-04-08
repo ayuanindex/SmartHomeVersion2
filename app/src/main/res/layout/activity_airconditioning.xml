@@ -6,7 +6,6 @@
     android:orientation="vertical"
     android:padding="10dp">
 
-
     <RelativeLayout
         android:id="@+id/rl_back"
         android:layout_width="wrap_content"
@@ -102,12 +101,12 @@
 
     <!--中间-->
     <LinearLayout
+        android:id="@+id/ll_center"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@id/rl_bottom"
+        android:layout_height="wrap_content"
         android:layout_below="@id/ll_head"
         android:layout_centerInParent="true"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="20dp"
         android:layout_marginBottom="10dp"
         android:background="@drawable/xml_radio_frame_white"
         android:gravity="center_vertical"
@@ -118,8 +117,9 @@
             android:layout_height="wrap_content"
             android:layout_gravity="left"
             android:layout_marginStart="30dp"
+            android:layout_marginTop="20dp"
             android:fontFamily="serif-monospace"
-            android:text="温度：XXX"
+            android:text="当前温度：26度"
             android:textSize="20sp" />
 
         <TextView
@@ -128,7 +128,7 @@
             android:layout_gravity="left"
             android:layout_marginStart="30dp"
             android:fontFamily="serif-monospace"
-            android:text="湿度：XXX"
+            android:text="设定温度：31度"
             android:textSize="20sp" />
 
         <TextView
@@ -137,7 +137,7 @@
             android:layout_gravity="left"
             android:layout_marginStart="30dp"
             android:fontFamily="serif-monospace"
-            android:text="烟雾：XXX"
+            android:text="风速：5级"
             android:textSize="20sp" />
 
         <TextView
@@ -145,9 +145,124 @@
             android:layout_height="wrap_content"
             android:layout_gravity="left"
             android:layout_marginStart="30dp"
+            android:layout_marginBottom="20dp"
             android:fontFamily="serif-monospace"
-            android:text="人体检测：XXX位置"
+            android:text="模式：制热"
             android:textSize="20sp" />
+    </LinearLayout>
+
+    <!--空调按钮以及冷热模式-->
+    <LinearLayout
+        android:id="@+id/ll_center_two"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/ll_center"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="10dp"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center">
+
+            <CheckBox
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:background="@drawable/xml_check_select_power_toggle"
+                android:button="@null" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center">
+
+            <ImageView
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:background="@drawable/xml_cycle_white"
+                android:padding="3dp"
+                android:src="@drawable/pic_daxue" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center">
+
+            <ImageView
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:background="@drawable/xml_cycle_white"
+                android:padding="3dp"
+                android:src="@drawable/pic_baitianqingtian" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/rl_bottom"
+        android:layout_below="@id/ll_center_two"
+        android:layout_marginTop="30dp"
+        android:layout_marginBottom="10dp"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center">
+
+            <ImageView
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:background="@drawable/xml_cycle_white"
+                android:src="@drawable/pic_mute_add" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center">
+
+            <ImageView
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:background="@drawable/xml_cycle_white"
+                android:src="@drawable/pic_mute_remove" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center">
+
+            <ImageView
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:background="@drawable/xml_cycle_white"
+                android:src="@drawable/pic_arrow_up" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center">
+
+            <ImageView
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:background="@drawable/xml_cycle_white"
+                android:src="@drawable/pic_arrow_down" />
+        </LinearLayout>
     </LinearLayout>
 
     <!--底部-->
