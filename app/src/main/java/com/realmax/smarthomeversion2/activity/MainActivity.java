@@ -79,7 +79,7 @@ public class MainActivity extends BaseActivity {
                         intent.putExtra("tag", "electrical");
                         break;
                     case 3:// 传感器
-                        intent = new Intent(MainActivity.this, LightActivity.class);
+                        intent = new Intent(MainActivity.this, TransducerActivity.class);
                         intent.putExtra("tag", "curtain");
                         break;
                     case 4:// 监控

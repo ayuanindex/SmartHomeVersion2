@@ -45,17 +45,23 @@
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity" />
-        <!--摄像头-->
-        <activity
-            android:name=".activity.CameraActivity"
-            android:launchMode="singleTask"
-            android:screenOrientation="fullSensor" />
         <!--家用电器-->
         <activity
             android:name=".activity.ElectricalActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity" /> <!--家用电器-->
+        <!--传感器-->
+        <activity
+            android:name=".activity.TransducerActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity" />
+        <!--摄像头-->
+        <activity
+            android:name=".activity.CameraActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="fullSensor" />
     </application>
 
 </manifest>

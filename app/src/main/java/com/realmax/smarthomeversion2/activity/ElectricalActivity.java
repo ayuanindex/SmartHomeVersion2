@@ -37,10 +37,7 @@ public class ElectricalActivity extends BaseActivity {
     private ImageView iv_switchLeft;
     private ImageView iv_switchRight;
     private TextView tv_currentRoom;
-    private boolean powerIsOpen = false;
-    private boolean muteIsOpen = false;
     private int currentPosition = 0;
-    private RelativeLayout rl_mute;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState, @Nullable PersistableBundle persistentState) {
@@ -65,7 +62,6 @@ public class ElectricalActivity extends BaseActivity {
         iv_switchLeft = (ImageView) findViewById(R.id.iv_switchLeft);
         iv_switchRight = (ImageView) findViewById(R.id.iv_switchRight);
         tv_currentRoom = (TextView) findViewById(R.id.tv_currentRoom);
-        rl_mute = (RelativeLayout) findViewById(R.id.rl_mute);
     }
 
     @Override
