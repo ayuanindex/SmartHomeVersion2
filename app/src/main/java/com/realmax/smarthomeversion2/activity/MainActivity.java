@@ -74,17 +74,17 @@ public class MainActivity extends BaseActivity {
                         intent = new Intent(MainActivity.this, CurtainActivity.class);
                         intent.putExtra("tag", "curtain");
                         break;
-                    case 2:
-                        intent = new Intent(MainActivity.this, CameraActivity.class);
-                        intent.putExtra("tag", "camera");
+                    case 2://电器
+                        intent = new Intent(MainActivity.this, ElectricalActivity.class);
+                        intent.putExtra("tag", "electrical");
                         break;
                     case 3:
                         intent = new Intent(MainActivity.this, LightActivity.class);
                         intent.putExtra("tag", "curtain");
                         break;
                     case 4:
-                        intent = new Intent(MainActivity.this, LightActivity.class);
-                        intent.putExtra("tag", "curtain");
+                        intent = new Intent(MainActivity.this, CameraActivity.class);
+                        intent.putExtra("tag", "camera");
                         break;
                     case 5:
                         intent = new Intent(MainActivity.this, LightActivity.class);

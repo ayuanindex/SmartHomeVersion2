@@ -116,7 +116,7 @@ public class ValueUtil {
     /**
      * 发送停止获取摄像头拍摄信心的指令
      */
-    public static void sendStopCmd(String tag) {
+    public static void sendStopCmd() {
         CustomerHandler customerHandler = getHandlerHashMap().get("camera");
         if (customerHandler == null) {
             return;
@@ -128,7 +128,7 @@ public class ValueUtil {
             return;
         }
 
-        String command = "{\"cmd\": \"start\"}";
+        String command = "{\"cmd\": \"stop\"}";
         handlerContext.writeAndFlush(Unpooled.copiedBuffer(option(EncodeAndDecode.getStrUnicode(command), (byte) 0x02)));
     }
 
