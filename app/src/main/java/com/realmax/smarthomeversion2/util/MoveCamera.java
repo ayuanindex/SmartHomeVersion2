@@ -78,7 +78,7 @@ public class MoveCamera {
                 }
             }
         };
-        timer.schedule(timerTask, 0, 100);
+        timer.schedule(timerTask, 0, 50);
     }
 
     /**
@@ -97,7 +97,7 @@ public class MoveCamera {
                 }
             }
         };
-        timer.schedule(timerTask, 0, 100);
+        timer.schedule(timerTask, 0, 50);
     }
 
     /**
@@ -116,7 +116,7 @@ public class MoveCamera {
                 }
             }
         };
-        timer.schedule(timerTask, 0, 100);
+        timer.schedule(timerTask, 0, 50);
     }
 
     /**
@@ -135,7 +135,7 @@ public class MoveCamera {
                 }
             }
         };
-        timer.schedule(timerTask, 0, 100);
+        timer.schedule(timerTask, 0, 50);
     }
 
     /**
