@@ -36,6 +36,7 @@ public class TransducerActivity extends BaseActivity {
     private ImageView iv_switchRight;
     private TextView tv_currentRoom;
     private String tag;
+    private int currentPosition = 0;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState, @Nullable PersistableBundle persistentState) {
@@ -78,6 +79,20 @@ public class TransducerActivity extends BaseActivity {
                 finish();
             }
         });
+
+        iv_switchLeft.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                switchPage(0);
+            }
+        });
+
+        iv_switchRight.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                switchPage(1);
+            }
+        });
     }
 
     @Override
@@ -108,6 +123,22 @@ public class TransducerActivity extends BaseActivity {
                 }
             });
         }
+    }
+
+    private void switchPage(int i) {
+        switch (i) {
+            case 0:
+                if (currentPosition > 0) {
+                    currentPosition--;
+                }
+                break;
+            case 1:
+                if (currentPosition < roomBeans.size() - 1) {
+                    currentPosition++;
+                }
+                break;
+        }
+        tv_currentRoom.setText(roomBeans.get(currentPosition).getRoomName());
     }
 
     /**

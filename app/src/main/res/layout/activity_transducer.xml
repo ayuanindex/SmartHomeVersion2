@@ -98,7 +98,7 @@
             android:layout_alignParentEnd="true"
             android:layout_centerInParent="true"
             android:layout_marginEnd="20dp"
-            android:src="@drawable/pic_weather_duoyun" />
+            android:src="@drawable/pic_weather_na" />
     </RelativeLayout>
 
     <!--中间-->

@@ -47,15 +47,19 @@ public class AirConditioningActivity extends BaseActivity {
     @Override
     protected void initView() {
         rl_back = (RelativeLayout) findViewById(R.id.rl_back);
+        // 时间
         iv_one = (ImageView) findViewById(R.id.iv_one);
         iv_two = (ImageView) findViewById(R.id.iv_two);
         iv_three = (ImageView) findViewById(R.id.iv_three);
         iv_four = (ImageView) findViewById(R.id.iv_four);
+        // 天气状态
         iv_weather = (ImageView) findViewById(R.id.iv_weather);
+        // 空调状态
         tv_temperature = (TextView) findViewById(R.id.tv_temperature);
         tv_setTemperature = (TextView) findViewById(R.id.tv_setTemperature);
         tv_windSpeed = (TextView) findViewById(R.id.tv_windSpeed);
         tv_mode = (TextView) findViewById(R.id.tv_mode);
+        // 空调功能
         cb_powerSwitch = (CheckBox) findViewById(R.id.cb_powerSwitch);
         iv_cold = (ImageView) findViewById(R.id.iv_cold);
         iv_hot = (ImageView) findViewById(R.id.iv_hot);
@@ -63,6 +67,7 @@ public class AirConditioningActivity extends BaseActivity {
         iv_reduce = (ImageView) findViewById(R.id.iv_reduce);
         iv_up = (ImageView) findViewById(R.id.iv_up);
         iv_down = (ImageView) findViewById(R.id.iv_down);
+        // 切换房间
         iv_switchLeft = (ImageView) findViewById(R.id.iv_switchLeft);
         iv_switchRight = (ImageView) findViewById(R.id.iv_switchRight);
         tv_currentRoom = (TextView) findViewById(R.id.tv_currentRoom);
