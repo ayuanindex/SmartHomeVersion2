@@ -80,7 +80,7 @@ public class MainActivity extends BaseActivity {
                         break;
                     case 3:// 传感器
                         intent = new Intent(MainActivity.this, TransducerActivity.class);
-                        intent.putExtra("tag", "curtain");
+                        intent.putExtra("tag", "camera");
                         break;
                     case 4:// 监控
                         intent = new Intent(MainActivity.this, CameraActivity.class);
@@ -88,7 +88,7 @@ public class MainActivity extends BaseActivity {
                         break;
                     case 5:// 空调
                         intent = new Intent(MainActivity.this, AirConditioningActivity.class);
-                        intent.putExtra("tag", "curtain");
+                        intent.putExtra("tag", "camera");
                         break;
                 }
                 startActivity(intent);

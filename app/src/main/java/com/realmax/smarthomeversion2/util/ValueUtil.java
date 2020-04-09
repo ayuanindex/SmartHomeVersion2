@@ -133,6 +133,24 @@ public class ValueUtil {
     }
 
     /**
+     * 发送获取天气信息的指令
+     */
+    public static void sendWeatherCmd() {
+        CustomerHandler customerHandler = getHandlerHashMap().get("camera");
+        if (customerHandler == null) {
+            return;
+        }
+
+        ChannelHandlerContext handlerContext = customerHandler.getHandlerContext();
+
+        if (handlerContext == null) {
+            return;
+        }
+        String command = "{\"cmd\": \"pull\"}";
+        handlerContext.writeAndFlush(Unpooled.copiedBuffer(option(EncodeAndDecode.getStrUnicode(command), (byte) 0x83)));
+    }
+
+    /**
      * 将需要发送的消息加工成服务端可识别的数据
      *
      * @param command 需要发送的指令

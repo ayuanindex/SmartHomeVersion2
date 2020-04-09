@@ -297,7 +297,6 @@ public class CameraActivity extends BaseActivity {
                 @RequiresApi(api = Build.VERSION_CODES.O)
                 @Override
                 public void getResultData(String msg) {
-                    L.e(msg + "ajksdlf");
                     checkJson(msg);
                 }
             });
@@ -369,4 +368,9 @@ public class CameraActivity extends BaseActivity {
         }
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        ValueUtil.sendStopCmd();
+    }
 }

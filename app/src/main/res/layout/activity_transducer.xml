@@ -141,7 +141,7 @@
             android:layout_gravity="left"
             android:layout_marginStart="30dp"
             android:fontFamily="serif-monospace"
-            android:text="烟雾：XXX"
+            android:text="烟雾：无"
             android:textSize="20sp" />
 
         <TextView
@@ -151,7 +151,7 @@
             android:layout_gravity="left"
             android:layout_marginStart="30dp"
             android:fontFamily="serif-monospace"
-            android:text="人体检测：XXX位置"
+            android:text="人体检测：客厅位置有人"
             android:textSize="20sp" />
     </LinearLayout>
 

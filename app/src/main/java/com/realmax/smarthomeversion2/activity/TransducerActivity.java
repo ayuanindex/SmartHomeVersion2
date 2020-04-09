@@ -1,5 +1,6 @@
 package com.realmax.smarthomeversion2.activity;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.view.View;
@@ -9,7 +10,16 @@ import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 
+import com.google.gson.Gson;
 import com.realmax.smarthomeversion2.R;
+import com.realmax.smarthomeversion2.bean.WeatherBean;
+import com.realmax.smarthomeversion2.tcp.CustomerCallback;
+import com.realmax.smarthomeversion2.tcp.CustomerHandler;
+import com.realmax.smarthomeversion2.util.L;
+import com.realmax.smarthomeversion2.util.ValueUtil;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class TransducerActivity extends BaseActivity {
     private RelativeLayout rl_back;
@@ -25,6 +35,7 @@ public class TransducerActivity extends BaseActivity {
     private ImageView iv_switchLeft;
     private ImageView iv_switchRight;
     private TextView tv_currentRoom;
+    private String tag;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState, @Nullable PersistableBundle persistentState) {
@@ -71,6 +82,94 @@ public class TransducerActivity extends BaseActivity {
 
     @Override
     protected void initData() {
+        tag = getIntent().getStringExtra("tag");
+        ValueUtil.sendWeatherCmd();
+        CustomerHandler customerHandler = getCustomerHandler(tag);
+        if (customerHandler != null) {
 
+            customerHandler.setCustomerCallback(new CustomerCallback() {
+                @Override
+                public void disConnected() {
+                    L.e("连接断开");
+                }
+
+                @Override
+                public void getResultData(String msg) {
+                    try {
+                        JSONObject jsonObject = new JSONObject(msg);
+                        if (jsonObject.optString("cmd").equals("ans")) {
+                            WeatherBean weatherBean = new Gson().fromJson(msg, WeatherBean.class);
+                            L.e("weather：" + weatherBean.toString());
+                            refreshUI(weatherBean);
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        }
+    }
+
+    /**
+     * 更新界面
+     *
+     * @param weatherBean 需要显示的数据
+     */
+    private void refreshUI(WeatherBean weatherBean) {
+        int numberPicOne = getNumberPic(weatherBean.getTime().charAt(0));
+        int numberPicTwo = getNumberPic(weatherBean.getTime().charAt(1));
+        int numberPicThree = getNumberPic(weatherBean.getTime().charAt(3));
+        int numberPicFour = getNumberPic(weatherBean.getTime().charAt(4));
+        int weatherPic = getWeatherPic(weatherBean.getWeather());
+        runOnUiThread(new Runnable() {
+            @SuppressLint("SetTextI18n")
+            @Override
+            public void run() {
+                iv_one.setImageResource(numberPicOne);
+                iv_two.setImageResource(numberPicTwo);
+                iv_three.setImageResource(numberPicThree);
+                iv_four.setImageResource(numberPicFour);
+
+                iv_weather.setImageResource(weatherPic);
+
+                tv_temperature.setText("温度：" + weatherBean.getTemp() + "℃");
+                tv_humidity.setText("湿度：" + weatherBean.getHumi() + "%");
+            }
+        });
+    }
+
+    /**
+     * 获取对应的天气图片
+     *
+     * @param weather 天气状态
+     * @return 返回天气状态图片的资源ID
+     */
+    private int getWeatherPic(String weather) {
+        String wt = "pic_weather_";
+        switch (weather) {
+            case "晴天":
+                wt += "tianqing";
+                break;
+            case "多云":
+                wt += "duoyun";
+                break;
+            case "雨天":
+                wt += "dayu";
+                break;
+            case "雪天":
+                wt += "daxue";
+                break;
+        }
+        return getResources().getIdentifier(wt, "drawable", getPackageName());
+    }
+
+    /**
+     * 获取指定数字的图片
+     *
+     * @param c 指定位置的Char
+     * @return 返回指定图片的ID
+     */
+    private int getNumberPic(char c) {
+        return getResources().getIdentifier("pic_number" + c, "drawable", getPackageName());
     }
 }

@@ -24,7 +24,7 @@ public abstract class NettyHandler extends SimpleChannelInboundHandler<ByteBuf> 
     protected void messageReceived(ChannelHandlerContext channelHandlerContext, ByteBuf msg) throws Exception {
         Log.i(TAG, "channelRead0: client channelRead..哈哈哈");
         ByteBuf buf = msg.readBytes(msg.readableBytes());
-        String s = buf.toString(StandardCharsets.US_ASCII);
+        String s = buf.toString(StandardCharsets.UTF_8);
         /*String s = buf.toString(StandardCharsets.UTF_8)*/
         ;
         for (char c : s.toCharArray()) {
