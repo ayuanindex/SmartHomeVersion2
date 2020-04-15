@@ -19,34 +19,31 @@ import com.realmax.smarthomeversion2.App;
 import com.realmax.smarthomeversion2.R;
 import com.realmax.smarthomeversion2.bean.CameraBodyBean;
 import com.realmax.smarthomeversion2.tcp.CustomerCallback;
-import com.realmax.smarthomeversion2.tcp.CustomerHandler;
+import com.realmax.smarthomeversion2.tcp.CustomerHandlerBase;
 import com.realmax.smarthomeversion2.util.EncodeAndDecode;
-import com.realmax.smarthomeversion2.util.L;
 import com.realmax.smarthomeversion2.util.MoveCamera;
 import com.realmax.smarthomeversion2.util.ValueUtil;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-
 public class CameraActivity extends BaseActivity {
-    private TextView tv_angleA;
-    private TextView tv_angleB;
-    private ImageView iv_camera;
-    private ImageView iv_btn_left;
-    private ImageView iv_btn_right;
-    private ImageView iv_btn_up;
-    private ImageView iv_btn_down;
-    private ImageView iv_switchLeft;
-    private ImageView iv_switchRight;
-    private TextView tv_currentRoom;
+    private TextView tvAngleA;
+    private TextView tvAngleB;
+    private ImageView ivCamera;
+    private ImageView ivBtnLeft;
+    private ImageView ivBtnRight;
+    private ImageView ivBtnUp;
+    private ImageView ivBtnDown;
+    private ImageView ivSwitchLeft;
+    private ImageView ivSwitchRight;
+    private TextView tvCurrentRoom;
     private String tag;
     private int currentCamera = 0;
     private int currentPosition = 0;
-    private LinearLayout ll_tip;
+    private LinearLayout llTip;
     private int delayMillis = 100;
-    private RelativeLayout rl_back;
+    private RelativeLayout rlBack;
 
     @Override
     protected int getLayout() {
@@ -55,30 +52,30 @@ public class CameraActivity extends BaseActivity {
 
     @Override
     protected void initView() {
-        tv_angleA = (TextView) findViewById(R.id.tv_angleA);
-        tv_angleB = (TextView) findViewById(R.id.tv_angleB);
-        iv_camera = (ImageView) findViewById(R.id.iv_camera);
-        iv_btn_left = (ImageView) findViewById(R.id.iv_btn_left);
-        iv_btn_right = (ImageView) findViewById(R.id.iv_btn_right);
-        iv_btn_up = (ImageView) findViewById(R.id.iv_btn_up);
-        iv_btn_down = (ImageView) findViewById(R.id.iv_btn_down);
-        iv_switchLeft = (ImageView) findViewById(R.id.iv_switchLeft);
-        iv_switchRight = (ImageView) findViewById(R.id.iv_switchRight);
-        tv_currentRoom = (TextView) findViewById(R.id.tv_currentRoom);
-        ll_tip = (LinearLayout) findViewById(R.id.ll_tip);
-        rl_back = (RelativeLayout) findViewById(R.id.rl_back);
+        tvAngleA = (TextView) findViewById(R.id.tv_angleA);
+        tvAngleB = (TextView) findViewById(R.id.tv_angleB);
+        ivCamera = (ImageView) findViewById(R.id.iv_camera);
+        ivBtnLeft = (ImageView) findViewById(R.id.iv_btn_left);
+        ivBtnRight = (ImageView) findViewById(R.id.iv_btn_right);
+        ivBtnUp = (ImageView) findViewById(R.id.iv_btn_up);
+        ivBtnDown = (ImageView) findViewById(R.id.iv_btn_down);
+        ivSwitchLeft = (ImageView) findViewById(R.id.iv_switchLeft);
+        ivSwitchRight = (ImageView) findViewById(R.id.iv_switchRight);
+        tvCurrentRoom = (TextView) findViewById(R.id.tv_currentRoom);
+        llTip = (LinearLayout) findViewById(R.id.ll_tip);
+        rlBack = (RelativeLayout) findViewById(R.id.rl_back);
     }
 
     @Override
     protected void initEvent() {
-        rl_back.setOnClickListener(new View.OnClickListener() {
+        rlBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
             }
         });
 
-        iv_camera.setOnTouchListener(new View.OnTouchListener() {
+        ivCamera.setOnTouchListener(new View.OnTouchListener() {
 
             private float moveY;
             private float moveX;
@@ -89,7 +86,7 @@ public class CameraActivity extends BaseActivity {
             public boolean onTouch(View v, MotionEvent event) {
                 switch (event.getActionMasked()) {
                     case MotionEvent.ACTION_DOWN:
-                        ll_tip.setVisibility(View.VISIBLE);
+                        llTip.setVisibility(View.VISIBLE);
                         // 拿到手指放下是的坐标
                         initX = event.getX(0);
                         initY = event.getY(0);
@@ -102,8 +99,8 @@ public class CameraActivity extends BaseActivity {
                         MoveCamera.touchMoveCamera((int) (initX - moveX) / 10, (int) (initY - moveY) / 10, new MoveCamera.Result() {
                             @Override
                             public void resultAngle(float a, float b) {
-                                tv_angleA.setText("A:" + a + "º");
-                                tv_angleB.setText("B:" + b + "º");
+                                tvAngleA.setText("A:" + a + "º");
+                                tvAngleB.setText("B:" + b + "º");
                             }
                         });
                         initX = moveX;
@@ -113,30 +110,32 @@ public class CameraActivity extends BaseActivity {
                         new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
-                                ll_tip.setVisibility(View.GONE);
+                                llTip.setVisibility(View.GONE);
                             }
                         }, delayMillis);
                         MoveCamera.stop();
+                        break;
+                    default:
                         break;
                 }
                 return true;
             }
         });
 
-        iv_btn_left.setOnTouchListener(new View.OnTouchListener() {
+        ivBtnLeft.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
-                        ll_tip.setVisibility(View.VISIBLE);
+                        llTip.setVisibility(View.VISIBLE);
                         MoveCamera.move(MoveCamera.LEFT, currentCamera, new MoveCamera.Result() {
                             @Override
                             public void resultAngle(float a, float b) {
                                 runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        tv_angleA.setText("A:" + a + "º");
-                                        tv_angleB.setText("B:" + b + "º");
+                                        tvAngleA.setText("A:" + a + "º");
+                                        tvAngleB.setText("B:" + b + "º");
                                     }
                                 });
                             }
@@ -146,30 +145,32 @@ public class CameraActivity extends BaseActivity {
                         new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
-                                ll_tip.setVisibility(View.GONE);
+                                llTip.setVisibility(View.GONE);
                             }
                         }, delayMillis);
                         MoveCamera.stop();
+                        break;
+                    default:
                         break;
                 }
                 return true;
             }
         });
 
-        iv_btn_right.setOnTouchListener(new View.OnTouchListener() {
+        ivBtnRight.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
-                        ll_tip.setVisibility(View.VISIBLE);
+                        llTip.setVisibility(View.VISIBLE);
                         MoveCamera.move(MoveCamera.RIGHT, currentCamera, new MoveCamera.Result() {
                             @Override
                             public void resultAngle(float a, float b) {
                                 runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        tv_angleA.setText("A:" + a + "º");
-                                        tv_angleB.setText("B:" + b + "º");
+                                        tvAngleA.setText("A:" + a + "º");
+                                        tvAngleB.setText("B:" + b + "º");
                                     }
                                 });
                             }
@@ -179,30 +180,32 @@ public class CameraActivity extends BaseActivity {
                         new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
-                                ll_tip.setVisibility(View.GONE);
+                                llTip.setVisibility(View.GONE);
                             }
                         }, delayMillis);
                         MoveCamera.stop();
+                        break;
+                    default:
                         break;
                 }
                 return true;
             }
         });
 
-        iv_btn_up.setOnTouchListener(new View.OnTouchListener() {
+        ivBtnUp.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
-                        ll_tip.setVisibility(View.VISIBLE);
+                        llTip.setVisibility(View.VISIBLE);
                         MoveCamera.move(MoveCamera.UP, currentCamera, new MoveCamera.Result() {
                             @Override
                             public void resultAngle(float a, float b) {
                                 runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        tv_angleA.setText("A:" + a + "º");
-                                        tv_angleB.setText("B:" + b + "º");
+                                        tvAngleA.setText("A:" + a + "º");
+                                        tvAngleB.setText("B:" + b + "º");
                                     }
                                 });
                             }
@@ -212,30 +215,32 @@ public class CameraActivity extends BaseActivity {
                         new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
-                                ll_tip.setVisibility(View.GONE);
+                                llTip.setVisibility(View.GONE);
                             }
                         }, delayMillis);
                         MoveCamera.stop();
+                        break;
+                    default:
                         break;
                 }
                 return true;
             }
         });
 
-        iv_btn_down.setOnTouchListener(new View.OnTouchListener() {
+        ivBtnDown.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
-                        ll_tip.setVisibility(View.VISIBLE);
+                        llTip.setVisibility(View.VISIBLE);
                         MoveCamera.move(MoveCamera.DOWN, currentCamera, new MoveCamera.Result() {
                             @Override
                             public void resultAngle(float a, float b) {
                                 runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        tv_angleA.setText("A:" + a + "º");
-                                        tv_angleB.setText("B:" + b + "º");
+                                        tvAngleA.setText("A:" + a + "º");
+                                        tvAngleB.setText("B:" + b + "º");
                                     }
                                 });
                             }
@@ -245,24 +250,26 @@ public class CameraActivity extends BaseActivity {
                         new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
-                                ll_tip.setVisibility(View.GONE);
+                                llTip.setVisibility(View.GONE);
                             }
                         }, delayMillis);
                         MoveCamera.stop();
+                        break;
+                    default:
                         break;
                 }
                 return true;
             }
         });
 
-        iv_switchLeft.setOnClickListener(new View.OnClickListener() {
+        ivSwitchLeft.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 switchPage(0);
             }
         });
 
-        iv_switchRight.setOnClickListener(new View.OnClickListener() {
+        ivSwitchRight.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 switchPage(1);
@@ -280,12 +287,13 @@ public class CameraActivity extends BaseActivity {
         }
 
         // 获取Netty的Hander
-        CustomerHandler customerHandler = getCustomerHandler(tag);
+        CustomerHandlerBase customerHandler = getCustomerHandler(tag);
         if (customerHandler != null) {
             customerHandler.setCustomerCallback(new CustomerCallback() {
                 @Override
                 public void disConnected() {
                     ValueUtil.getIsConnected().put(tag, false);
+                    ValueUtil.getHandlerHashMap().put(tag, null);
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -327,8 +335,10 @@ public class CameraActivity extends BaseActivity {
                     }
                 }
                 break;
+            default:
+                break;
         }
-        tv_currentRoom.setText(roomBeans.get(currentPosition).getRoomName());
+        tvCurrentRoom.setText(roomBeans.get(currentPosition).getRoomName());
     }
 
     /**
@@ -342,7 +352,7 @@ public class CameraActivity extends BaseActivity {
             if (!TextUtils.isEmpty(msg)) {
                 JSONObject jsonObject = new JSONObject(msg);
                 String cmd = jsonObject.optString("cmd");
-                if (cmd.equals("play")) {
+                if ("play".equals(cmd)) {
                     setImage(msg);
                 }
             }
@@ -362,15 +372,20 @@ public class CameraActivity extends BaseActivity {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    iv_camera.setImageBitmap(bitmap);
+                    ivCamera.setImageBitmap(bitmap);
                 }
             });
         }
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        ValueUtil.sendStopCmd();
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
-        ValueUtil.sendStopCmd();
     }
 }

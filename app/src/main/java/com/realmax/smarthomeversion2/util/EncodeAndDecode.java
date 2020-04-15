@@ -70,11 +70,15 @@ public class EncodeAndDecode {
                 unicode.append("\\u");
                 bit = (c >>> 8);
                 tmp = Integer.toHexString(bit);
-                if (tmp.length() == 1) unicode.append("0");
+                if (tmp.length() == 1) {
+                    unicode.append("0");
+                }
                 unicode.append(tmp);
                 bit = (c & 0xFF);
                 tmp = Integer.toHexString(bit);
-                if (tmp.length() == 1) unicode.append("0");
+                if (tmp.length() == 1) {
+                    unicode.append("0");
+                }
                 unicode.append(tmp);
             } else {
                 unicode.append(c);

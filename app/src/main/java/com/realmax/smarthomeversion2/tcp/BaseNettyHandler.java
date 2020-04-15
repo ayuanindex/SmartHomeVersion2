@@ -9,7 +9,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 
-public abstract class NettyHandler extends SimpleChannelInboundHandler<ByteBuf> {
+public abstract class BaseNettyHandler extends SimpleChannelInboundHandler<ByteBuf> {
     private static final String TAG = "NettyHandler";
     // 回调接口
     private CustomerCallback callback;

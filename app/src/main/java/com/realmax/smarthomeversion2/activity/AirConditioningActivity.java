@@ -13,26 +13,26 @@ import androidx.annotation.Nullable;
 import com.realmax.smarthomeversion2.R;
 
 public class AirConditioningActivity extends BaseActivity {
-    private RelativeLayout rl_back;
-    private ImageView iv_one;
-    private ImageView iv_two;
-    private ImageView iv_three;
-    private ImageView iv_four;
-    private ImageView iv_weather;
-    private TextView tv_temperature;
-    private TextView tv_setTemperature;
-    private TextView tv_windSpeed;
-    private TextView tv_mode;
-    private CheckBox cb_powerSwitch;
-    private ImageView iv_cold;
-    private ImageView iv_hot;
-    private ImageView iv_plus;
-    private ImageView iv_reduce;
-    private ImageView iv_up;
-    private ImageView iv_down;
-    private ImageView iv_switchLeft;
-    private ImageView iv_switchRight;
-    private TextView tv_currentRoom;
+    private RelativeLayout rlBack;
+    private ImageView ivOne;
+    private ImageView ivTwo;
+    private ImageView ivThree;
+    private ImageView ivFour;
+    private ImageView ivWeather;
+    private TextView tvTemperature;
+    private TextView tvSettemperature;
+    private TextView tvWindSpeed;
+    private TextView tvMode;
+    private CheckBox cbPowerSwitch;
+    private ImageView ivCold;
+    private ImageView ivHot;
+    private ImageView ivPlus;
+    private ImageView ivReduce;
+    private ImageView ivUp;
+    private ImageView ivDown;
+    private ImageView ivSwitchLeft;
+    private ImageView ivSwitchRight;
+    private TextView tvCurrentRoom;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState, @Nullable PersistableBundle persistentState) {
@@ -46,36 +46,36 @@ public class AirConditioningActivity extends BaseActivity {
 
     @Override
     protected void initView() {
-        rl_back = (RelativeLayout) findViewById(R.id.rl_back);
+        rlBack = (RelativeLayout) findViewById(R.id.rl_back);
         // 时间
-        iv_one = (ImageView) findViewById(R.id.iv_one);
-        iv_two = (ImageView) findViewById(R.id.iv_two);
-        iv_three = (ImageView) findViewById(R.id.iv_three);
-        iv_four = (ImageView) findViewById(R.id.iv_four);
+        ivOne = (ImageView) findViewById(R.id.iv_one);
+        ivTwo = (ImageView) findViewById(R.id.iv_two);
+        ivThree = (ImageView) findViewById(R.id.iv_three);
+        ivFour = (ImageView) findViewById(R.id.iv_four);
         // 天气状态
-        iv_weather = (ImageView) findViewById(R.id.iv_weather);
+        ivWeather = (ImageView) findViewById(R.id.iv_weather);
         // 空调状态
-        tv_temperature = (TextView) findViewById(R.id.tv_temperature);
-        tv_setTemperature = (TextView) findViewById(R.id.tv_setTemperature);
-        tv_windSpeed = (TextView) findViewById(R.id.tv_windSpeed);
-        tv_mode = (TextView) findViewById(R.id.tv_mode);
+        tvTemperature = (TextView) findViewById(R.id.tv_temperature);
+        tvSettemperature = (TextView) findViewById(R.id.tv_setTemperature);
+        tvWindSpeed = (TextView) findViewById(R.id.tv_windSpeed);
+        tvMode = (TextView) findViewById(R.id.tv_mode);
         // 空调功能
-        cb_powerSwitch = (CheckBox) findViewById(R.id.cb_powerSwitch);
-        iv_cold = (ImageView) findViewById(R.id.iv_cold);
-        iv_hot = (ImageView) findViewById(R.id.iv_hot);
-        iv_plus = (ImageView) findViewById(R.id.iv_plus);
-        iv_reduce = (ImageView) findViewById(R.id.iv_reduce);
-        iv_up = (ImageView) findViewById(R.id.iv_up);
-        iv_down = (ImageView) findViewById(R.id.iv_down);
+        cbPowerSwitch = (CheckBox) findViewById(R.id.cb_powerSwitch);
+        ivCold = (ImageView) findViewById(R.id.iv_cold);
+        ivHot = (ImageView) findViewById(R.id.iv_hot);
+        ivPlus = (ImageView) findViewById(R.id.iv_plus);
+        ivReduce = (ImageView) findViewById(R.id.iv_reduce);
+        ivUp = (ImageView) findViewById(R.id.iv_up);
+        ivDown = (ImageView) findViewById(R.id.iv_down);
         // 切换房间
-        iv_switchLeft = (ImageView) findViewById(R.id.iv_switchLeft);
-        iv_switchRight = (ImageView) findViewById(R.id.iv_switchRight);
-        tv_currentRoom = (TextView) findViewById(R.id.tv_currentRoom);
+        ivSwitchLeft = (ImageView) findViewById(R.id.iv_switchLeft);
+        ivSwitchRight = (ImageView) findViewById(R.id.iv_switchRight);
+        tvCurrentRoom = (TextView) findViewById(R.id.tv_currentRoom);
     }
 
     @Override
     protected void initEvent() {
-        rl_back.setOnClickListener(new View.OnClickListener() {
+        rlBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();

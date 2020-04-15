@@ -2,7 +2,7 @@ package com.realmax.smarthomeversion2.tcp;
 
 import io.netty.channel.ChannelHandlerContext;
 
-public class CustomerHandler extends NettyHandler {
+public class CustomerHandlerBase extends BaseNettyHandler {
 
     private ChannelHandlerContext handlerContext;
     private CustomerCallback customerCallback;

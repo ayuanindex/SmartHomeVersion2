@@ -2,8 +2,6 @@ package com.realmax.smarthomeversion2.activity;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.os.PersistableBundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -11,12 +9,10 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 
@@ -24,7 +20,7 @@ import com.realmax.smarthomeversion2.App;
 import com.realmax.smarthomeversion2.R;
 import com.realmax.smarthomeversion2.bean.LinkBean;
 import com.realmax.smarthomeversion2.tcp.CustomerCallback;
-import com.realmax.smarthomeversion2.tcp.CustomerHandler;
+import com.realmax.smarthomeversion2.tcp.CustomerHandlerBase;
 import com.realmax.smarthomeversion2.tcp.NettyLinkUtil;
 import com.realmax.smarthomeversion2.util.L;
 
@@ -37,19 +33,6 @@ public class SettingActivity extends BaseActivity {
     private ListView lv_list;
     private ArrayList<LinkBean> linkBeans;
     private CustomerAdapter customerAdapter;
-    private Handler handler = new Handler() {
-        @Override
-        public void handleMessage(@NonNull Message msg) {
-            super.handleMessage(msg);
-            switch (msg.what) {
-                case 0:
-                    L.e("正在刷新1");
-                    customerAdapter.notifyDataSetChanged();
-                    L.e("正在刷新2");
-                    break;
-            }
-        }
-    };
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState, @Nullable PersistableBundle persistentState) {
@@ -77,8 +60,6 @@ public class SettingActivity extends BaseActivity {
         });
 
         lv_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
-
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if (!linkBeans.get(position).isConnected()) {
@@ -90,12 +71,17 @@ public class SettingActivity extends BaseActivity {
         });
     }
 
+    @SuppressLint("SetTextI18n")
     private void showDialog(LinkBean linkBean) {
         AlertDialog.Builder builder = new AlertDialog.Builder(SettingActivity.this);
         AlertDialog alertDialog = builder.create();
         View inflate = View.inflate(SettingActivity.this, R.layout.dialog_link, null);
         alertDialog.setView(inflate);
         ViewHolder viewHolder = new ViewHolder(inflate);
+
+        // 回显IP地址和端口号
+        viewHolder.et_ip.setText(linkBean.getHOST());
+        viewHolder.et_port.setText("" + linkBean.getPORT());
 
         viewHolder.tv_ok.setOnClickListener(new View.OnClickListener() {
             @SuppressLint("SetTextI18n")
@@ -113,8 +99,8 @@ public class SettingActivity extends BaseActivity {
                     return;
                 }
 
-                App.showToast("正在连接");
-                CustomerHandler customerHandler = new CustomerHandler();
+                /*App.showToast("正在连接");*/
+                CustomerHandlerBase customerHandler = new CustomerHandlerBase();
                 linkBean.connected(ip, port, customerHandler, new NettyLinkUtil.Callback() {
                     @Override
                     public void success(EventLoopGroup eventLoopGroup) {
@@ -181,8 +167,8 @@ public class SettingActivity extends BaseActivity {
     @Override
     protected void initData() {
         linkBeans = new ArrayList<>();
-        linkBeans.add(new LinkBean("电灯", "light"));
-        linkBeans.add(new LinkBean("窗帘", "curtain"));
+        linkBeans.add(new LinkBean("电灯&窗帘", "light"));
+        /*linkBeans.add(new LinkBean("窗帘", "curtain"));*/
         linkBeans.add(new LinkBean("摄像头", "camera"));
 
         customerAdapter = new CustomerAdapter();

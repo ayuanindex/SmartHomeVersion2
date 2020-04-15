@@ -198,6 +198,8 @@ public class ElectricalActivity extends BaseActivity {
                     }*/
                 }
                 break;
+            default:
+                break;
         }
         tv_currentRoom.setText(roomBeans.get(currentPosition).getRoomName());
         /*customerAdapter.notifyDataSetChanged();*/

@@ -2,7 +2,8 @@ package com.realmax.smarthomeversion2.util;
 
 import com.realmax.smarthomeversion2.bean.CurtainBean;
 import com.realmax.smarthomeversion2.bean.LightBean;
-import com.realmax.smarthomeversion2.tcp.CustomerHandler;
+import com.realmax.smarthomeversion2.bean.TestBean;
+import com.realmax.smarthomeversion2.tcp.CustomerHandlerBase;
 
 import org.json.JSONObject;
 
@@ -18,7 +19,7 @@ public class ValueUtil {
     /**
      * Netty的回调监听集合
      */
-    private static HashMap<String, CustomerHandler> handlerHashMap = new HashMap<>();
+    private static HashMap<String, CustomerHandlerBase> handlerHashMap = new HashMap<>();
 
     /**
      * 连接状态的集合
@@ -29,7 +30,7 @@ public class ValueUtil {
         return room;
     }
 
-    public static HashMap<String, CustomerHandler> getHandlerHashMap() {
+    public static HashMap<String, CustomerHandlerBase> getHandlerHashMap() {
         return handlerHashMap;
     }
 
@@ -45,7 +46,7 @@ public class ValueUtil {
      * @param angleB   纵向旋转角度---默认45
      */
     public static void sendCameraCmd(int deviceId, float angleA, float angleB) {
-        CustomerHandler customerHandler = getHandlerHashMap().get("camera");
+        CustomerHandlerBase customerHandler = getHandlerHashMap().get("camera");
         if (customerHandler == null) {
             return;
         }
@@ -64,10 +65,10 @@ public class ValueUtil {
     /**
      * 发送开启电灯或关闭电灯的指令
      *
-     * @param lightBean 需要修改的对象
+     * @param testBean 需要修改的对象
      */
-    public static void sendLightOpenOrCloseCmd(LightBean lightBean) {
-        CustomerHandler customerHandler = getHandlerHashMap().get("light");
+    public static void sendLightOpenOrCloseCmd(TestBean testBean) {
+        CustomerHandlerBase customerHandler = getHandlerHashMap().get("light");
         if (customerHandler == null) {
             return;
         }
@@ -79,21 +80,22 @@ public class ValueUtil {
         }
 
         HashMap<String, List<Integer>> hashMap = new HashMap<>();
-        hashMap.put("Ligth_S", lightBean.getLigth_S());
-        hashMap.put("Light_C", lightBean.getLight_C());
+        hashMap.put("Light_C", testBean.getLight_S());
+        hashMap.put("Curtain_C", testBean.getCurtain_S());
         JSONObject jsonObject = new JSONObject(hashMap);
         String s = jsonObject.toString();
         L.e(s);
-        handlerContext.writeAndFlush(Unpooled.copiedBuffer(option(EncodeAndDecode.getStrUnicode(s), (byte) 0x02)));
+        handlerContext.writeAndFlush(Unpooled.copiedBuffer(EncodeAndDecode.getStrUnicode(s).getBytes()));
     }
 
     /**
      * 发送开启电灯或关闭电灯的指令
      *
-     * @param curtainBean 需要修改的对象
+     * @param testBean 需要修改的对象
      */
-    public static void sendCurtainOpenOrCloseCmd(CurtainBean curtainBean) {
-        CustomerHandler customerHandler = getHandlerHashMap().get("curtain");
+    public static void sendCurtainOpenOrCloseCmd(TestBean testBean) {
+        CustomerHandlerBase customerHandler = getHandlerHashMap().get("light");
+        /*CustomerHandler customerHandler = getHandlerHashMap().get("curtain");*/
         if (customerHandler == null) {
             return;
         }
@@ -105,38 +107,42 @@ public class ValueUtil {
         }
 
         HashMap<String, List<Integer>> hashMap = new HashMap<>();
-        hashMap.put("Curtain_S", curtainBean.getCurtain_S());
-        hashMap.put("Curtain_C", curtainBean.getCurtain_C());
+        hashMap.put("Light_C", testBean.getLight_S());
+        hashMap.put("Curtain_C", testBean.getCurtain_S());
         JSONObject jsonObject = new JSONObject(hashMap);
         String s = jsonObject.toString();
         L.e(s);
-        handlerContext.writeAndFlush(Unpooled.copiedBuffer(option(EncodeAndDecode.getStrUnicode(s), (byte) 0x02)));
+        handlerContext.writeAndFlush(Unpooled.copiedBuffer(EncodeAndDecode.getStrUnicode(s).getBytes()));
     }
 
     /**
      * 发送停止获取摄像头拍摄信心的指令
      */
     public static void sendStopCmd() {
-        CustomerHandler customerHandler = getHandlerHashMap().get("camera");
-        if (customerHandler == null) {
-            return;
+        try {
+            CustomerHandlerBase customerHandler = getHandlerHashMap().get("camera");
+            if (customerHandler == null) {
+                return;
+            }
+
+            ChannelHandlerContext handlerContext = customerHandler.getHandlerContext();
+
+            if (handlerContext == null) {
+                return;
+            }
+
+            String command = "{\"cmd\": \"stop\"}";
+            handlerContext.writeAndFlush(Unpooled.copiedBuffer(option(EncodeAndDecode.getStrUnicode(command), (byte) 0x02)));
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-
-        ChannelHandlerContext handlerContext = customerHandler.getHandlerContext();
-
-        if (handlerContext == null) {
-            return;
-        }
-
-        String command = "{\"cmd\": \"stop\"}";
-        handlerContext.writeAndFlush(Unpooled.copiedBuffer(option(EncodeAndDecode.getStrUnicode(command), (byte) 0x02)));
     }
 
     /**
      * 发送获取天气信息的指令
      */
     public static void sendWeatherCmd() {
-        CustomerHandler customerHandler = getHandlerHashMap().get("camera");
+        CustomerHandlerBase customerHandler = getHandlerHashMap().get("camera");
         if (customerHandler == null) {
             return;
         }

@@ -14,7 +14,7 @@ import com.google.gson.Gson;
 import com.realmax.smarthomeversion2.R;
 import com.realmax.smarthomeversion2.bean.WeatherBean;
 import com.realmax.smarthomeversion2.tcp.CustomerCallback;
-import com.realmax.smarthomeversion2.tcp.CustomerHandler;
+import com.realmax.smarthomeversion2.tcp.CustomerHandlerBase;
 import com.realmax.smarthomeversion2.util.L;
 import com.realmax.smarthomeversion2.util.ValueUtil;
 
@@ -99,7 +99,7 @@ public class TransducerActivity extends BaseActivity {
     protected void initData() {
         tag = getIntent().getStringExtra("tag");
         ValueUtil.sendWeatherCmd();
-        CustomerHandler customerHandler = getCustomerHandler(tag);
+        CustomerHandlerBase customerHandler = getCustomerHandler(tag);
         if (customerHandler != null) {
 
             customerHandler.setCustomerCallback(new CustomerCallback() {
@@ -112,7 +112,7 @@ public class TransducerActivity extends BaseActivity {
                 public void getResultData(String msg) {
                     try {
                         JSONObject jsonObject = new JSONObject(msg);
-                        if (jsonObject.optString("cmd").equals("ans")) {
+                        if ("ans".equals(jsonObject.optString("cmd"))) {
                             WeatherBean weatherBean = new Gson().fromJson(msg, WeatherBean.class);
                             L.e("weather：" + weatherBean.toString());
                             refreshUI(weatherBean);
@@ -136,6 +136,8 @@ public class TransducerActivity extends BaseActivity {
                 if (currentPosition < roomBeans.size() - 1) {
                     currentPosition++;
                 }
+                break;
+            default:
                 break;
         }
         tv_currentRoom.setText(roomBeans.get(currentPosition).getRoomName());
@@ -189,6 +191,8 @@ public class TransducerActivity extends BaseActivity {
                 break;
             case "雪天":
                 wt += "daxue";
+                break;
+            default:
                 break;
         }
         return getResources().getIdentifier(wt, "drawable", getPackageName());

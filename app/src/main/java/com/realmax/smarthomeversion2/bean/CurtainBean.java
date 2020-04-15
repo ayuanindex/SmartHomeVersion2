@@ -13,25 +13,25 @@ public class CurtainBean {
     private List<Integer> Curtain_S;
     private List<Integer> Curtain_C;
 
-    public CurtainBean(List<Integer> curtain_S, List<Integer> curtain_C) {
-        Curtain_S = curtain_S;
-        Curtain_C = curtain_C;
+    public CurtainBean(List<Integer> curtainS, List<Integer> curtainC) {
+        Curtain_S = curtainS;
+        Curtain_C = curtainC;
     }
 
-    public List<Integer> getCurtain_S() {
+    public List<Integer> getCurtainS() {
         return Curtain_S;
     }
 
-    public void setCurtain_S(List<Integer> Curtain_S) {
-        this.Curtain_S = Curtain_S;
+    public void setCurtainS(List<Integer> curtainS) {
+        this.Curtain_S = curtainS;
     }
 
-    public List<Integer> getCurtain_C() {
+    public List<Integer> getCurtainC() {
         return Curtain_C;
     }
 
-    public void setCurtain_C(List<Integer> Curtain_C) {
-        this.Curtain_C = Curtain_C;
+    public void setCurtainC(List<Integer> curtainC) {
+        this.Curtain_C = curtainC;
     }
 
     @Override

@@ -10,7 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import com.realmax.smarthomeversion2.tcp.CustomerHandler;
+import com.realmax.smarthomeversion2.tcp.CustomerHandlerBase;
 import com.realmax.smarthomeversion2.util.ValueUtil;
 
 public abstract class BaseFragment extends Fragment {
@@ -44,7 +44,7 @@ public abstract class BaseFragment extends Fragment {
      * @param tag 标示符
      * @return 返回自定义的handler
      */
-    CustomerHandler getCustomerHandler(String tag) {
+    CustomerHandlerBase getCustomerHandler(String tag) {
         return ValueUtil.getHandlerHashMap().get(tag);
     }
 

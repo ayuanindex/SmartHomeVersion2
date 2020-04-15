@@ -1,18 +1,15 @@
 package com.realmax.smarthomeversion2.bean;
 
-import android.app.Activity;
-
-import com.realmax.smarthomeversion2.App;
-import com.realmax.smarthomeversion2.tcp.CustomerCallback;
-import com.realmax.smarthomeversion2.tcp.CustomerHandler;
+import com.realmax.smarthomeversion2.tcp.CustomerHandlerBase;
 import com.realmax.smarthomeversion2.tcp.NettyLinkUtil;
+import com.realmax.smarthomeversion2.util.SpUtil;
 import com.realmax.smarthomeversion2.util.ValueUtil;
-
-import io.netty.channel.EventLoopGroup;
 
 public class LinkBean {
     private String label;
     private String tag;
+    private String HOST;
+    private int PORT;
     private boolean connected;
 
     public LinkBean(String label, String tag) {
@@ -34,6 +31,14 @@ public class LinkBean {
 
     public void setTag(String tag) {
         this.tag = tag;
+    }
+
+    public String getHOST() {
+        return SpUtil.getString(tag + "1", "192.168.50.247");
+    }
+
+    public int getPORT() {
+        return SpUtil.getInt(tag + "2", 8527);
     }
 
     public boolean isConnected() {
@@ -59,17 +64,22 @@ public class LinkBean {
                 '}';
     }
 
-    public void connected(String ip, String port, CustomerHandler customerHandler, NettyLinkUtil.Callback status) {
+    public void connected(String ip, String port, CustomerHandlerBase customerHandler, NettyLinkUtil.Callback status) {
         new Thread() {
             @Override
             public void run() {
                 super.run();
                 try {
-                    CustomerHandler customerHandler = new CustomerHandler();
+                    /*CustomerHandler customerHandler = new CustomerHandler();*/
                     ValueUtil.getHandlerHashMap().put(LinkBean.this.tag, customerHandler);
 
                     int portInt = Integer.parseInt(port);
                     NettyLinkUtil nettyLinkUtil = new NettyLinkUtil(ip, portInt);
+                    // 连接成功后将host和port存入sp中
+                    LinkBean.this.HOST = ip;
+                    LinkBean.this.PORT = portInt;
+                    SpUtil.putString(tag + "1", LinkBean.this.HOST);
+                    SpUtil.putInt(tag + "2", LinkBean.this.PORT);
                     nettyLinkUtil.start(status, customerHandler);
                 } catch (Exception e) {
                     e.printStackTrace();

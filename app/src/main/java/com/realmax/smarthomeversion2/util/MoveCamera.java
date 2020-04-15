@@ -7,7 +7,7 @@ public class MoveCamera {
     /**
      * 初始角度
      */
-    private static float LONGITUDINAL = 45f;
+    private static float LONGITUDINAL = 10f;
     private static float HORIZONTAL = 0f;
 
     /**
@@ -43,7 +43,7 @@ public class MoveCamera {
         // 重置角度
         if (MoveCamera.DEVICEID != deviceId) {
             HORIZONTAL = 0;
-            LONGITUDINAL = 45;
+            LONGITUDINAL = 10;
         }
         MoveCamera.DEVICEID = deviceId;
         switch (type) {
@@ -58,6 +58,8 @@ public class MoveCamera {
                 break;
             case 4:
                 moveRight(result);
+                break;
+            default:
                 break;
         }
     }
@@ -146,7 +148,7 @@ public class MoveCamera {
     public static void touchStart(int deviceId) {
         if (MoveCamera.DEVICEID != deviceId) {
             HORIZONTAL = 0f;
-            LONGITUDINAL = 45f;
+            LONGITUDINAL = 10f;
         }
         MoveCamera.DEVICEID = deviceId;
         timer = new Timer();

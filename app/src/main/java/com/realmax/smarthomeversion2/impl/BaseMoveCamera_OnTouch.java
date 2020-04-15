@@ -6,7 +6,7 @@ import android.view.View;
 
 import com.realmax.smarthomeversion2.util.MoveCamera;
 
-public abstract class MoveCamera_OnTouch implements View.OnTouchListener {
+public abstract class BaseMoveCamera_OnTouch implements View.OnTouchListener {
     private static final String TAG = "MoveCamera_OnTouch";
 
     @Override
@@ -27,6 +27,8 @@ public abstract class MoveCamera_OnTouch implements View.OnTouchListener {
                 break;
             case MotionEvent.ACTION_UP:
                 MoveCamera.stop();
+                break;
+            default:
                 break;
         }
         return true;

@@ -8,7 +8,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.realmax.smarthomeversion2.bean.RoomBean;
-import com.realmax.smarthomeversion2.tcp.CustomerHandler;
+import com.realmax.smarthomeversion2.tcp.CustomerHandlerBase;
 import com.realmax.smarthomeversion2.util.ValueUtil;
 
 import java.util.ArrayList;
@@ -82,7 +82,7 @@ public abstract class BaseActivity extends AppCompatActivity {
      * @param tag 标示符
      * @return 返回自定义的handler
      */
-    CustomerHandler getCustomerHandler(String tag) {
+    CustomerHandlerBase getCustomerHandler(String tag) {
         return ValueUtil.getHandlerHashMap().get(tag);
     }
 }

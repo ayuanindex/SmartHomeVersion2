@@ -72,7 +72,8 @@ public class MainActivity extends BaseActivity {
                         break;
                     case 1:// 门窗
                         intent = new Intent(MainActivity.this, CurtainActivity.class);
-                        intent.putExtra("tag", "curtain");
+                        /*intent.putExtra("tag", "curtain");*/
+                        intent.putExtra("tag", "light");
                         break;
                     case 2:// 电器
                         intent = new Intent(MainActivity.this, ElectricalActivity.class);
@@ -89,6 +90,8 @@ public class MainActivity extends BaseActivity {
                     case 5:// 空调
                         intent = new Intent(MainActivity.this, AirConditioningActivity.class);
                         intent.putExtra("tag", "camera");
+                        break;
+                    default:
                         break;
                 }
                 startActivity(intent);
