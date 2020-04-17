@@ -335,8 +335,8 @@ public class CameraActivity extends BaseActivity {
                     }
                 }
                 break;
-            default:
-                break;
+            /*default:
+                break;*/
         }
         tvCurrentRoom.setText(roomBeans.get(currentPosition).getRoomName());
     }

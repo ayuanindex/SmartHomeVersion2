@@ -12,6 +12,9 @@ import androidx.annotation.Nullable;
 
 import com.realmax.smarthomeversion2.R;
 
+/**
+ * @author ayuan
+ */
 public class AirConditioningActivity extends BaseActivity {
     private RelativeLayout rlBack;
     private ImageView ivOne;
@@ -20,7 +23,7 @@ public class AirConditioningActivity extends BaseActivity {
     private ImageView ivFour;
     private ImageView ivWeather;
     private TextView tvTemperature;
-    private TextView tvSettemperature;
+    private TextView tvSetTemperature;
     private TextView tvWindSpeed;
     private TextView tvMode;
     private CheckBox cbPowerSwitch;
@@ -56,7 +59,7 @@ public class AirConditioningActivity extends BaseActivity {
         ivWeather = (ImageView) findViewById(R.id.iv_weather);
         // 空调状态
         tvTemperature = (TextView) findViewById(R.id.tv_temperature);
-        tvSettemperature = (TextView) findViewById(R.id.tv_setTemperature);
+        tvSetTemperature = (TextView) findViewById(R.id.tv_setTemperature);
         tvWindSpeed = (TextView) findViewById(R.id.tv_windSpeed);
         tvMode = (TextView) findViewById(R.id.tv_mode);
         // 空调功能

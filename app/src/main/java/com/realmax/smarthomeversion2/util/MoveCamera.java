@@ -85,6 +85,7 @@ public class MoveCamera {
 
     /**
      * 向下移动
+     *
      * @param result
      */
     private static void moveDown(Result result) {
@@ -104,6 +105,7 @@ public class MoveCamera {
 
     /**
      * 向左移动
+     *
      * @param result
      */
     private static void moveLeft(Result result) {
@@ -123,6 +125,7 @@ public class MoveCamera {
 
     /**
      * 向右移动
+     *
      * @param result
      */
     private static void moveRight(Result result) {
