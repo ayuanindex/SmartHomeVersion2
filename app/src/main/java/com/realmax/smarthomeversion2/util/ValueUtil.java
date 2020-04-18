@@ -1,7 +1,5 @@
 package com.realmax.smarthomeversion2.util;
 
-import com.realmax.smarthomeversion2.bean.CurtainBean;
-import com.realmax.smarthomeversion2.bean.LightBean;
 import com.realmax.smarthomeversion2.bean.TestBean;
 import com.realmax.smarthomeversion2.tcp.CustomerHandlerBase;
 
@@ -13,8 +11,10 @@ import java.util.List;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 
+/**
+ * @author ayuan
+ */
 public class ValueUtil {
-    private static String room = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
     /**
      * Netty的回调监听集合
@@ -26,9 +26,9 @@ public class ValueUtil {
      */
     private static HashMap<String, Boolean> isConnected = new HashMap<>();
 
-    public static String getRoom() {
-        return room;
-    }
+    /*public static String getRoom() {
+        return "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    }*/
 
     public static HashMap<String, CustomerHandlerBase> getHandlerHashMap() {
         return handlerHashMap;
@@ -79,7 +79,7 @@ public class ValueUtil {
             return;
         }
 
-        HashMap<String, List<Integer>> hashMap = new HashMap<>();
+        HashMap<String, List<Integer>> hashMap = new HashMap<>(2);
         hashMap.put("Light_C", testBean.getLight_S());
         hashMap.put("Curtain_C", testBean.getCurtain_S());
         JSONObject jsonObject = new JSONObject(hashMap);
@@ -106,7 +106,7 @@ public class ValueUtil {
             return;
         }
 
-        HashMap<String, List<Integer>> hashMap = new HashMap<>();
+        HashMap<String, List<Integer>> hashMap = new HashMap<>(2);
         hashMap.put("Light_C", testBean.getLight_S());
         hashMap.put("Curtain_C", testBean.getCurtain_S());
         JSONObject jsonObject = new JSONObject(hashMap);
@@ -135,7 +135,7 @@ public class ValueUtil {
   }
         * */
 
-        HashMap<String, Object> childMap = new HashMap<>();
+        HashMap<String, Object> childMap = new HashMap<>(1);
         if (door != -1) {
             childMap.put("door_C", door);
         }
@@ -146,7 +146,7 @@ public class ValueUtil {
             childMap.put("pass_c", password);
         }
 
-        HashMap<String, Object> hashMap = new HashMap<>();
+        HashMap<String, Object> hashMap = new HashMap<>(1);
         hashMap.put(field, childMap);
 
         JSONObject jsonObject = new JSONObject(hashMap);
@@ -201,18 +201,18 @@ public class ValueUtil {
      * 将需要发送的消息加工成服务端可识别的数据
      *
      * @param command 需要发送的指令
-     * @param b
+     * @param b       版本号
      * @return 返回即将要发送的数据的byte数组
      */
-    public static byte[] option(String command, byte b) {
+    private static byte[] option(String command, byte b) {
         // 将指令转换成byte数组（此处的指令是已经转换成了Unicode编码，如果不转换长度计算会有问题）
         byte[] commandBytes = command.getBytes();
         // 这里的长度是字节长度（总长度是数据的字节长度+其他数据的长度：帧头、帧尾……）
         int size = commandBytes.length + 10;
         // 帧长度=总长度-帧头的长度（2byte）-帧尾的长度(2byte)
-        int head_len = size - 4;
+        int headLen = size - 4;
         // 将帧长度转换成小端模式
-        byte[] lens = Int2Bytes_LE(head_len);
+        byte[] lens = int2Bytesle(headLen);
         // 将需要验证的数据合并成一个byte数组
         // 将所有的参数放进去（其中帧头、协议版本号、帧尾是不变的数据）
         // 注意：需要将每个16进制的数据单独当成byte数组的一个元素，例：0xffaa -->  new byte[]{(byte) 0xff, (byte) 0xaa},需要拆分开
@@ -261,7 +261,7 @@ public class ValueUtil {
      * @param iValue 需要转换的数字
      * @return 返回小端模式的byte数组
      */
-    private static byte[] Int2Bytes_LE(int iValue) {
+    private static byte[] int2Bytesle(int iValue) {
         byte[] rst = new byte[4];
         // 先写int的最后一个字节
         rst[0] = (byte) (iValue & 0xFF);
@@ -277,7 +277,7 @@ public class ValueUtil {
     /**
      * 任意个byte数组合并
      *
-     * @param bytes
+     * @param bytes 多个byte数组
      * @return 发挥合并后的byte数组
      */
     private static byte[] combine(byte[]... bytes) {
@@ -305,8 +305,8 @@ public class ValueUtil {
         return ret;
     }
 
-    /**
-     * 主动关闭连接
+    /*
+      主动关闭连接
      */
     /*public static void closeLink() {
         new Thread() {
