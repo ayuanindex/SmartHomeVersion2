@@ -63,11 +63,11 @@ public class CurtainActivity extends BaseActivity {
     @SuppressLint("SetTextI18n")
     @Override
     protected void initEvent() {
-        rlBack.setOnClickListener(v -> finish());
+        rlBack.setOnClickListener((View v) -> finish());
 
-        ivSwitchLeft.setOnClickListener(v -> switchPage(0));
+        ivSwitchLeft.setOnClickListener((View v) -> switchPage(0));
 
-        ivSwitchRight.setOnClickListener(v -> switchPage(1));
+        ivSwitchRight.setOnClickListener((View v) -> switchPage(1));
     }
 
     @Override
@@ -75,11 +75,9 @@ public class CurtainActivity extends BaseActivity {
         tag = getIntent().getStringExtra("tag");
         currentPosition = 0;
 
-        /*curtainBean = new CurtainBean(new ArrayList<>(), new ArrayList<>());*/
         testBean = new TestBean(new ArrayList<>(), new ArrayList<>());
 
         currentCurtainStatus = new ArrayList<>();
-        /*currentCurtainControl = new ArrayList<>();*/
 
         // 初始化列表
         customerAdapter = new CustomerAdapter();
@@ -103,26 +101,18 @@ public class CurtainActivity extends BaseActivity {
                         if (!TextUtils.isEmpty(msg)) {
                             JSONObject jsonObject = new JSONObject(msg);
                             String curtainS = "Curtain_S";
-                            if (jsonObject.has(curtainS)/* || jsonObject.has("Curtain_C")*/) {
-                                /*curtainBean = new Gson().fromJson(msg, CurtainBean.class);*/
+                            if (jsonObject.has(curtainS)) {
                                 testBean = new Gson().fromJson(msg, TestBean.class);
 
                                 // 获取到数据刷新列表
                                 runOnUiThread(() -> {
                                     currentCurtainStatus.clear();
-                                    /*currentCurtainControl.clear();*/
                                     for (int i : roomBeans.get(currentPosition).getCurtailId()) {
                                         if (i - 1 < testBean.getCurtain_S().size()) {
                                             L.e("i:" + i);
                                             // 现实中指定客厅的灯
                                             currentCurtainStatus.add(testBean.getCurtain_S().get(i - 1));
-                                            /*currentCurtainControl.add(curtainBean.getCurtain_C().get(currentPosition));*/
-                                        }/*if (i - 1 < curtainBean.getCurtainS().size()) {
-                                            L.e("i:" + i);
-                                            // 现实中指定客厅的灯
-                                            currentCurtainStatus.add(curtainBean.getCurtainS().get(currentPosition));
-                                            *//*currentCurtainControl.add(curtainBean.getCurtain_C().get(currentPosition));*//*
-                                        }*/
+                                        }
                                     }
                                     customerAdapter.notifyDataSetChanged();
                                 });
@@ -143,9 +133,6 @@ public class CurtainActivity extends BaseActivity {
      */
     @SuppressLint("SetTextI18n")
     private void switchPage(int type) {
-        /*if (curtainBean == null) {
-            return;
-        }*/
         if (testBean == null) {
             return;
         }
@@ -155,14 +142,12 @@ public class CurtainActivity extends BaseActivity {
             case 0:
                 if (currentPosition > 0) {
                     currentCurtainStatus.clear();
-                    /*currentCurtainControl.clear();*/
                     currentPosition--;
                     int[] curtailId = roomBeans.get(currentPosition).getCurtailId();
                     for (int i : curtailId) {
                         L.e("" + i);
                         if (i - 1 < testBean.getCurtain_S().size()) {
                             currentCurtainStatus.add(testBean.getCurtain_S().get(i - 1));
-                            /*currentCurtainControl.add(curtainBean.getCurtain_C().get(i - 1));*/
                         }
                     }
                 }
@@ -177,7 +162,6 @@ public class CurtainActivity extends BaseActivity {
                         L.e("" + i);
                         if (i - 1 < testBean.getCurtain_S().size()) {
                             currentCurtainStatus.add(testBean.getCurtain_S().get(i - 1));
-                            /*currentCurtainControl.add(curtainBean.getCurtain_C().get(i - 1));*/
                         }
                     }
                 }
@@ -185,10 +169,14 @@ public class CurtainActivity extends BaseActivity {
             default:
                 break;
         }
+
         tvCurrentRoom.setText(roomBeans.get(currentPosition).getRoomName());
         customerAdapter.notifyDataSetChanged();
     }
 
+    /**
+     * @author ayuan
+     */
     private class CustomerAdapter extends BaseAdapter {
         private static final int OPEN = 1;
         private final int CLOSE = 0;
@@ -231,13 +219,8 @@ public class CurtainActivity extends BaseActivity {
 
             swToggle.setChecked(getItem(position) == 1);
 
-            swToggle.setOnTouchListener((v, event) -> {
+            swToggle.setOnTouchListener((View v, MotionEvent event) -> {
                 if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
-                    /*ArrayList<Integer> light_c = new ArrayList<>(curtainBean.getCurtain_C());
-                        light_c.set(curtailId[position] - 1, swToggle.isChecked() ? OPEN : CLOSE);
-                        CurtainBean curtainBean = new CurtainBean(new ArrayList<>(), light_c);
-                        // 发送控制窗帘的开关的请求
-                        ValueUtil.sendCurtainOpenOrCloseCmd(curtainBean);*/
                     ArrayList<Integer> curtainC = new ArrayList<>(testBean.getCurtain_S());
                     curtainC.set(curtailId[position] - 1, getItem(position) == OPEN ? CLOSE : OPEN);
                     TestBean bean = new TestBean(CurtainActivity.this.testBean.getLight_S(), curtainC);

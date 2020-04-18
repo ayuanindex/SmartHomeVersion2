@@ -1,16 +1,13 @@
 package com.realmax.smarthomeversion2.activity;
 
 import android.content.Intent;
-import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import androidx.annotation.Nullable;
 
 import com.realmax.smarthomeversion2.R;
 
@@ -27,11 +24,6 @@ public class MainActivity extends BaseActivity {
     private String[] labels;
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState, @Nullable PersistableBundle persistentState) {
-        super.onCreate(savedInstanceState, persistentState);
-    }
-
-    @Override
     protected int getLayout() {
         return R.layout.activity_main;
     }
@@ -45,13 +37,13 @@ public class MainActivity extends BaseActivity {
 
     @Override
     protected void initEvent() {
-        ivHome.setOnClickListener(v -> {
+        ivHome.setOnClickListener((View v) -> {
             // TODO: 2020/4/2
         });
 
-        ivLinkSetting.setOnClickListener(v -> jump(SettingActivity.class));
+        ivLinkSetting.setOnClickListener((View v) -> jump(SettingActivity.class));
 
-        gvView.setOnItemClickListener((parent, view, position, id) -> {
+        gvView.setOnItemClickListener((AdapterView<?> parent, View view, int position, long id) -> {
             Intent intent = null;
             // 跳转到指定界面
             switch (position) {
@@ -95,7 +87,7 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void initData() {
         // 初始化主界面资源
-        integerHashMap = new HashMap<>(6);
+        integerHashMap = new HashMap<>(7);
         integerHashMap.put(0, R.drawable.pic_light_open);
         integerHashMap.put(1, R.drawable.pic_dor_window_open);
         integerHashMap.put(2, R.drawable.pic_door);

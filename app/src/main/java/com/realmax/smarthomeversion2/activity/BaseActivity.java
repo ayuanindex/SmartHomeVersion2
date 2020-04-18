@@ -17,7 +17,6 @@ import java.util.ArrayList;
  * @author ayuan
  */
 public abstract class BaseActivity extends AppCompatActivity {
-    private static final String TAG = "BaseActivity";
     public ArrayList<RoomBean> roomBeans;
 
     @Override

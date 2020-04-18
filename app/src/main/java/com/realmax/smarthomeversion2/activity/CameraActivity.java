@@ -83,36 +83,36 @@ public class CameraActivity extends BaseActivity {
     @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void initEvent() {
-        rlBack.setOnClickListener(v -> finish());
+        rlBack.setOnClickListener((View v) -> finish());
 
-        ivCamera.setOnTouchListener((v, event) -> {
+        ivCamera.setOnTouchListener((View v, MotionEvent event) -> {
             touchMoveCamera(event);
             return true;
         });
 
-        ivBtnLeft.setOnTouchListener((v, event) -> {
+        ivBtnLeft.setOnTouchListener((View v, MotionEvent event) -> {
             changeCameraDirection(event, MoveCamera.LEFT);
             return true;
         });
 
-        ivBtnRight.setOnTouchListener((v, event) -> {
+        ivBtnRight.setOnTouchListener((View v, MotionEvent event) -> {
             changeCameraDirection(event, MoveCamera.RIGHT);
             return true;
         });
 
-        ivBtnUp.setOnTouchListener((v, event) -> {
+        ivBtnUp.setOnTouchListener((View v, MotionEvent event) -> {
             changeCameraDirection(event, MoveCamera.UP);
             return true;
         });
 
-        ivBtnDown.setOnTouchListener((v, event) -> {
+        ivBtnDown.setOnTouchListener((View v, MotionEvent event) -> {
             changeCameraDirection(event, MoveCamera.DOWN);
             return true;
         });
 
-        ivSwitchLeft.setOnClickListener(v -> switchPage(0));
+        ivSwitchLeft.setOnClickListener((View v) -> switchPage(0));
 
-        ivSwitchRight.setOnClickListener(v -> switchPage(1));
+        ivSwitchRight.setOnClickListener((View v) -> switchPage(1));
     }
 
     @Override

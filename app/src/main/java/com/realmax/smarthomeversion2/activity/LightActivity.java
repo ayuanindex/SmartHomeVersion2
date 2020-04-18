@@ -29,10 +29,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 /**
- * @ProjectName: SmartHomeVersion2
- * @Package: com.realmax.smarthomeversion2.activity
- * @ClassName: LightActivityy
- * @CreateDate: 2020/4/3 12:07
+ * @author ayuan
  */
 public class LightActivity extends BaseActivity {
     private RelativeLayout rlBack;
@@ -63,11 +60,11 @@ public class LightActivity extends BaseActivity {
     @SuppressLint("SetTextI18n")
     @Override
     protected void initEvent() {
-        rlBack.setOnClickListener(v -> finish());
+        rlBack.setOnClickListener((View v) -> finish());
 
-        ivSwitchLeft.setOnClickListener(v -> switchPage(0));
+        ivSwitchLeft.setOnClickListener((View v) -> switchPage(0));
 
-        ivSwitchRight.setOnClickListener(v -> switchPage(1));
+        ivSwitchRight.setOnClickListener((View v) -> switchPage(1));
     }
 
     @Override
@@ -108,7 +105,6 @@ public class LightActivity extends BaseActivity {
                                 // 获取到数据刷新列表
                                 runOnUiThread(() -> {
                                     currentLightStatus.clear();
-                                    /*currentLightControl.clear();*/
                                     for (int i : roomBeans.get(currentPosition).getLightId()) {
                                         if (i - 1 < testBean.getLight_S().size()) {
                                             // 现实中指定客厅的灯
@@ -213,7 +209,7 @@ public class LightActivity extends BaseActivity {
             // 设置当前电灯的状态
             cbCheck.setChecked(getItem(position) == 1);
 
-            swToggle.setOnTouchListener((v, event) -> {
+            swToggle.setOnTouchListener((View v, MotionEvent event) -> {
                 if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
                     L.e("onTouch:" + position);
                     ArrayList<Integer> lightC = new ArrayList<>(testBean.getLight_S());

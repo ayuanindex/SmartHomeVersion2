@@ -1,8 +1,6 @@
 package com.realmax.smarthomeversion2.activity;
 
 import android.annotation.SuppressLint;
-import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
@@ -10,7 +8,6 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SwitchCompat;
 
 import com.google.gson.Gson;
@@ -43,11 +40,6 @@ public class DoorActivity extends BaseActivity {
     private DoorBean doorBean;
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState, @Nullable PersistableBundle persistentState) {
-        super.onCreate(savedInstanceState, persistentState);
-    }
-
-    @Override
     protected int getLayout() {
         return R.layout.activity_door;
     }
@@ -76,27 +68,27 @@ public class DoorActivity extends BaseActivity {
     @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void initEvent() {
-        rlBack.setOnClickListener(v -> finish());
+        rlBack.setOnClickListener((View v) -> finish());
 
-        swDoorToggle.setOnTouchListener((v, event) -> {
+        swDoorToggle.setOnTouchListener((View v, MotionEvent event) -> {
+            if (MotionEvent.ACTION_DOWN == event.getActionMasked()) {
+                DoorActivity.this.sendCmd();
+            }
+            return true;
+        });
+
+        swLockToggle.setOnTouchListener((View v, MotionEvent event) -> {
             if (MotionEvent.ACTION_DOWN == event.getActionMasked()) {
                 sendCmd();
             }
             return true;
         });
 
-        swLockToggle.setOnTouchListener((v, event) -> {
-            if (MotionEvent.ACTION_DOWN == event.getActionMasked()) {
-                sendCmd();
-            }
-            return true;
-        });
+        ivPasswordIcon.setOnClickListener((View v) -> putPassword());
 
-        ivPasswordIcon.setOnClickListener(v -> putPassword());
+        ivSwitchLeft.setOnClickListener((View v) -> switchPage(0));
 
-        ivSwitchLeft.setOnClickListener(v -> switchPage(0));
-
-        ivSwitchRight.setOnClickListener(v -> switchPage(1));
+        ivSwitchRight.setOnClickListener((View v) -> switchPage(1));
     }
 
     /**
@@ -219,6 +211,9 @@ public class DoorActivity extends BaseActivity {
         tvCurrentRoom.setText(currentDoor);
     }
 
+    /**
+     * 选择控件进行显示或者隐藏
+     */
     public void selectShowHide() {
         switch (currentPosition) {
             case 0:
