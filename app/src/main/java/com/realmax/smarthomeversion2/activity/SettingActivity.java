@@ -168,6 +168,7 @@ public class SettingActivity extends BaseActivity {
     protected void initData() {
         linkBeans = new ArrayList<>();
         linkBeans.add(new LinkBean("电灯&窗帘", "light"));
+        linkBeans.add(new LinkBean("门", "door"));
         /*linkBeans.add(new LinkBean("窗帘", "curtain"));*/
         linkBeans.add(new LinkBean("摄像头", "camera"));
 

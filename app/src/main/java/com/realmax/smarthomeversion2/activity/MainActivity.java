@@ -70,24 +70,29 @@ public class MainActivity extends BaseActivity {
                         intent = new Intent(MainActivity.this, LightActivity.class);
                         intent.putExtra("tag", "light");
                         break;
-                    case 1:// 门窗
+                    case 1:// 门
                         intent = new Intent(MainActivity.this, CurtainActivity.class);
                         /*intent.putExtra("tag", "curtain");*/
                         intent.putExtra("tag", "light");
                         break;
-                    case 2:// 电器
+                    case 2:// 门
+                        intent = new Intent(MainActivity.this, DoorActivity.class);
+                        /*intent.putExtra("tag", "curtain");*/
+                        intent.putExtra("tag", "door");
+                        break;
+                    case 3:// 电器
                         intent = new Intent(MainActivity.this, ElectricalActivity.class);
                         intent.putExtra("tag", "electrical");
                         break;
-                    case 3:// 传感器
+                    case 4:// 传感器
                         intent = new Intent(MainActivity.this, TransducerActivity.class);
                         intent.putExtra("tag", "camera");
                         break;
-                    case 4:// 监控
+                    case 5:// 监控
                         intent = new Intent(MainActivity.this, CameraActivity.class);
                         intent.putExtra("tag", "camera");
                         break;
-                    case 5:// 空调
+                    case 6:// 空调
                         intent = new Intent(MainActivity.this, AirConditioningActivity.class);
                         intent.putExtra("tag", "camera");
                         break;
@@ -105,14 +110,16 @@ public class MainActivity extends BaseActivity {
         integerHashMap = new HashMap<>();
         integerHashMap.put(0, R.drawable.pic_light_open);
         integerHashMap.put(1, R.drawable.pic_dor_window_open);
-        integerHashMap.put(2, R.drawable.pic_electrical_open);
-        integerHashMap.put(3, R.drawable.pic_sensor_open);
-        integerHashMap.put(4, R.drawable.pic_monitor_open);
-        integerHashMap.put(5, R.drawable.pic_airconditioning_open);
+        integerHashMap.put(2, R.drawable.pic_door);
+        integerHashMap.put(3, R.drawable.pic_electrical_open);
+        integerHashMap.put(4, R.drawable.pic_sensor_open);
+        integerHashMap.put(5, R.drawable.pic_monitor_open);
+        integerHashMap.put(6, R.drawable.pic_airconditioning_open);
 
         labels = new String[]{
                 "灯光",
-                "门窗",
+                "窗",
+                "门",
                 "电器",
                 "传感",
                 "监控",

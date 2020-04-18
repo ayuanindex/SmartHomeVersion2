@@ -358,6 +358,8 @@ public class CameraActivity extends BaseActivity {
             }
         } catch (JSONException e) {
             e.printStackTrace();
+            String substring = msg.substring(1);
+            checkJson(msg);
         }
     }
 

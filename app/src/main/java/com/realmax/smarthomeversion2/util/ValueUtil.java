@@ -115,6 +115,47 @@ public class ValueUtil {
         handlerContext.writeAndFlush(Unpooled.copiedBuffer(EncodeAndDecode.getStrUnicode(s).getBytes()));
     }
 
+    public static void sendDoorCmd(String field, int door, int key, int password) {
+        CustomerHandlerBase customerHandler = getHandlerHashMap().get("door");
+        /*CustomerHandler customerHandler = getHandlerHashMap().get("curtain");*/
+        if (customerHandler == null) {
+            return;
+        }
+
+        ChannelHandlerContext handlerContext = customerHandler.getHandlerContext();
+
+        if (handlerContext == null) {
+            return;
+        }
+        /*
+        * "door2_C": {
+    "pass_c": 1234,
+    "lock_c": 1,
+    "door_C": 0
+  }
+        * */
+
+        HashMap<String, Object> childMap = new HashMap<>();
+        if (door != -1) {
+            childMap.put("door_C", door);
+        }
+        if (key != -1) {
+            childMap.put("lock_c", key);
+        }
+        if (password != -1) {
+            childMap.put("pass_c", password);
+        }
+
+        HashMap<String, Object> hashMap = new HashMap<>();
+        hashMap.put(field, childMap);
+
+        JSONObject jsonObject = new JSONObject(hashMap);
+        String s = jsonObject.toString();
+
+        L.e("msg:" + s);
+        handlerContext.writeAndFlush(Unpooled.copiedBuffer(EncodeAndDecode.getStrUnicode(s).getBytes()));
+    }
+
     /**
      * 发送停止获取摄像头拍摄信心的指令
      */

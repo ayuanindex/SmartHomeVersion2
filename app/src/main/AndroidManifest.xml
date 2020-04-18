@@ -39,9 +39,15 @@
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity" />
-        <!--窗帘门窗-->
+        <!--窗户-->
         <activity
             android:name=".activity.CurtainActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity" /> <!--窗帘门窗-->
+        <!--门-->
+        <activity
+            android:name=".activity.DoorActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity" />
