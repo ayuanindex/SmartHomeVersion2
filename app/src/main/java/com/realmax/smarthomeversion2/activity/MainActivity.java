@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
@@ -39,70 +38,57 @@ public class MainActivity extends BaseActivity {
 
     @Override
     protected void initView() {
-        ivHome = (ImageView) findViewById(R.id.iv_home);
-        ivLinkSetting = (ImageView) findViewById(R.id.iv_linkSetting);
-        gvView = (GridView) findViewById(R.id.gv_view);
+        ivHome = findViewById(R.id.iv_home);
+        ivLinkSetting = findViewById(R.id.iv_linkSetting);
+        gvView = findViewById(R.id.gv_view);
     }
 
     @Override
     protected void initEvent() {
-        ivHome.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // TODO: 2020/4/2
-            }
+        ivHome.setOnClickListener(v -> {
+            // TODO: 2020/4/2
         });
 
-        ivLinkSetting.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // TODO: 2020/4/2
-                jump(SettingActivity.class);
-            }
-        });
+        ivLinkSetting.setOnClickListener(v -> jump(SettingActivity.class));
 
-        gvView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = null;
-                String tag = "";
-                // 跳转到指定界面
-                switch (position) {
-                    case 0:// 灯光
-                        intent = new Intent(MainActivity.this, LightActivity.class);
-                        intent.putExtra("tag", "light");
-                        break;
-                    case 1:// 门
-                        intent = new Intent(MainActivity.this, CurtainActivity.class);
-                        /*intent.putExtra("tag", "curtain");*/
-                        intent.putExtra("tag", "light");
-                        break;
-                    case 2:// 门
-                        intent = new Intent(MainActivity.this, DoorActivity.class);
-                        /*intent.putExtra("tag", "curtain");*/
-                        intent.putExtra("tag", "door");
-                        break;
-                    case 3:// 电器
-                        intent = new Intent(MainActivity.this, ElectricalActivity.class);
-                        intent.putExtra("tag", "electrical");
-                        break;
-                    case 4:// 传感器
-                        intent = new Intent(MainActivity.this, TransducerActivity.class);
-                        intent.putExtra("tag", "camera");
-                        break;
-                    case 5:// 监控
-                        intent = new Intent(MainActivity.this, CameraActivity.class);
-                        intent.putExtra("tag", "camera");
-                        break;
-                    case 6:// 空调
-                        intent = new Intent(MainActivity.this, AirConditioningActivity.class);
-                        intent.putExtra("tag", "camera");
-                        break;
-                    default:
-                        break;
-                }
-                startActivity(intent);
+        gvView.setOnItemClickListener((parent, view, position, id) -> {
+            Intent intent = null;
+            // 跳转到指定界面
+            switch (position) {
+                case 0:// 灯光
+                    intent = new Intent(MainActivity.this, LightActivity.class);
+                    intent.putExtra("tag", "light");
+                    break;
+                case 1:// 门
+                    intent = new Intent(MainActivity.this, CurtainActivity.class);
+                    /*intent.putExtra("tag", "curtain");*/
+                    intent.putExtra("tag", "light");
+                    break;
+                case 2:// 门
+                    intent = new Intent(MainActivity.this, DoorActivity.class);
+                    /*intent.putExtra("tag", "curtain");*/
+                    intent.putExtra("tag", "door");
+                    break;
+                case 3:// 电器
+                    intent = new Intent(MainActivity.this, ElectricalActivity.class);
+                    intent.putExtra("tag", "electrical");
+                    break;
+                case 4:// 传感器
+                    intent = new Intent(MainActivity.this, TransducerActivity.class);
+                    intent.putExtra("tag", "camera");
+                    break;
+                case 5:// 监控
+                    intent = new Intent(MainActivity.this, CameraActivity.class);
+                    intent.putExtra("tag", "camera");
+                    break;
+                case 6:// 空调
+                    intent = new Intent(MainActivity.this, AirConditioningActivity.class);
+                    intent.putExtra("tag", "camera");
+                    break;
+                default:
+                    break;
             }
+            startActivity(intent);
         });
     }
 
@@ -169,8 +155,8 @@ public class MainActivity extends BaseActivity {
         }
 
         private void initView(View view) {
-            ivIcon = (ImageView) view.findViewById(R.id.iv_icon);
-            tvLabel = (TextView) view.findViewById(R.id.tv_label);
+            ivIcon = view.findViewById(R.id.iv_icon);
+            tvLabel = view.findViewById(R.id.tv_label);
         }
     }
 }
