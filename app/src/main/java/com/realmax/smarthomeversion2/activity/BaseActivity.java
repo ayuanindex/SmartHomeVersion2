@@ -50,6 +50,8 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     /**
+     * 获取布局资源的ID
+     *
      * @return 页面资源的ID
      */
     @LayoutRes
