@@ -5,10 +5,15 @@ import com.realmax.smarthomeversion2.tcp.NettyLinkUtil;
 import com.realmax.smarthomeversion2.util.SpUtil;
 import com.realmax.smarthomeversion2.util.ValueUtil;
 
+/**
+ * 连接对象
+ *
+ * @author ayuan
+ */
 public class LinkBean {
     private String label;
     private String tag;
-    private String HOST;
+    private String mHOST;
     private int PORT;
     private boolean connected;
 
@@ -33,7 +38,7 @@ public class LinkBean {
         this.tag = tag;
     }
 
-    public String getHOST() {
+    public String getmHOST() {
         return SpUtil.getString(tag + "1", "192.168.50.247");
     }
 
@@ -76,9 +81,9 @@ public class LinkBean {
                     int portInt = Integer.parseInt(port);
                     NettyLinkUtil nettyLinkUtil = new NettyLinkUtil(ip, portInt);
                     // 连接成功后将host和port存入sp中
-                    LinkBean.this.HOST = ip;
+                    LinkBean.this.mHOST = ip;
                     LinkBean.this.PORT = portInt;
-                    SpUtil.putString(tag + "1", LinkBean.this.HOST);
+                    SpUtil.putString(tag + "1", LinkBean.this.mHOST);
                     SpUtil.putInt(tag + "2", LinkBean.this.PORT);
                     nettyLinkUtil.start(status, customerHandler);
                 } catch (Exception e) {

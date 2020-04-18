@@ -17,12 +17,14 @@ import com.realmax.smarthomeversion2.R;
 
 import java.util.HashMap;
 
+/**
+ * @author ayuan
+ */
 public class MainActivity extends BaseActivity {
-    private ImageView iv_home;
-    private ImageView iv_linkSetting;
-    private GridView gv_view;
+    private ImageView ivHome;
+    private ImageView ivLinkSetting;
+    private GridView gvView;
     private HashMap<Integer, Integer> integerHashMap;
-    private CustomerAdapter customerAdapter;
     private String[] labels;
 
     @Override
@@ -37,21 +39,21 @@ public class MainActivity extends BaseActivity {
 
     @Override
     protected void initView() {
-        iv_home = (ImageView) findViewById(R.id.iv_home);
-        iv_linkSetting = (ImageView) findViewById(R.id.iv_linkSetting);
-        gv_view = (GridView) findViewById(R.id.gv_view);
+        ivHome = (ImageView) findViewById(R.id.iv_home);
+        ivLinkSetting = (ImageView) findViewById(R.id.iv_linkSetting);
+        gvView = (GridView) findViewById(R.id.gv_view);
     }
 
     @Override
     protected void initEvent() {
-        iv_home.setOnClickListener(new View.OnClickListener() {
+        ivHome.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // TODO: 2020/4/2
             }
         });
 
-        iv_linkSetting.setOnClickListener(new View.OnClickListener() {
+        ivLinkSetting.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // TODO: 2020/4/2
@@ -59,7 +61,7 @@ public class MainActivity extends BaseActivity {
             }
         });
 
-        gv_view.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        gvView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = null;
@@ -107,7 +109,7 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void initData() {
         // 初始化主界面资源
-        integerHashMap = new HashMap<>();
+        integerHashMap = new HashMap<>(6);
         integerHashMap.put(0, R.drawable.pic_light_open);
         integerHashMap.put(1, R.drawable.pic_dor_window_open);
         integerHashMap.put(2, R.drawable.pic_door);
@@ -126,8 +128,8 @@ public class MainActivity extends BaseActivity {
                 "空调",
         };
 
-        customerAdapter = new CustomerAdapter();
-        gv_view.setAdapter(customerAdapter);
+        CustomerAdapter customerAdapter = new CustomerAdapter();
+        gvView.setAdapter(customerAdapter);
     }
 
     /**

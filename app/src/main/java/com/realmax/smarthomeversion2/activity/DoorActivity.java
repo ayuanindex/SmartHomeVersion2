@@ -5,8 +5,6 @@ import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -25,24 +23,20 @@ import com.realmax.smarthomeversion2.util.ValueUtil;
 
 import java.util.ArrayList;
 
+/**
+ * @author ayuan
+ */
 public class DoorActivity extends BaseActivity {
-    private RelativeLayout rl_back;
-    private TextView tv_doorLabel;
-    private SwitchCompat sw_doorToggle;
-    private CheckBox cb_doorIcon;
-    private TextView tv_doorLock;
-    private SwitchCompat sw_lockToggle;
-    private CheckBox cb_keyIcon;
-    private TextView tv_doorPassword;
-    private ImageView iv_passwordIcon;
-    private TextView tv_Password;
-    private ImageView iv_switchLeft;
-    private ImageView iv_switchRight;
-    private TextView tv_currentRoom;
-    private String tag;
-    private LinearLayout ll_door;
-    private LinearLayout ll_key;
-    private LinearLayout ll_password;
+    private RelativeLayout rlBack;
+    private SwitchCompat swDoorToggle;
+    private SwitchCompat swLockToggle;
+    private ImageView ivPasswordIcon;
+    private ImageView ivSwitchLeft;
+    private ImageView ivSwitchRight;
+    private TextView tvCurrentRoom;
+    private LinearLayout llDoor;
+    private LinearLayout llKey;
+    private LinearLayout llPassword;
     private ArrayList<String> doorNameList;
     private int currentPosition;
     private String currentDoor;
@@ -60,84 +54,61 @@ public class DoorActivity extends BaseActivity {
 
     @Override
     protected void initView() {
-        rl_back = (RelativeLayout) findViewById(R.id.rl_back);
+        rlBack = findViewById(R.id.rl_back);
         // 电动门
-        tv_doorLabel = (TextView) findViewById(R.id.tv_doorLabel);
-        sw_doorToggle = (SwitchCompat) findViewById(R.id.sw_doorToggle);
-        cb_doorIcon = (CheckBox) findViewById(R.id.cb_doorIcon);
+        swDoorToggle = findViewById(R.id.sw_doorToggle);
         // 门锁
-        tv_doorLock = (TextView) findViewById(R.id.tv_doorLock);
-        sw_lockToggle = (SwitchCompat) findViewById(R.id.sw_lockToggle);
-        cb_keyIcon = (CheckBox) findViewById(R.id.cb_keyIcon);
+        swLockToggle = findViewById(R.id.sw_lockToggle);
         // 密码
-        tv_doorPassword = (TextView) findViewById(R.id.tv_doorPassword);
-        iv_passwordIcon = (ImageView) findViewById(R.id.iv_passwordIcon);
-        tv_Password = (TextView) findViewById(R.id.tv_Password);
+        ivPasswordIcon = findViewById(R.id.iv_passwordIcon);
         // 切换房间
-        iv_switchLeft = (ImageView) findViewById(R.id.iv_switchLeft);
-        iv_switchRight = (ImageView) findViewById(R.id.iv_switchRight);
-        tv_currentRoom = (TextView) findViewById(R.id.tv_currentRoom);
+        ivSwitchLeft = findViewById(R.id.iv_switchLeft);
+        ivSwitchRight = findViewById(R.id.iv_switchRight);
+        tvCurrentRoom = findViewById(R.id.tv_currentRoom);
         // 三个条目
-        ll_door = (LinearLayout) findViewById(R.id.ll_door);
-        ll_key = (LinearLayout) findViewById(R.id.ll_key);
-        ll_password = (LinearLayout) findViewById(R.id.ll_password);
+        llDoor = findViewById(R.id.ll_door);
+        llKey = findViewById(R.id.ll_key);
+        llPassword = findViewById(R.id.ll_password);
 
         selectShowHide();
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void initEvent() {
-        rl_back.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
+        rlBack.setOnClickListener(v -> finish());
+
+        swDoorToggle.setOnTouchListener((v, event) -> {
+            if (MotionEvent.ACTION_DOWN == event.getActionMasked()) {
+                sendCmd();
             }
+            return true;
         });
 
-        sw_doorToggle.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (MotionEvent.ACTION_DOWN == event.getActionMasked()) {
-                    // TODO: 4/17/20 请求门的开关
-                    sendCmd();
-                }
-                return true;
+        swLockToggle.setOnTouchListener((v, event) -> {
+            if (MotionEvent.ACTION_DOWN == event.getActionMasked()) {
+                sendCmd();
             }
+            return true;
         });
 
-        sw_lockToggle.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (MotionEvent.ACTION_DOWN == event.getActionMasked()) {
-                    // TODO: 4/17/20 请求锁的开关
-                    sendCmd();
-                }
-                return true;
-            }
-        });
+        ivPasswordIcon.setOnClickListener(v -> putPassword());
 
-        iv_passwordIcon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // TODO: 4/17/20 请求输入密码
-            }
-        });
+        ivSwitchLeft.setOnClickListener(v -> switchPage(0));
 
-        iv_switchLeft.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                switchPage(0);
-            }
-        });
-
-        iv_switchRight.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                switchPage(1);
-            }
-        });
+        ivSwitchRight.setOnClickListener(v -> switchPage(1));
     }
 
+    /**
+     * 执行输入密码的操作
+     */
+    private void putPassword() {
+
+    }
+
+    /**
+     * 发送指定门的指令
+     */
     private void sendCmd() {
         if (doorBean == null) {
             return;
@@ -153,37 +124,37 @@ public class DoorActivity extends BaseActivity {
         switch (currentPosition) {
             case 0:
                 // 客厅大门--->电动门
-                DoorBean.Door1SBean door1_s = doorBean.getDoor1_S();
+                DoorBean.Door1SBean door1S = doorBean.getDoor1_S();
                 field = "door1_C";
-                door = door1_s.getDoor_s() == 1 ? 0 : 1;
+                door = door1S.getDoor_s() == 1 ? 0 : 1;
                 break;
             case 1:
                 // 庭院后门--->锁+密码
-                DoorBean.Door2SBean door2_s = doorBean.getDoor2_S();
+                DoorBean.Door2SBean door2S = doorBean.getDoor2_S();
                 field = "door2_C";
-                lock = door2_s.getLock_s() == 1 ? 0 : 1;
-                pass = door2_s.getPass();
+                lock = door2S.getLock_s() == 1 ? 0 : 1;
+                pass = door2S.getPass();
                 break;
             case 2:
                 // 院墙小门--->锁+密码
-                DoorBean.Door3SBean door3_s = doorBean.getDoor3_S();
+                DoorBean.Door3SBean door3S = doorBean.getDoor3_S();
                 field = "door3_C";
-                lock = door3_s.getLock_s() == 1 ? 0 : 1;
-                pass = door3_s.getPass();
+                lock = door3S.getLock_s() == 1 ? 0 : 1;
+                pass = door3S.getPass();
                 break;
             case 3:
                 // 院墙大门--->锁+密码
-                DoorBean.Door4SBean door4_s = doorBean.getDoor4_S();
+                DoorBean.Door4SBean door4S = doorBean.getDoor4_S();
                 field = "door4_C";
-                lock = door4_s.getLock_s() == 1 ? 0 : 1;
-                pass = door4_s.getPass();
+                lock = door4S.getLock_s() == 1 ? 0 : 1;
+                pass = door4S.getPass();
                 break;
             case 4:
                 // 车库门--->电动门+锁
-                DoorBean.Door5SBean door5_s = doorBean.getDoor5_S();
+                DoorBean.Door5SBean door5S = doorBean.getDoor5_S();
                 field = "door5_C";
-                door = door5_s.getDoor_s() == 1 ? 0 : 1;
-                lock = door5_s.getLock_s() == 1 ? 0 : 1;
+                door = door5S.getDoor_s() == 1 ? 0 : 1;
+                lock = door5S.getLock_s() == 1 ? 0 : 1;
                 break;
             default:
                 break;
@@ -193,7 +164,7 @@ public class DoorActivity extends BaseActivity {
 
     @Override
     protected void initData() {
-        tag = getIntent().getStringExtra("tag");
+        String tag = getIntent().getStringExtra("tag");
 
         doorNameList = new ArrayList<>();
         doorNameList.add("客厅大门");
@@ -245,27 +216,27 @@ public class DoorActivity extends BaseActivity {
                 break;
         }
         selectShowHide();
-        tv_currentRoom.setText(doorNameList.get(currentPosition));
+        tvCurrentRoom.setText(currentDoor);
     }
 
     public void selectShowHide() {
         switch (currentPosition) {
             case 0:
-                isVisible(true, ll_door);
-                isVisible(false, ll_password, ll_key);
+                isVisible(true, llDoor);
+                isVisible(false, llPassword, llKey);
                 break;
             case 1:
             case 2:
-                isVisible(true, ll_key, ll_password);
-                isVisible(false, ll_door);
+                isVisible(true, llKey, llPassword);
+                isVisible(false, llDoor);
                 break;
             case 3:
-                isVisible(true, ll_door, ll_password);
-                isVisible(false, ll_key);
+                isVisible(true, llDoor, llPassword);
+                isVisible(false, llKey);
                 break;
             case 4:
-                isVisible(true, ll_door, ll_key);
-                isVisible(false, ll_password);
+                isVisible(true, llDoor, llKey);
+                isVisible(false, llPassword);
                 break;
             default:
                 break;

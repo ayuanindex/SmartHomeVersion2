@@ -28,9 +28,12 @@ import java.util.ArrayList;
 
 import io.netty.channel.EventLoopGroup;
 
+/**
+ * @author ayuan
+ */
 public class SettingActivity extends BaseActivity {
-    private RelativeLayout rl_back;
-    private ListView lv_list;
+    private RelativeLayout rlBack;
+    private ListView lvList;
     private ArrayList<LinkBean> linkBeans;
     private CustomerAdapter customerAdapter;
 
@@ -46,20 +49,20 @@ public class SettingActivity extends BaseActivity {
 
     @Override
     protected void initView() {
-        rl_back = (RelativeLayout) findViewById(R.id.rl_back);
-        lv_list = (ListView) findViewById(R.id.lv_list);
+        rlBack = (RelativeLayout) findViewById(R.id.rl_back);
+        lvList = (ListView) findViewById(R.id.lv_list);
     }
 
     @Override
     protected void initEvent() {
-        rl_back.setOnClickListener(new View.OnClickListener() {
+        rlBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
             }
         });
 
-        lv_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        lvList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if (!linkBeans.get(position).isConnected()) {
@@ -80,22 +83,22 @@ public class SettingActivity extends BaseActivity {
         ViewHolder viewHolder = new ViewHolder(inflate);
 
         // 回显IP地址和端口号
-        viewHolder.et_ip.setText(linkBean.getHOST());
-        viewHolder.et_port.setText("" + linkBean.getPORT());
+        viewHolder.etIp.setText(linkBean.getmHOST());
+        viewHolder.etPort.setText("" + linkBean.getPORT());
 
-        viewHolder.tv_ok.setOnClickListener(new View.OnClickListener() {
+        viewHolder.tvOk.setOnClickListener(new View.OnClickListener() {
             @SuppressLint("SetTextI18n")
             @Override
             public void onClick(View v) {
-                String ip = viewHolder.et_ip.getText().toString().trim();
+                String ip = viewHolder.etIp.getText().toString().trim();
                 if (TextUtils.isEmpty(ip)) {
-                    viewHolder.et_ip.setText("ip地址不能为空");
+                    viewHolder.etIp.setText("ip地址不能为空");
                     return;
                 }
 
-                String port = viewHolder.et_port.getText().toString().trim();
+                String port = viewHolder.etPort.getText().toString().trim();
                 if (TextUtils.isEmpty(port)) {
-                    viewHolder.et_ip.setText("端口号不能为空");
+                    viewHolder.etIp.setText("端口号不能为空");
                     return;
                 }
 
@@ -139,7 +142,7 @@ public class SettingActivity extends BaseActivity {
             }
         });
 
-        viewHolder.tv_cancel.setOnClickListener(new View.OnClickListener() {
+        viewHolder.tvCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 alertDialog.dismiss();
@@ -150,17 +153,17 @@ public class SettingActivity extends BaseActivity {
 
     static class ViewHolder {
         View rootView;
-        EditText et_ip;
-        EditText et_port;
-        TextView tv_cancel;
-        TextView tv_ok;
+        EditText etIp;
+        EditText etPort;
+        TextView tvCancel;
+        TextView tvOk;
 
         ViewHolder(View rootView) {
             this.rootView = rootView;
-            this.et_ip = (EditText) rootView.findViewById(R.id.et_ip);
-            this.et_port = (EditText) rootView.findViewById(R.id.et_port);
-            this.tv_cancel = (TextView) rootView.findViewById(R.id.tv_cancel);
-            this.tv_ok = (TextView) rootView.findViewById(R.id.tv_ok);
+            this.etIp = (EditText) rootView.findViewById(R.id.et_ip);
+            this.etPort = (EditText) rootView.findViewById(R.id.et_port);
+            this.tvCancel = (TextView) rootView.findViewById(R.id.tv_cancel);
+            this.tvOk = (TextView) rootView.findViewById(R.id.tv_ok);
         }
     }
 
@@ -173,7 +176,7 @@ public class SettingActivity extends BaseActivity {
         linkBeans.add(new LinkBean("摄像头", "camera"));
 
         customerAdapter = new CustomerAdapter();
-        lv_list.setAdapter(customerAdapter);
+        lvList.setAdapter(customerAdapter);
     }
 
     private class CustomerAdapter extends BaseAdapter {
