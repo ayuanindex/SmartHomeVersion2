@@ -1,8 +1,6 @@
 package com.realmax.smarthomeversion2.activity;
 
 import android.annotation.SuppressLint;
-import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.text.TextUtils;
 import android.view.MotionEvent;
 import android.view.View;
@@ -14,13 +12,11 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SwitchCompat;
 
 import com.google.gson.Gson;
 import com.realmax.smarthomeversion2.App;
 import com.realmax.smarthomeversion2.R;
-import com.realmax.smarthomeversion2.bean.LightBean;
 import com.realmax.smarthomeversion2.bean.TestBean;
 import com.realmax.smarthomeversion2.tcp.CustomerCallback;
 import com.realmax.smarthomeversion2.tcp.CustomerHandlerBase;
@@ -39,23 +35,16 @@ import java.util.ArrayList;
  * @CreateDate: 2020/4/3 12:07
  */
 public class LightActivity extends BaseActivity {
-    private RelativeLayout rl_back;
-    private ListView lv_list;
-    private ImageView iv_switchLeft;
-    private ImageView iv_switchRight;
-    private TextView tv_currentRoom;
-    private LightBean lightBean;
+    private RelativeLayout rlBack;
+    private ListView lvList;
+    private ImageView ivSwitchLeft;
+    private ImageView ivSwitchRight;
+    private TextView tvCurrentRoom;
     private CustomerAdapter customerAdapter;
     private String tag;
     private ArrayList<Integer> currentLightStatus;
-    /*private ArrayList<Integer> currentLightControl;*/
     private int currentPosition;
     private TestBean testBean;
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState, @Nullable PersistableBundle persistentState) {
-        super.onCreate(savedInstanceState, persistentState);
-    }
 
     @Override
     protected int getLayout() {
@@ -64,36 +53,21 @@ public class LightActivity extends BaseActivity {
 
     @Override
     protected void initView() {
-        rl_back = (RelativeLayout) findViewById(R.id.rl_back);
-        lv_list = (ListView) findViewById(R.id.lv_list);
-        iv_switchLeft = (ImageView) findViewById(R.id.iv_switchLeft);
-        iv_switchRight = (ImageView) findViewById(R.id.iv_switchRight);
-        tv_currentRoom = (TextView) findViewById(R.id.tv_currentRoom);
+        rlBack = findViewById(R.id.rl_back);
+        lvList = findViewById(R.id.lv_list);
+        ivSwitchLeft = findViewById(R.id.iv_switchLeft);
+        ivSwitchRight = findViewById(R.id.iv_switchRight);
+        tvCurrentRoom = findViewById(R.id.tv_currentRoom);
     }
 
     @SuppressLint("SetTextI18n")
     @Override
     protected void initEvent() {
-        rl_back.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+        rlBack.setOnClickListener(v -> finish());
 
-        iv_switchLeft.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                switchPage(0);
-            }
-        });
+        ivSwitchLeft.setOnClickListener(v -> switchPage(0));
 
-        iv_switchRight.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                switchPage(1);
-            }
-        });
+        ivSwitchRight.setOnClickListener(v -> switchPage(1));
     }
 
     @Override
@@ -101,15 +75,13 @@ public class LightActivity extends BaseActivity {
         tag = getIntent().getStringExtra("tag");
         currentPosition = 0;
 
-        /*lightBean = new LightBean(new ArrayList<>(), new ArrayList<>());*/
         testBean = new TestBean(new ArrayList<>(), new ArrayList<>());
 
         currentLightStatus = new ArrayList<>();
-        /*currentLightControl = new ArrayList<>();*/
 
         // 初始化列表
         customerAdapter = new CustomerAdapter();
-        lv_list.setAdapter(customerAdapter);
+        lvList.setAdapter(customerAdapter);
 
         // 拿到当前连接的Handler用于接受消息
         CustomerHandlerBase customerHandler = getCustomerHandler(tag);
@@ -130,29 +102,20 @@ public class LightActivity extends BaseActivity {
                         if (!TextUtils.isEmpty(msg)) {
                             JSONObject jsonObject = new JSONObject(msg);
                             // 验证是否是当前电灯的json数据
-                            if (jsonObject.has("Light_S") /*|| jsonObject.has("Ligth_C")*/) {
-                                /*lightBean = new Gson().fromJson(msg, LightBean.class);*/
+                            String lightS = "Light_S";
+                            if (jsonObject.has(lightS)) {
                                 testBean = new Gson().fromJson(msg, TestBean.class);
                                 // 获取到数据刷新列表
-                                runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        currentLightStatus.clear();
-                                        /*currentLightControl.clear();*/
-                                        for (int i : roomBeans.get(currentPosition).getLightId()) {
-                                            if (i - 1 < testBean.getLight_S().size()) {
-                                                // 现实中指定客厅的灯
-                                                currentLightStatus.add(testBean.getLight_S().get(i - 1));
-                                            }
-                                            /*if (i - 1 < lightBean.getLight_S().size()) {
-                                                L.e("i:" + i);
-                                                // 现实中指定客厅的灯
-                                                currentLightStatus.add(lightBean.getLight_S().get(currentPosition));
-                                                *//*currentLightControl.add(lightBean.getLight_C().get(currentPosition));*//*
-                                            }*/
+                                runOnUiThread(() -> {
+                                    currentLightStatus.clear();
+                                    /*currentLightControl.clear();*/
+                                    for (int i : roomBeans.get(currentPosition).getLightId()) {
+                                        if (i - 1 < testBean.getLight_S().size()) {
+                                            // 现实中指定客厅的灯
+                                            currentLightStatus.add(testBean.getLight_S().get(i - 1));
                                         }
-                                        customerAdapter.notifyDataSetChanged();
                                     }
+                                    customerAdapter.notifyDataSetChanged();
                                 });
                             }
                         }
@@ -166,14 +129,11 @@ public class LightActivity extends BaseActivity {
 
     /**
      * 切换客厅
+     *
+     * @param type 左右切换的标示符：0表示向左，1表示向右
      */
     @SuppressLint("SetTextI18n")
     private void switchPage(int type) {
-        /*if (lightBean == null) {
-            return;
-        }
-*/
-
         if (testBean == null) {
             return;
         }
@@ -183,13 +143,11 @@ public class LightActivity extends BaseActivity {
                 if (currentPosition > 0) {
                     currentLightStatus.clear();
                     currentPosition--;
-                    /*currentLightControl.clear();*/
                     int[] lightId = roomBeans.get(currentPosition).getLightId();
                     for (int i : lightId) {
                         L.e("" + i);
                         if (i - 1 < testBean.getLight_S().size()) {
                             currentLightStatus.add(testBean.getLight_S().get(i - 1));
-                            /*currentLightControl.add(lightBean.getLight_C().get(i - 1));*/
                         }
                     }
                 }
@@ -197,13 +155,11 @@ public class LightActivity extends BaseActivity {
             case 1:
                 if (currentPosition < roomBeans.size() - 1) {
                     currentLightStatus.clear();
-                    /*currentLightControl.clear();*/
                     currentPosition++;
                     int[] lightId = roomBeans.get(currentPosition).getLightId();
                     for (int i : lightId) {
                         if (i - 1 < testBean.getLight_S().size()) {
                             currentLightStatus.add(testBean.getLight_S().get(i - 1));
-                            /*currentLightControl.add(lightBean.getLight_C().get(i - 1));*/
                         }
                     }
                 }
@@ -212,45 +168,13 @@ public class LightActivity extends BaseActivity {
                 break;
         }
 
-        /*// 切换客厅
-        switch (type) {
-            case 0:
-                if (currentPosition > 0) {
-                    currentLightStatus.clear();
-                    currentPosition--;
-                    *//*currentLightControl.clear();*//*
-                    int[] lightId = roomBeans.get(currentPosition).getLightId();
-                    for (int i : lightId) {
-                        L.e("" + i);
-                        if (i - 1 < lightBean.getLight_S().size()) {
-                            currentLightStatus.add(lightBean.getLight_S().get(i - 1));
-                            *//*currentLightControl.add(lightBean.getLight_C().get(i - 1));*//*
-                        }
-                    }
-                }
-                break;
-            case 1:
-                if (currentPosition < roomBeans.size() - 1) {
-                    currentLightStatus.clear();
-                    *//*currentLightControl.clear();*//*
-                    currentPosition++;
-                    int[] lightId = roomBeans.get(currentPosition).getLightId();
-                    for (int i : lightId) {
-                        L.e("" + i);
-                        if (i - 1 < lightBean.getLight_S().size()) {
-                            currentLightStatus.add(lightBean.getLight_S().get(i - 1));
-                            *//*currentLightControl.add(lightBean.getLight_C().get(i - 1));*//*
-                        }
-                    }
-                }
-                break;
-            default:
-                break;
-        }*/
-        tv_currentRoom.setText(roomBeans.get(currentPosition).getRoomName());
+        tvCurrentRoom.setText(roomBeans.get(currentPosition).getRoomName());
         customerAdapter.notifyDataSetChanged();
     }
 
+    /**
+     * @author ayuan
+     */
     private class CustomerAdapter extends BaseAdapter {
         private static final int OPEN = 1;
         private static final int CLOSE = 0;
@@ -273,7 +197,7 @@ public class LightActivity extends BaseActivity {
             return position;
         }
 
-        @SuppressLint("SetTextI18n")
+        @SuppressLint({"SetTextI18n", "ClickableViewAccessibility"})
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             View view;
@@ -289,37 +213,24 @@ public class LightActivity extends BaseActivity {
             // 设置当前电灯的状态
             cbCheck.setChecked(getItem(position) == 1);
 
-            swToggle.setOnTouchListener(new View.OnTouchListener() {
-                @Override
-                public boolean onTouch(View v, MotionEvent event) {
-                    switch (event.getActionMasked()) {
-                        case MotionEvent.ACTION_DOWN:
-                            L.e("onTouch:" + position);
-                            /*ArrayList<Integer> light_c = new ArrayList<>(lightBean.getLight_C());
-                            light_c.set(lightId[position] - 1, swToggle.isChecked() ? OPEN : CLOSE);
-                            LightBean lightBean = new LightBean(new ArrayList<>(), light_c);
-                            // 发送控制电灯开关的请求
-                            ValueUtil.sendLightOpenOrCloseCmd(lightBean);*/
-                            ArrayList<Integer> lightC = new ArrayList<>(testBean.getLight_S());
-                            lightC.set(lightId[position] - 1, getItem(position) == OPEN ? CLOSE : OPEN);
-                            /*LightBean bean = new LightBean(testBean.getLight_S(), lightC);*/
-                            TestBean bean = new TestBean(lightC, LightActivity.this.testBean.getCurtain_S());
-                            ValueUtil.sendLightOpenOrCloseCmd(bean);
-                            break;
-                        default:
-                            break;
-                    }
-                    return true;
+            swToggle.setOnTouchListener((v, event) -> {
+                if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
+                    L.e("onTouch:" + position);
+                    ArrayList<Integer> lightC = new ArrayList<>(testBean.getLight_S());
+                    lightC.set(lightId[position] - 1, getItem(position) == OPEN ? CLOSE : OPEN);
+                    TestBean bean = new TestBean(lightC, LightActivity.this.testBean.getCurtain_S());
+                    ValueUtil.sendLightOpenOrCloseCmd(bean);
                 }
+                return true;
             });
             swToggle.setChecked(getItem(position) == 1);
             return view;
         }
 
         private void initView(View view) {
-            tvLabel = (TextView) view.findViewById(R.id.tv_label);
-            swToggle = (SwitchCompat) view.findViewById(R.id.sw_toggle);
-            cbCheck = (CheckBox) view.findViewById(R.id.cb_check);
+            tvLabel = view.findViewById(R.id.tv_label);
+            swToggle = view.findViewById(R.id.sw_toggle);
+            cbCheck = view.findViewById(R.id.cb_check);
         }
     }
 }
