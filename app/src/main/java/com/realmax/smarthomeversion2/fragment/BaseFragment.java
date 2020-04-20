@@ -13,8 +13,10 @@ import androidx.fragment.app.Fragment;
 import com.realmax.smarthomeversion2.tcp.CustomerHandlerBase;
 import com.realmax.smarthomeversion2.util.ValueUtil;
 
+/**
+ * @author ayuan
+ */
 public abstract class BaseFragment extends Fragment {
-    private static final String TAG = "BaseFragment";
     private Context context;
 
     @Override

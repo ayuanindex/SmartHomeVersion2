@@ -1,5 +1,8 @@
 package com.realmax.smarthomeversion2.bean;
 
+/**
+ * @author ayuan
+ */
 public class RoomBean {
     private String roomName;
     private int[] lightId;

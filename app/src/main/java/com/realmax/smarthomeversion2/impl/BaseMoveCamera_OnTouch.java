@@ -6,24 +6,16 @@ import android.view.View;
 
 import com.realmax.smarthomeversion2.util.MoveCamera;
 
+/**
+ * @author ayuan
+ */
 public abstract class BaseMoveCamera_OnTouch implements View.OnTouchListener {
-    private static final String TAG = "MoveCamera_OnTouch";
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                MoveCamera.move(getType(), getDeviceId(), new MoveCamera.Result() {
-                    @Override
-                    public void resultAngle(float a, float b) {
-                        getActivity().runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                getAngle(a, b);
-                            }
-                        });
-                    }
-                });
+                MoveCamera.move(getType(), getDeviceId(), (float a, float b) -> getActivity().runOnUiThread(() -> getAngle(a, b)));
                 break;
             case MotionEvent.ACTION_UP:
                 MoveCamera.stop();
@@ -34,11 +26,11 @@ public abstract class BaseMoveCamera_OnTouch implements View.OnTouchListener {
         return true;
     }
 
-    public abstract int getType();
+    abstract int getType();
 
     public abstract Activity getActivity();
 
-    public abstract int getDeviceId();
+    abstract int getDeviceId();
 
-    public abstract void getAngle(float a, float b);
+    abstract void getAngle(float a, float b);
 }

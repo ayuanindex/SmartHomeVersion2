@@ -2,6 +2,7 @@ package com.realmax.smarthomeversion2.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Looper;
 
 import androidx.annotation.LayoutRes;
 import androidx.annotation.Nullable;
@@ -46,6 +47,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         roomBeans.add(new RoomBean("书房", new int[]{17, 18}, new int[]{10}, new int[]{10}));
         roomBeans.add(new RoomBean("庭院", new int[]{15}, new int[]{}, new int[]{11}));
         roomBeans.add(new RoomBean("院墙", new int[]{16}, new int[]{}, new int[]{12}));
+
     }
 
     /**
