@@ -21,6 +21,7 @@ import com.realmax.smarthomeversion2.bean.CameraBodyBean;
 import com.realmax.smarthomeversion2.tcp.CustomerCallback;
 import com.realmax.smarthomeversion2.tcp.CustomerHandlerBase;
 import com.realmax.smarthomeversion2.util.EncodeAndDecode;
+import com.realmax.smarthomeversion2.util.L;
 import com.realmax.smarthomeversion2.util.MoveCamera;
 import com.realmax.smarthomeversion2.util.ValueUtil;
 
@@ -193,6 +194,7 @@ public class CameraActivity extends BaseActivity {
         } catch (JSONException e) {
             e.printStackTrace();
             String substring = msg.substring(1);
+            L.e("Json出现异常：" + substring);
             checkJson(substring);
         }
     }

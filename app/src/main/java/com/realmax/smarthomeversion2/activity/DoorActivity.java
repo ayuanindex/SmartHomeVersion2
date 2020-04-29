@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import androidx.appcompat.widget.SwitchCompat;
 
+import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
 import com.realmax.smarthomeversion2.R;
 import com.realmax.smarthomeversion2.bean.DoorBean;
@@ -62,7 +63,7 @@ public class DoorActivity extends BaseActivity {
         llKey = findViewById(R.id.ll_key);
         llPassword = findViewById(R.id.ll_password);
 
-        selectShowHide();
+        isVisible(false, llDoor, llKey, llPassword);
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -73,12 +74,14 @@ public class DoorActivity extends BaseActivity {
         swDoorToggle.setOnTouchListener((View v, MotionEvent event) -> {
             if (MotionEvent.ACTION_DOWN == event.getActionMasked()) {
                 DoorActivity.this.sendCmd();
+                L.e("lkasjdlfaks");
             }
             return true;
         });
 
         swLockToggle.setOnTouchListener((View v, MotionEvent event) -> {
             if (MotionEvent.ACTION_DOWN == event.getActionMasked()) {
+                L.e("lkasjdlfaks");
                 sendCmd();
             }
             return true;
@@ -96,6 +99,35 @@ public class DoorActivity extends BaseActivity {
      */
     private void putPassword() {
 
+    }
+
+    @Override
+    protected void initData() {
+        String tag = getIntent().getStringExtra("tag");
+
+        doorNameList = new ArrayList<>();
+        doorNameList.add("客厅大门");
+        doorNameList.add("庭院后门");
+        doorNameList.add("院墙小门");
+        doorNameList.add("院墙大门");
+        doorNameList.add("车库门");
+        CustomerHandlerBase customerHandlerBase = ValueUtil.getHandlerHashMap().get(tag);
+        if (customerHandlerBase != null) {
+            customerHandlerBase.setCustomerCallback(new CustomerCallback() {
+                @Override
+                public void disConnected() {
+                    ValueUtil.getIsConnected().put("door", false);
+                    L.e("网络连接已断开");
+                }
+
+                @Override
+                public void getResultData(String msg) {
+                    doorBean = new Gson().fromJson(msg, DoorBean.class);
+                    selectShowHide();
+                    L.e("toString:" + doorBean.toString());
+                }
+            });
+        }
     }
 
     /**
@@ -154,39 +186,15 @@ public class DoorActivity extends BaseActivity {
         ValueUtil.sendDoorCmd(field, door, lock, pass);
     }
 
-    @Override
-    protected void initData() {
-        String tag = getIntent().getStringExtra("tag");
-
-        doorNameList = new ArrayList<>();
-        doorNameList.add("客厅大门");
-        doorNameList.add("庭院后门");
-        doorNameList.add("院墙小门");
-        doorNameList.add("院墙大门");
-        doorNameList.add("车库门");
-        CustomerHandlerBase customerHandlerBase = ValueUtil.getHandlerHashMap().get(tag);
-        if (customerHandlerBase != null) {
-            customerHandlerBase.setCustomerCallback(new CustomerCallback() {
-                @Override
-                public void disConnected() {
-                    ValueUtil.getIsConnected().put("door", false);
-                    L.e("网络连接已断开");
-                }
-
-                @Override
-                public void getResultData(String msg) {
-                    doorBean = new Gson().fromJson(msg, DoorBean.class);
-                    L.e("toString:" + doorBean.toString());
-                }
-            });
-        }
-    }
-
     /**
      * 切换门
      */
     @SuppressLint("SetTextI18n")
     private void switchPage(int type) {
+        if (doorBean == null) {
+            return;
+        }
+
         switch (type) {
             case 0:
                 if (currentPosition > 0) {

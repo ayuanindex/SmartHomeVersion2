@@ -127,13 +127,6 @@ public class ValueUtil {
         if (handlerContext == null) {
             return;
         }
-        /*
-        * "door2_C": {
-    "pass_c": 1234,
-    "lock_c": 1,
-    "door_C": 0
-  }
-        * */
 
         HashMap<String, Object> childMap = new HashMap<>(1);
         if (door != -1) {

@@ -4,6 +4,12 @@
     package="com.realmax.smarthomeversion2">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.WRITE_SETTINGS" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
 
     <application
         android:name=".App"
@@ -26,7 +32,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
+        <!--语音控制界面-->
+        <activity
+            android:name=".audio.CommendActivity"
+            android:theme="@style/myTransparent" />
         <!--连接设置界面-->
         <activity
             android:name=".activity.SettingActivity"
@@ -74,6 +83,8 @@
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity" />
+        <!--语音服务-->
+        <service android:name=".audio.AudioService" />
     </application>
 
 </manifest>

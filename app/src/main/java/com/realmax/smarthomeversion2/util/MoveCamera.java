@@ -7,7 +7,7 @@ public class MoveCamera {
     /**
      * 初始角度
      */
-    private static float LONGITUDINAL = 10f;
+    private static float LONGITUDINAL = 45f;
     private static float HORIZONTAL = 0f;
 
     /**
@@ -43,7 +43,7 @@ public class MoveCamera {
         // 重置角度
         if (MoveCamera.DEVICEID != deviceId) {
             HORIZONTAL = 0;
-            LONGITUDINAL = 10;
+            LONGITUDINAL = 45;
         }
         MoveCamera.DEVICEID = deviceId;
         switch (type) {
@@ -66,6 +66,7 @@ public class MoveCamera {
 
     /**
      * 向上移动
+     *
      * @param result
      */
     private static void moveUp(Result result) {
@@ -73,7 +74,7 @@ public class MoveCamera {
         timerTask = new TimerTask() {
             @Override
             public void run() {
-                if (LONGITUDINAL < 90f) {
+                if (LONGITUDINAL < 70f) {
                     LONGITUDINAL++;
                     ValueUtil.sendCameraCmd(DEVICEID, HORIZONTAL, LONGITUDINAL);
                     result.resultAngle(HORIZONTAL, LONGITUDINAL);
@@ -93,7 +94,7 @@ public class MoveCamera {
         timerTask = new TimerTask() {
             @Override
             public void run() {
-                if (LONGITUDINAL > -90f) {
+                if (LONGITUDINAL > -70f) {
                     LONGITUDINAL--;
                     ValueUtil.sendCameraCmd(DEVICEID, HORIZONTAL, LONGITUDINAL);
                     result.resultAngle(HORIZONTAL, LONGITUDINAL);
@@ -151,7 +152,7 @@ public class MoveCamera {
     public static void touchStart(int deviceId) {
         if (MoveCamera.DEVICEID != deviceId) {
             HORIZONTAL = 0f;
-            LONGITUDINAL = 10f;
+            LONGITUDINAL = 45f;
         }
         MoveCamera.DEVICEID = deviceId;
         timer = new Timer();
@@ -172,9 +173,9 @@ public class MoveCamera {
      */
     public static void touchMoveCamera(int addHor, int addLong, Result result) {
         // 上下滑
-        if (LONGITUDINAL <= 90f && addLong > 0) {
+        if (LONGITUDINAL <= 70f && addLong > 0) {
             LONGITUDINAL--;
-        } else if (LONGITUDINAL >= -90f && addLong < 0) {
+        } else if (LONGITUDINAL >= -70f && addLong < 0) {
             LONGITUDINAL++;
         }
 
@@ -186,8 +187,8 @@ public class MoveCamera {
         }
 
         // 对纵向的距离最大值与最小值再一次进行判定，防止角度溢出
-        LONGITUDINAL = Math.min(LONGITUDINAL, 90f);
-        LONGITUDINAL = Math.max(LONGITUDINAL, -90f);
+        LONGITUDINAL = Math.min(LONGITUDINAL, 70f);
+        LONGITUDINAL = Math.max(LONGITUDINAL, -70f);
 
         // 对横向的距离最大值与最小值再一次进行判定，防止角度溢出
         HORIZONTAL = Math.min(HORIZONTAL, 180f);

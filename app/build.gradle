@@ -41,4 +41,15 @@ dependencies {
     //Gson
     implementation 'com.google.code.gson:gson:2.8.6'
     implementation files('libs/org.eclipse.paho.client.mqttv3-1.2.1.jar')
+
+    implementation 'com.github.bumptech.glide:glide:4.11.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
+    implementation 'com.tencent.aai:aai:2.1.5:@aar'
+
+    implementation 'com.squareup.okhttp3:okhttp:4.0.0-RC1'
+    implementation 'com.squareup.okio:okio:1.11.0'
+    implementation 'com.google.code.gson:gson:2.8.5'
+    implementation 'org.slf4j:slf4j-api:1.7.25'
+
+    implementation 'com.tencentcloudapi:tencentcloud-sdk-java:3.0.93'
 }
