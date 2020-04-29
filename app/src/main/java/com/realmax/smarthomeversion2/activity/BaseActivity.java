@@ -1,18 +1,24 @@
 package com.realmax.smarthomeversion2.activity;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Looper;
 
 import androidx.annotation.LayoutRes;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.realmax.smarthomeversion2.bean.RoomBean;
 import com.realmax.smarthomeversion2.tcp.CustomerHandlerBase;
 import com.realmax.smarthomeversion2.util.ValueUtil;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * @author ayuan
@@ -26,8 +32,34 @@ public abstract class BaseActivity extends AppCompatActivity {
         setContentView(getLayout());
         initView();
         initEvent();
-        parameter();
-        initData();
+        checkPermissions();
+    }
+
+    /**
+     * 权限验证
+     */
+    private void checkPermissions() {
+
+        List<String> permissions = new LinkedList<>();
+        addPermission(permissions, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        addPermission(permissions, Manifest.permission.RECORD_AUDIO);
+        addPermission(permissions, Manifest.permission.INTERNET);
+        addPermission(permissions, Manifest.permission.READ_PHONE_STATE);
+
+        if (!permissions.isEmpty()) {
+            // 请求还未请求的权限
+            ActivityCompat.requestPermissions(this, permissions.toArray(new String[0]), 1);
+            checkPermissions();
+        } else {
+            parameter();
+            initData();
+        }
+    }
+
+    private void addPermission(List<String> permissionList, String permission) {
+        if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
+            permissionList.add(permission);
+        }
     }
 
     protected void parameter() {

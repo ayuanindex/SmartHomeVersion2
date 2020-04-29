@@ -253,7 +253,12 @@ public class VoiceToMessage {
 
     public void close() {
         if (aaiClient != null) {
-            aaiClient.release();
+            threadPoolExecutor.execute(new Runnable() {
+                @Override
+                public void run() {
+                    aaiClient.release();
+                }
+            });
         }
     }
 }

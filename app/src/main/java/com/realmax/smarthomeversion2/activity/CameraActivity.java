@@ -211,17 +211,6 @@ public class CameraActivity extends BaseActivity {
         }
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        ValueUtil.sendStopCmd();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-    }
-
     @SuppressLint("SetTextI18n")
     private void touchMoveCamera(MotionEvent event) {
         switch (event.getActionMasked()) {
@@ -269,5 +258,16 @@ public class CameraActivity extends BaseActivity {
             default:
                 break;
         }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        ValueUtil.sendStopCmd();
     }
 }

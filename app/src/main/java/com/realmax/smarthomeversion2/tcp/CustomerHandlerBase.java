@@ -28,7 +28,6 @@ public class CustomerHandlerBase extends BaseNettyHandler {
                 JSONObject jsonObject = new JSONObject(jsonStr);
                 customerCallback.getResultData(jsonStr);
             } catch (JSONException e) {
-                e.printStackTrace();
                 getJson(jsonStr);
             }
         }

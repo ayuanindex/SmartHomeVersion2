@@ -18,6 +18,8 @@
     </style>
 
     <style name="myTransparent" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!--应用全屏显示-->
+        <item name="android:windowFullscreen">true</item>
         <item name="windowNoTitle">true</item>
         <item name="android:windowNoTitle">true</item> <!-- 无标题 -->
         <item name="android:windowBackground">@android:color/transparent</item>

@@ -9,6 +9,7 @@ import android.util.Log;
 
 import androidx.annotation.Nullable;
 
+import com.realmax.smarthomeversion2.activity.CameraActivity;
 import com.tencent.aai.exception.ClientException;
 import com.tencent.aai.exception.ServerException;
 import com.tencent.aai.listener.AudioRecognizeResultListener;
@@ -23,6 +24,7 @@ import java.util.Map;
 public class AudioService extends Service {
     private static final String TAG = "AudioService";
     private HashMap<String, String> hashMap = new HashMap<>();
+    private VoiceToMessage voiceToMessage;
 
     @Override
     protected void attachBaseContext(Context base) {
@@ -39,7 +41,7 @@ public class AudioService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d(TAG, "onStartCommand: 服务启动");
 
-        VoiceToMessage voiceToMessage = new VoiceToMessage(true);
+        voiceToMessage = new VoiceToMessage(true);
 
         voiceToMessage.init(getApplicationContext(), new AudioRecognizeResultListener() {
             @Override
@@ -61,6 +63,7 @@ public class AudioService extends Service {
                     if (str.matches(regex)) {
                         Log.d(TAG, "onSegmentSuccess: 嘻嘻嘻");
                         Intent intent = new Intent(getApplicationContext(), CommendActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivity(intent);
                     }
                 }
@@ -122,6 +125,7 @@ public class AudioService extends Service {
 
             }
         });
+
         return super.onStartCommand(intent, flags, startId);
     }
 
@@ -137,5 +141,14 @@ public class AudioService extends Service {
             stringBuilder.append(stringStringEntry.getValue());
         }
         return stringBuilder.toString();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        // 服务销毁时关闭语音
+        if (voiceToMessage != null) {
+            voiceToMessage.close();
+        }
     }
 }

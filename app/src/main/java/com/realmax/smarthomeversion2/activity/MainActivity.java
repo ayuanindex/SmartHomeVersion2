@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.realmax.smarthomeversion2.R;
+import com.realmax.smarthomeversion2.audio.AudioService;
 
 import java.util.HashMap;
 
@@ -22,6 +23,7 @@ public class MainActivity extends BaseActivity {
     private GridView gvView;
     private HashMap<Integer, Integer> integerHashMap;
     private String[] labels;
+    private Intent audioService;
 
     @Override
     protected int getLayout() {
@@ -91,6 +93,10 @@ public class MainActivity extends BaseActivity {
 
     @Override
     protected void initData() {
+        // 开去语音服务
+        audioService = new Intent(this, AudioService.class);
+        startService(audioService);
+
         // 初始化主界面资源
         integerHashMap = new HashMap<>(7);
         integerHashMap.put(0, R.drawable.pic_light_open);
@@ -156,5 +162,17 @@ public class MainActivity extends BaseActivity {
             ivIcon = view.findViewById(R.id.iv_icon);
             tvLabel = view.findViewById(R.id.tv_label);
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        // 注释掉返回按钮
+        /*super.onBackPressed();*/
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        stopService(audioService);
     }
 }
