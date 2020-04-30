@@ -47,10 +47,13 @@ public class CommendActivity extends BaseActivity {
     @Override
     protected void initData() {
         messageBeans = new ArrayList<>();
+        messageBeans.add(0, new MessageBean("哈喽啊远!", R.layout.item_left_message));
 
         rcList.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
         customerAdapter = new CustomerAdapter();
         rcList.setAdapter(customerAdapter);
+
+        SpeechMessage.initTts("哈喽啊远!", this);
 
         App.setAudioControl(new AudioControl(this, messageBeans, customerAdapter) {
             @Override

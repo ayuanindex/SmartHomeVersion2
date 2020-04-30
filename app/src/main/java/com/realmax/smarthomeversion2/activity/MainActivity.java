@@ -58,8 +58,6 @@ public class MainActivity extends BaseActivity {
         audioService = new Intent(this, AudioService.class);
         startService(audioService);
 
-        startActivity(new Intent(this, CommendActivity.class));
-
         // 初始化主界面资源
         integerHashMap = new HashMap<>(7);
         integerHashMap.put(0, R.drawable.pic_light_open);

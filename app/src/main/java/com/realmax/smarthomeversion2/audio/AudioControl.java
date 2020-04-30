@@ -1,7 +1,8 @@
 package com.realmax.smarthomeversion2.audio;
 
 import android.text.TextUtils;
-import android.util.Log;
+
+import androidx.annotation.LayoutRes;
 
 import com.google.gson.Gson;
 import com.realmax.smarthomeversion2.R;
@@ -33,8 +34,8 @@ public abstract class AudioControl {
     private static final String CLOSE_LIGHT = ".*[关|灯].*[关|灯].*";
     private static final String OPEN_DOOR = ".*[开|门].*[开|门].*";
     private static final String CLOSE_DOOR = ".*[关|门].*[关|门].*";
-    private static final String OPEN_CURTAIN = ".*[开|窗帘].*[开|窗帘].*";
-    private static final String CLOSE_CURTAIN = ".*[关|窗帘].*[关|窗帘].*";
+    private static final String OPEN_CURTAIN = ".*[开|窗].*[开|窗].*";
+    private static final String CLOSE_CURTAIN = ".*[关|窗].*[关|窗].*";
 
     /**
      * 当前的模式
@@ -77,7 +78,7 @@ public abstract class AudioControl {
         // 回调识别完成时的字符串
         onSuccessString(str);
         // 添加普通的聊天布局
-        addSimpleList(str);
+        addSimpleList(str, R.layout.item_left_message);
 
         if (!isSingleModel) {
             // 非场景模式
@@ -89,13 +90,30 @@ public abstract class AudioControl {
     }
 
     /**
+     * 语音反馈
+     *
+     * @param msg    反馈的语音
+     * @param layout 反馈的布局
+     */
+    private void feedBack(String msg, @LayoutRes int layout) {
+        mActivity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                SpeechMessage.initTts(msg, mActivity);
+                addSimpleList(msg, layout);
+            }
+        });
+    }
+
+    /**
      * 添加普通的文字识别界面
      *
-     * @param str 提示文字
+     * @param str    提示文字
+     * @param layout 反馈的布局
      */
-    private void addSimpleList(String str) {
+    private void addSimpleList(String str, int layout) {
         mActivity.runOnUiThread(() -> {
-            messageBeans.add(messageBeans.size(), new MessageBean(str, R.layout.item_left_message));
+            messageBeans.add(messageBeans.size(), new MessageBean(str, layout));
             customerAdapter.notifyDataSetChanged();
         });
     }
@@ -122,17 +140,28 @@ public abstract class AudioControl {
                     }
                     break;
                 case DOOR:
+                    if (str.matches(OPEN_DOOR)) {
+                        doorInstruction(true);
+                    } else if (str.matches(CLOSE_DOOR)) {
+                        doorInstruction(false);
+                    }
                     break;
                 case CURTAIN:
+                    if (str.matches(OPEN_CURTAIN)) {
+                        curtainInstruction(true);
+                    } else if (str.matches(CLOSE_CURTAIN)) {
+                        curtainInstruction(false);
+                    }
                     break;
                 default:
             }
         } else if (!selectRoom(str)) {
             // 没有检测到有关房间的指令
-        } else {
+            feedBack("嗯...啊远大人，你要我干什么呢？", R.layout.item_left_message);
+        }/* else {
             // 没有匹配到任何指令
             addSimpleList("抱歉，我不知道你在说什么");
-        }
+        }*/
     }
 
     /**
@@ -163,11 +192,12 @@ public abstract class AudioControl {
         // 根据指令切换当前模式
         if (str.matches(OPEN_LIGHT) || str.matches(CLOSE_LIGHT)) {
             currentModel = LIGTH;
-        } else if (str.matches(OPEN_DOOR) || str.matches(CLOSE_DOOR)) {
-            currentModel = DOOR;
         } else if (str.matches(OPEN_CURTAIN) || str.matches(CLOSE_CURTAIN)) {
             currentModel = CURTAIN;
+        } else if (str.matches(OPEN_DOOR) || str.matches(CLOSE_DOOR)) {
+            currentModel = DOOR;
         }
+        L.e(currentModel);
     }
 
     /**
@@ -180,37 +210,86 @@ public abstract class AudioControl {
         CustomerHandlerBase lightHandler = ValueUtil.getHandlerHashMap().get("light");
         if (lightHandler == null) {
             mActivity.runOnUiThread(() -> {
-                messageBeans.add(messageBeans.size(), new MessageBean("灯的连接尚未开启，请开启后再试吧", R.layout.item_left_select_light));
-                customerAdapter.notifyDataSetChanged();
+                feedBack("灯的连接尚未开启，请开启后再试吧", R.layout.item_left_message);
             });
             return;
         }
 
         mActivity.runOnUiThread(() -> {
-            messageBeans.add(messageBeans.size(), new MessageBean("正在开灯", R.layout.item_left_select_light));
-            customerAdapter.notifyDataSetChanged();
+            feedBack("正在" + (isOpen ? "开" : "关") + "灯", R.layout.item_left_message);
         });
 
         String currentCommand = lightHandler.getCurrentCommand();
-        L.e(currentCommand);
+        L.e("灯的当前状态" + currentCommand);
         if (!TextUtils.isEmpty(currentCommand)) {
+            // 根据获取到的状态信息生成JavaBean对象
             LightOrCurtainBean lightOrCurtainBean = new Gson().fromJson(currentCommand, LightOrCurtainBean.class);
             List<Integer> lightS = lightOrCurtainBean.getLight_S();
-            for (String roomName : roomToBeOperatedList) {
-                for (RoomBean roomBean : roomBeans) {
-                    if (roomBean.getRoomName().equals(roomName)) {
-                        int[] lightId = roomBean.getLightId();
-                        for (int i : lightId) {
-                            // 将需要修改的房间等的状态修改
-                            lightS.set(i - 1, isOpen ? 1 : 0);
-                        }
-                    }
+            changeState((RoomBean roomBean) -> {
+                int[] lightId = roomBean.getLightId();
+                for (int i : lightId) {
+                    // 将需要修改的房间等的状态修改
+                    lightS.set(i - 1, isOpen ? 1 : 0);
                 }
-            }
+            });
 
             L.e(lightOrCurtainBean.toString());
             // 开始执行控制指令
             ValueUtil.sendLightOpenOrCloseCmd(lightOrCurtainBean);
+        }
+    }
+
+    /**
+     * 窗帘的开关操作
+     *
+     * @param isOpen true表示打开，false表示关闭
+     */
+    private void curtainInstruction(boolean isOpen) {
+        // 获取当前提到的房间的窗帘的状态
+        CustomerHandlerBase lightHandler = ValueUtil.getHandlerHashMap().get("light");
+        if (lightHandler == null) {
+            mActivity.runOnUiThread(() -> {
+                feedBack("窗帘的连接尚未开启，请开启后再试吧", R.layout.item_left_message);
+            });
+            return;
+        }
+
+        mActivity.runOnUiThread(() -> {
+            feedBack("正在" + (isOpen ? "打开" : "关闭") + "窗帘", R.layout.item_left_message);
+        });
+
+        String currentCommand = lightHandler.getCurrentCommand();
+        L.e("窗帘的当前状态" + currentCommand);
+        if (!TextUtils.isEmpty(currentCommand)) {
+            // 根据获取到的状态信息生成JavaBean对象
+            LightOrCurtainBean lightOrCurtainBean = new Gson().fromJson(currentCommand, LightOrCurtainBean.class);
+            List<Integer> curtainS = lightOrCurtainBean.getCurtain_S();
+            changeState((RoomBean roomBean) -> {
+                int[] curtailId = roomBean.getCurtailId();
+                for (int i : curtailId) {
+                    // 将需要修改房间窗帘的状态修改
+                    curtainS.set(i - 1, isOpen ? 1 : 0);
+                }
+            });
+
+            L.e(lightOrCurtainBean.toString());
+            // 开始执行控制指令
+            ValueUtil.sendCurtainOpenOrCloseCmd(lightOrCurtainBean);
+        }
+    }
+
+    private void doorInstruction(boolean isOpen) {
+
+    }
+
+    private void changeState(ChangeStatusListener changeStatusListener) {
+        for (String roomName : roomToBeOperatedList) {
+            for (RoomBean roomBean : roomBeans) {
+                if (roomBean.getRoomName().equals(roomName)) {
+                    // 获取到对应房间的对象
+                    changeStatusListener.changeStatus(roomBean);
+                }
+            }
         }
     }
 
@@ -226,8 +305,7 @@ public abstract class AudioControl {
      */
     public void finish() {
         mActivity.runOnUiThread(() -> {
-            messageBeans.add(messageBeans.size(), new MessageBean("下次再聊", R.layout.item_left_message));
-            customerAdapter.notifyDataSetChanged();
+            feedBack("下次再聊", R.layout.item_left_message);
         });
 
         CustomerThreadManager.threadPoolExecutor.execute(() -> {
@@ -238,5 +316,9 @@ public abstract class AudioControl {
                 e.printStackTrace();
             }
         });
+    }
+
+    interface ChangeStatusListener {
+        void changeStatus(RoomBean roomBean);
     }
 }
