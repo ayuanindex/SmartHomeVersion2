@@ -9,7 +9,7 @@ import android.util.Log;
 
 import androidx.annotation.Nullable;
 
-import com.realmax.smarthomeversion2.activity.CameraActivity;
+import com.realmax.smarthomeversion2.App;
 import com.tencent.aai.exception.ClientException;
 import com.tencent.aai.exception.ServerException;
 import com.tencent.aai.listener.AudioRecognizeResultListener;
@@ -50,6 +50,12 @@ public class AudioService extends Service {
                 if (!TextUtils.isEmpty(text)) {
                     hashMap.put(String.valueOf(order), text);
                     Log.d(TAG, "onSliceSuccess: " + text);
+
+                    // 返回识别好的文字
+                    AudioControl audioControl = App.getAudioControl();
+                    if (audioControl != null) {
+                        audioControl.onSliceSuccess(text);
+                    }
                 }
             }
 
@@ -59,12 +65,21 @@ public class AudioService extends Service {
                 hashMap.clear();
                 Log.d(TAG, "onSegmentSuccess: " + str);
                 if (!TextUtils.isEmpty(str)) {
+                    AudioControl audioControl = App.getAudioControl();
                     String regex = ".*小[微|薇]你好.*";//定义一个正则表达式
                     if (str.matches(regex)) {
-                        Log.d(TAG, "onSegmentSuccess: 嘻嘻嘻");
-                        Intent intent = new Intent(getApplicationContext(), CommendActivity.class);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(intent);
+                        if (audioControl == null) {
+                            Log.d(TAG, "onSegmentSuccess: 嘻嘻嘻");
+                            Intent intent = new Intent(getApplicationContext(), CommendActivity.class);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(intent);
+                        } else {
+                            audioControl.onSegmentSuccess(str);
+                        }
+                    } else {
+                        if (audioControl != null) {
+                            audioControl.onSegmentSuccess(str);
+                        }
                     }
                 }
             }
@@ -117,12 +132,12 @@ public class AudioService extends Service {
         }, new AudioRecognizeTimeoutListener() {
             @Override
             public void onFirstVoiceFlowTimeout(AudioRecognizeRequest request) {
-
+                Log.d(TAG, "onFirstVoiceFlowTimeout: 第一个语音流超时");
             }
 
             @Override
             public void onNextVoiceFlowTimeout(AudioRecognizeRequest request) {
-
+                Log.d(TAG, "onNextVoiceFlowTimeout: 一个语音流超时");
             }
         });
 

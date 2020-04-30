@@ -17,7 +17,7 @@ import androidx.appcompat.widget.SwitchCompat;
 import com.google.gson.Gson;
 import com.realmax.smarthomeversion2.App;
 import com.realmax.smarthomeversion2.R;
-import com.realmax.smarthomeversion2.bean.TestBean;
+import com.realmax.smarthomeversion2.bean.LightOrCurtainBean;
 import com.realmax.smarthomeversion2.tcp.CustomerCallback;
 import com.realmax.smarthomeversion2.tcp.CustomerHandlerBase;
 import com.realmax.smarthomeversion2.util.L;
@@ -44,7 +44,7 @@ public class CurtainActivity extends BaseActivity {
      * 当前位置
      */
     private int currentPosition;
-    private TestBean testBean;
+    private LightOrCurtainBean lightOrCurtainBean;
 
     @Override
     protected int getLayout() {
@@ -75,7 +75,7 @@ public class CurtainActivity extends BaseActivity {
         tag = getIntent().getStringExtra("tag");
         currentPosition = 0;
 
-        testBean = new TestBean(new ArrayList<>(), new ArrayList<>());
+        lightOrCurtainBean = new LightOrCurtainBean(new ArrayList<>(), new ArrayList<>());
 
         currentCurtainStatus = new ArrayList<>();
 
@@ -102,16 +102,16 @@ public class CurtainActivity extends BaseActivity {
                             JSONObject jsonObject = new JSONObject(msg);
                             String curtainS = "Curtain_S";
                             if (jsonObject.has(curtainS)) {
-                                testBean = new Gson().fromJson(msg, TestBean.class);
+                                lightOrCurtainBean = new Gson().fromJson(msg, LightOrCurtainBean.class);
 
                                 // 获取到数据刷新列表
                                 runOnUiThread(() -> {
                                     currentCurtainStatus.clear();
                                     for (int i : roomBeans.get(currentPosition).getCurtailId()) {
-                                        if (i - 1 < testBean.getCurtain_S().size()) {
+                                        if (i - 1 < lightOrCurtainBean.getCurtain_S().size()) {
                                             L.e("i:" + i);
                                             // 现实中指定客厅的灯
-                                            currentCurtainStatus.add(testBean.getCurtain_S().get(i - 1));
+                                            currentCurtainStatus.add(lightOrCurtainBean.getCurtain_S().get(i - 1));
                                         }
                                     }
                                     customerAdapter.notifyDataSetChanged();
@@ -133,7 +133,7 @@ public class CurtainActivity extends BaseActivity {
      */
     @SuppressLint("SetTextI18n")
     private void switchPage(int type) {
-        if (testBean == null) {
+        if (lightOrCurtainBean == null) {
             return;
         }
 
@@ -146,8 +146,8 @@ public class CurtainActivity extends BaseActivity {
                     int[] curtailId = roomBeans.get(currentPosition).getCurtailId();
                     for (int i : curtailId) {
                         L.e("" + i);
-                        if (i - 1 < testBean.getCurtain_S().size()) {
-                            currentCurtainStatus.add(testBean.getCurtain_S().get(i - 1));
+                        if (i - 1 < lightOrCurtainBean.getCurtain_S().size()) {
+                            currentCurtainStatus.add(lightOrCurtainBean.getCurtain_S().get(i - 1));
                         }
                     }
                 }
@@ -160,8 +160,8 @@ public class CurtainActivity extends BaseActivity {
                     int[] curtailId = roomBeans.get(currentPosition).getCurtailId();
                     for (int i : curtailId) {
                         L.e("" + i);
-                        if (i - 1 < testBean.getCurtain_S().size()) {
-                            currentCurtainStatus.add(testBean.getCurtain_S().get(i - 1));
+                        if (i - 1 < lightOrCurtainBean.getCurtain_S().size()) {
+                            currentCurtainStatus.add(lightOrCurtainBean.getCurtain_S().get(i - 1));
                         }
                     }
                 }
@@ -221,9 +221,9 @@ public class CurtainActivity extends BaseActivity {
 
             swToggle.setOnTouchListener((View v, MotionEvent event) -> {
                 if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
-                    ArrayList<Integer> curtainC = new ArrayList<>(testBean.getCurtain_S());
+                    ArrayList<Integer> curtainC = new ArrayList<>(lightOrCurtainBean.getCurtain_S());
                     curtainC.set(curtailId[position] - 1, getItem(position) == OPEN ? CLOSE : OPEN);
-                    TestBean bean = new TestBean(CurtainActivity.this.testBean.getLight_S(), curtainC);
+                    LightOrCurtainBean bean = new LightOrCurtainBean(CurtainActivity.this.lightOrCurtainBean.getLight_S(), curtainC);
                     ValueUtil.sendCurtainOpenOrCloseCmd(bean);
                 }
                 return true;

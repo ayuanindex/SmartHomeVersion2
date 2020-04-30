@@ -12,8 +12,8 @@ public class CustomerHandlerBase extends BaseNettyHandler {
     private ChannelHandlerContext handlerContext;
     private CustomerCallback customerCallback;
     private boolean flag = false;
-    private int leftCount = 0;
     private StringBuffer strings = new StringBuffer();
+    private String currentCommand = "";
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
@@ -26,6 +26,7 @@ public class CustomerHandlerBase extends BaseNettyHandler {
         if (customerCallback != null) {
             try {
                 JSONObject jsonObject = new JSONObject(jsonStr);
+                currentCommand = jsonStr;
                 customerCallback.getResultData(jsonStr);
             } catch (JSONException e) {
                 getJson(jsonStr);
@@ -52,8 +53,8 @@ public class CustomerHandlerBase extends BaseNettyHandler {
                 flag = false;
                 String json = strings.toString();
                 strings = new StringBuffer();
+                currentCommand = json;
                 customerCallback.getResultData(json);
-                Log.d(TAG, "messageReceived: " + json);
             }
         }
     }
@@ -72,5 +73,13 @@ public class CustomerHandlerBase extends BaseNettyHandler {
 
     public void setCustomerCallback(CustomerCallback customerCallback) {
         this.customerCallback = customerCallback;
+    }
+
+    public String getCurrentCommand() {
+        return currentCommand;
+    }
+
+    public void setCurrentCommand(String currentCommand) {
+        this.currentCommand = currentCommand;
     }
 }

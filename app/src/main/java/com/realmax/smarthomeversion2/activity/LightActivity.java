@@ -17,7 +17,7 @@ import androidx.appcompat.widget.SwitchCompat;
 import com.google.gson.Gson;
 import com.realmax.smarthomeversion2.App;
 import com.realmax.smarthomeversion2.R;
-import com.realmax.smarthomeversion2.bean.TestBean;
+import com.realmax.smarthomeversion2.bean.LightOrCurtainBean;
 import com.realmax.smarthomeversion2.tcp.CustomerCallback;
 import com.realmax.smarthomeversion2.tcp.CustomerHandlerBase;
 import com.realmax.smarthomeversion2.util.L;
@@ -41,7 +41,7 @@ public class LightActivity extends BaseActivity {
     private String tag;
     private ArrayList<Integer> currentLightStatus;
     private int currentPosition;
-    private TestBean testBean;
+    private LightOrCurtainBean lightOrCurtainBean;
 
     @Override
     protected int getLayout() {
@@ -72,7 +72,7 @@ public class LightActivity extends BaseActivity {
         tag = getIntent().getStringExtra("tag");
         currentPosition = 0;
 
-        testBean = new TestBean(new ArrayList<>(), new ArrayList<>());
+        lightOrCurtainBean = new LightOrCurtainBean(new ArrayList<>(), new ArrayList<>());
 
         currentLightStatus = new ArrayList<>();
 
@@ -101,14 +101,14 @@ public class LightActivity extends BaseActivity {
                             // 验证是否是当前电灯的json数据
                             String lightS = "Light_S";
                             if (jsonObject.has(lightS)) {
-                                testBean = new Gson().fromJson(msg, TestBean.class);
+                                lightOrCurtainBean = new Gson().fromJson(msg, LightOrCurtainBean.class);
                                 // 获取到数据刷新列表
                                 runOnUiThread(() -> {
                                     currentLightStatus.clear();
                                     for (int i : roomBeans.get(currentPosition).getLightId()) {
-                                        if (i - 1 < testBean.getLight_S().size()) {
+                                        if (i - 1 < lightOrCurtainBean.getLight_S().size()) {
                                             // 现实中指定客厅的灯
-                                            currentLightStatus.add(testBean.getLight_S().get(i - 1));
+                                            currentLightStatus.add(lightOrCurtainBean.getLight_S().get(i - 1));
                                         }
                                     }
                                     customerAdapter.notifyDataSetChanged();
@@ -130,7 +130,7 @@ public class LightActivity extends BaseActivity {
      */
     @SuppressLint("SetTextI18n")
     private void switchPage(int type) {
-        if (testBean == null) {
+        if (lightOrCurtainBean == null) {
             return;
         }
 
@@ -142,8 +142,8 @@ public class LightActivity extends BaseActivity {
                     int[] lightId = roomBeans.get(currentPosition).getLightId();
                     for (int i : lightId) {
                         L.e("" + i);
-                        if (i - 1 < testBean.getLight_S().size()) {
-                            currentLightStatus.add(testBean.getLight_S().get(i - 1));
+                        if (i - 1 < lightOrCurtainBean.getLight_S().size()) {
+                            currentLightStatus.add(lightOrCurtainBean.getLight_S().get(i - 1));
                         }
                     }
                 }
@@ -154,8 +154,8 @@ public class LightActivity extends BaseActivity {
                     currentPosition++;
                     int[] lightId = roomBeans.get(currentPosition).getLightId();
                     for (int i : lightId) {
-                        if (i - 1 < testBean.getLight_S().size()) {
-                            currentLightStatus.add(testBean.getLight_S().get(i - 1));
+                        if (i - 1 < lightOrCurtainBean.getLight_S().size()) {
+                            currentLightStatus.add(lightOrCurtainBean.getLight_S().get(i - 1));
                         }
                     }
                 }
@@ -212,9 +212,9 @@ public class LightActivity extends BaseActivity {
             swToggle.setOnTouchListener((View v, MotionEvent event) -> {
                 if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
                     L.e("onTouch:" + position);
-                    ArrayList<Integer> lightC = new ArrayList<>(testBean.getLight_S());
+                    ArrayList<Integer> lightC = new ArrayList<>(lightOrCurtainBean.getLight_S());
                     lightC.set(lightId[position] - 1, getItem(position) == OPEN ? CLOSE : OPEN);
-                    TestBean bean = new TestBean(lightC, LightActivity.this.testBean.getCurtain_S());
+                    LightOrCurtainBean bean = new LightOrCurtainBean(lightC, LightActivity.this.lightOrCurtainBean.getCurtain_S());
                     ValueUtil.sendLightOpenOrCloseCmd(bean);
                 }
                 return true;

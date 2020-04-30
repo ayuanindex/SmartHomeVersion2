@@ -1,6 +1,6 @@
 package com.realmax.smarthomeversion2.util;
 
-import com.realmax.smarthomeversion2.bean.TestBean;
+import com.realmax.smarthomeversion2.bean.LightOrCurtainBean;
 import com.realmax.smarthomeversion2.tcp.CustomerHandlerBase;
 
 import org.json.JSONObject;
@@ -65,9 +65,9 @@ public class ValueUtil {
     /**
      * 发送开启电灯或关闭电灯的指令
      *
-     * @param testBean 需要修改的对象
+     * @param lightOrCurtainBean 需要修改的对象
      */
-    public static void sendLightOpenOrCloseCmd(TestBean testBean) {
+    public static void sendLightOpenOrCloseCmd(LightOrCurtainBean lightOrCurtainBean) {
         CustomerHandlerBase customerHandler = getHandlerHashMap().get("light");
         if (customerHandler == null) {
             return;
@@ -80,8 +80,8 @@ public class ValueUtil {
         }
 
         HashMap<String, List<Integer>> hashMap = new HashMap<>(2);
-        hashMap.put("Light_C", testBean.getLight_S());
-        hashMap.put("Curtain_C", testBean.getCurtain_S());
+        hashMap.put("Light_C", lightOrCurtainBean.getLight_S());
+        hashMap.put("Curtain_C", lightOrCurtainBean.getCurtain_S());
         JSONObject jsonObject = new JSONObject(hashMap);
         String s = jsonObject.toString();
         L.e(s);
@@ -91,9 +91,9 @@ public class ValueUtil {
     /**
      * 发送开启电灯或关闭电灯的指令
      *
-     * @param testBean 需要修改的对象
+     * @param lightOrCurtainBean 需要修改的对象
      */
-    public static void sendCurtainOpenOrCloseCmd(TestBean testBean) {
+    public static void sendCurtainOpenOrCloseCmd(LightOrCurtainBean lightOrCurtainBean) {
         CustomerHandlerBase customerHandler = getHandlerHashMap().get("light");
         /*CustomerHandler customerHandler = getHandlerHashMap().get("curtain");*/
         if (customerHandler == null) {
@@ -107,8 +107,8 @@ public class ValueUtil {
         }
 
         HashMap<String, List<Integer>> hashMap = new HashMap<>(2);
-        hashMap.put("Light_C", testBean.getLight_S());
-        hashMap.put("Curtain_C", testBean.getCurtain_S());
+        hashMap.put("Light_C", lightOrCurtainBean.getLight_S());
+        hashMap.put("Curtain_C", lightOrCurtainBean.getCurtain_S());
         JSONObject jsonObject = new JSONObject(hashMap);
         String s = jsonObject.toString();
         L.e(s);

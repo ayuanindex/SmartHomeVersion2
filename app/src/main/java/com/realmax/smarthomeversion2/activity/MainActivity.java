@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.realmax.smarthomeversion2.R;
 import com.realmax.smarthomeversion2.audio.AudioService;
+import com.realmax.smarthomeversion2.audio.CommendActivity;
 
 import java.util.HashMap;
 
@@ -51,6 +52,38 @@ public class MainActivity extends BaseActivity {
         });
     }
 
+    @Override
+    protected void initData() {
+        // 开去语音服务
+        audioService = new Intent(this, AudioService.class);
+        startService(audioService);
+
+        startActivity(new Intent(this, CommendActivity.class));
+
+        // 初始化主界面资源
+        integerHashMap = new HashMap<>(7);
+        integerHashMap.put(0, R.drawable.pic_light_open);
+        integerHashMap.put(1, R.drawable.pic_dor_window_open);
+        integerHashMap.put(2, R.drawable.pic_door);
+        integerHashMap.put(3, R.drawable.pic_electrical_open);
+        integerHashMap.put(4, R.drawable.pic_sensor_open);
+        integerHashMap.put(5, R.drawable.pic_monitor_open);
+        integerHashMap.put(6, R.drawable.pic_airconditioning_open);
+
+        labels = new String[]{
+                "灯光",
+                "窗",
+                "门",
+                "电器",
+                "传感",
+                "监控",
+                "空调",
+        };
+
+        CustomerAdapter customerAdapter = new CustomerAdapter();
+        gvView.setAdapter(customerAdapter);
+    }
+
     private void jump(int position) {
         Intent intent = null;
         // 跳转到指定界面
@@ -89,36 +122,6 @@ public class MainActivity extends BaseActivity {
                 break;
         }
         startActivity(intent);
-    }
-
-    @Override
-    protected void initData() {
-        // 开去语音服务
-        audioService = new Intent(this, AudioService.class);
-        startService(audioService);
-
-        // 初始化主界面资源
-        integerHashMap = new HashMap<>(7);
-        integerHashMap.put(0, R.drawable.pic_light_open);
-        integerHashMap.put(1, R.drawable.pic_dor_window_open);
-        integerHashMap.put(2, R.drawable.pic_door);
-        integerHashMap.put(3, R.drawable.pic_electrical_open);
-        integerHashMap.put(4, R.drawable.pic_sensor_open);
-        integerHashMap.put(5, R.drawable.pic_monitor_open);
-        integerHashMap.put(6, R.drawable.pic_airconditioning_open);
-
-        labels = new String[]{
-                "灯光",
-                "窗",
-                "门",
-                "电器",
-                "传感",
-                "监控",
-                "空调",
-        };
-
-        CustomerAdapter customerAdapter = new CustomerAdapter();
-        gvView.setAdapter(customerAdapter);
     }
 
     /**

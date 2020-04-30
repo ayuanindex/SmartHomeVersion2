@@ -2,12 +2,12 @@ package com.realmax.smarthomeversion2.bean;
 
 import java.util.List;
 
-public class TestBean {
+public class LightOrCurtainBean {
 
     private List<Integer> Light_S;
     private List<Integer> Curtain_S;
 
-    public TestBean(List<Integer> light_S, List<Integer> curtain_S) {
+    public LightOrCurtainBean(List<Integer> light_S, List<Integer> curtain_S) {
         Light_S = light_S;
         Curtain_S = curtain_S;
     }
