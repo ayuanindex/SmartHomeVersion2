@@ -1,6 +1,7 @@
 package com.realmax.smarthomeversion2.activity;
 
 import android.annotation.SuppressLint;
+import android.os.Handler;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
@@ -39,6 +40,7 @@ public class DoorActivity extends BaseActivity {
     private int currentPosition;
     private String currentDoor;
     private DoorBean doorBean;
+    private Handler uiHandler;
 
     @Override
     protected int getLayout() {
@@ -105,6 +107,8 @@ public class DoorActivity extends BaseActivity {
     protected void initData() {
         String tag = getIntent().getStringExtra("tag");
 
+        uiHandler = new Handler(getMainLooper());
+
         doorNameList = new ArrayList<>();
         doorNameList.add("客厅大门");
         doorNameList.add("庭院后门");
@@ -123,8 +127,8 @@ public class DoorActivity extends BaseActivity {
                 @Override
                 public void getResultData(String msg) {
                     doorBean = new Gson().fromJson(msg, DoorBean.class);
-                    selectShowHide();
                     L.e("toString:" + doorBean.toString());
+                    selectShowHide();
                 }
             });
         }
@@ -253,12 +257,15 @@ public class DoorActivity extends BaseActivity {
      * @param views     需要显示或隐藏的控件
      */
     private void isVisible(boolean isVisible, View... views) {
-        for (View view : views) {
-            if (isVisible) {
-                view.setVisibility(View.VISIBLE);
-            } else {
-                view.setVisibility(View.GONE);
+        uiHandler.post(() -> {
+            for (View view : views) {
+                if (isVisible) {
+                    view.setVisibility(View.VISIBLE);
+                } else {
+                    view.setVisibility(View.GONE);
+                }
             }
-        }
+        });
+        ;
     }
 }

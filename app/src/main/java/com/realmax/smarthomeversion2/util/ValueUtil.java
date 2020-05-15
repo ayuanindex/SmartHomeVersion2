@@ -117,7 +117,6 @@ public class ValueUtil {
 
     public static void sendDoorCmd(String field, int door, int key, int password) {
         CustomerHandlerBase customerHandler = getHandlerHashMap().get("door");
-        /*CustomerHandler customerHandler = getHandlerHashMap().get("curtain");*/
         if (customerHandler == null) {
             return;
         }

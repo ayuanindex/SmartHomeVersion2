@@ -38,7 +38,6 @@ public class MainActivity extends BaseActivity {
         gvView = findViewById(R.id.gv_view);
     }
 
-
     @Override
     protected void initEvent() {
         ivHome.setOnClickListener((View v) -> {
@@ -90,7 +89,7 @@ public class MainActivity extends BaseActivity {
                 intent = new Intent(MainActivity.this, LightActivity.class);
                 intent.putExtra("tag", "light");
                 break;
-            case 1:// 门
+            case 1:// 窗
                 intent = new Intent(MainActivity.this, CurtainActivity.class);
                 /*intent.putExtra("tag", "curtain");*/
                 intent.putExtra("tag", "light");
