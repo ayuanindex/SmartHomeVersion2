@@ -12,6 +12,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
+import androidx.cardview.widget.CardView;
 
 import com.realmax.smarthomeversion2.App;
 import com.realmax.smarthomeversion2.R;
@@ -75,7 +76,7 @@ public class SettingActivity extends BaseActivity {
         viewHolder.etIp.setText(linkBean.getmHOST());
         viewHolder.etPort.setText("" + linkBean.getPORT());
 
-        viewHolder.tvOk.setOnClickListener((View v) -> {
+        viewHolder.cardOk.setOnClickListener((View v) -> {
             // 验证IP是否为空看那个
             String ip = viewHolder.etIp.getText().toString().trim();
             if (TextUtils.isEmpty(ip)) {
@@ -117,7 +118,11 @@ public class SettingActivity extends BaseActivity {
             alertDialog.dismiss();
         });
 
-        viewHolder.tvCancel.setOnClickListener((View v) -> alertDialog.dismiss());
+        viewHolder.cardCancel.setOnClickListener((View v) -> alertDialog.dismiss());
+
+        if (alertDialog.getWindow() != null) {
+            alertDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        }
         alertDialog.show();
     }
 
@@ -125,15 +130,15 @@ public class SettingActivity extends BaseActivity {
         View rootView;
         EditText etIp;
         EditText etPort;
-        TextView tvCancel;
-        TextView tvOk;
+        CardView cardCancel;
+        CardView cardOk;
 
         ViewHolder(View rootView) {
             this.rootView = rootView;
             this.etIp = rootView.findViewById(R.id.et_ip);
             this.etPort = rootView.findViewById(R.id.et_port);
-            this.tvCancel = rootView.findViewById(R.id.tv_cancel);
-            this.tvOk = rootView.findViewById(R.id.tv_ok);
+            this.cardCancel = rootView.findViewById(R.id.cardCancel);
+            this.cardOk = rootView.findViewById(R.id.cardOk);
         }
     }
 
