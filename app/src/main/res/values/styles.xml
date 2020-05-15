@@ -30,8 +30,6 @@
     </style>
 
     <style name="clickStyle">
-        <!--<item name="android:clickable">true</item>-->
-        <!--<item name="android:focusable">true</item>-->
         <item name="android:foreground">?attr/selectableItemBackgroundBorderless</item>
     </style>
 </resources>

@@ -2,17 +2,22 @@ package com.realmax.smarthomeversion2.activity;
 
 import android.annotation.SuppressLint;
 import android.os.Handler;
+import android.text.TextUtils;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.Window;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.SwitchCompat;
+import androidx.cardview.widget.CardView;
 
-import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
+import com.realmax.smarthomeversion2.App;
 import com.realmax.smarthomeversion2.R;
 import com.realmax.smarthomeversion2.bean.DoorBean;
 import com.realmax.smarthomeversion2.tcp.CustomerCallback;
@@ -37,7 +42,7 @@ public class DoorActivity extends BaseActivity {
     private LinearLayout llKey;
     private LinearLayout llPassword;
     private ArrayList<String> doorNameList;
-    private int currentPosition;
+    private int currentPosition = 0;
     private String currentDoor;
     private DoorBean doorBean;
     private Handler uiHandler;
@@ -65,6 +70,8 @@ public class DoorActivity extends BaseActivity {
         llKey = findViewById(R.id.ll_key);
         llPassword = findViewById(R.id.ll_password);
 
+        uiHandler = new Handler(getMainLooper());
+
         isVisible(false, llDoor, llKey, llPassword);
     }
 
@@ -75,7 +82,7 @@ public class DoorActivity extends BaseActivity {
 
         swDoorToggle.setOnTouchListener((View v, MotionEvent event) -> {
             if (MotionEvent.ACTION_DOWN == event.getActionMasked()) {
-                DoorActivity.this.sendCmd();
+                sendCmd();
                 L.e("lkasjdlfaks");
             }
             return true;
@@ -96,18 +103,9 @@ public class DoorActivity extends BaseActivity {
         ivSwitchRight.setOnClickListener((View v) -> switchPage(1));
     }
 
-    /**
-     * 执行输入密码的操作
-     */
-    private void putPassword() {
-
-    }
-
     @Override
     protected void initData() {
         String tag = getIntent().getStringExtra("tag");
-
-        uiHandler = new Handler(getMainLooper());
 
         doorNameList = new ArrayList<>();
         doorNameList.add("客厅大门");
@@ -191,6 +189,81 @@ public class DoorActivity extends BaseActivity {
     }
 
     /**
+     * 执行输入密码的操作
+     */
+    private void putPassword() {
+        // 显示弹窗输入密码
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        AlertDialog alertDialog = builder.create();
+        View inflate = View.inflate(this, R.layout.dialog_put_password, null);
+        alertDialog.setView(inflate);
+        ViewHolder holder = new ViewHolder(inflate);
+
+        holder.cardUnlock.setOnClickListener((View v) -> {
+            String passwordStr = holder.etPassword.getText().toString().trim();
+            if (TextUtils.isEmpty(passwordStr)) {
+                App.showToast("请输入密码");
+            } else if (passwordStr.length() != 4) {
+                App.showToast("密码长度不足，请重试");
+            } else {
+                // 执行发送密码的操作;
+                setPassword(Integer.parseInt(passwordStr));
+                uiHandler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        alertDialog.dismiss();
+                    }
+                }, 500);
+            }
+        });
+
+        Window window = alertDialog.getWindow();
+        if (window != null) {
+            window.setBackgroundDrawableResource(android.R.color.transparent);
+        }
+        alertDialog.show();
+    }
+
+    /**
+     * 给对应的门的JavaBean设置密码
+     *
+     * @param password 需要输入的密码
+     */
+    private void setPassword(int password) {
+        // 123
+        switch (currentPosition) {
+            case 1:
+                doorBean.getDoor2_S().setPass(password);
+                break;
+            case 2:
+                doorBean.getDoor3_S().setPass(password);
+                break;
+            case 3:
+                doorBean.getDoor4_S().setPass(password);
+                break;
+        }
+
+        // 盗用指令发送的方法针对某个门发送指令
+        sendCmd();
+    }
+
+    /**
+     * 输入密码弹窗的ViewHolder
+     */
+    public static class ViewHolder {
+        View rootView;
+        EditText etPassword;
+        CardView cardUnlock;
+
+        ViewHolder(View rootView) {
+            this.rootView = rootView;
+            this.etPassword = (EditText) rootView.findViewById(R.id.et_password);
+            this.cardUnlock = (CardView) rootView.findViewById(R.id.cardUnlock);
+        }
+    }
+
+
+    /**
      * 切换门
      */
     @SuppressLint("SetTextI18n")
@@ -219,6 +292,7 @@ public class DoorActivity extends BaseActivity {
             default:
                 break;
         }
+
         selectShowHide();
         tvCurrentRoom.setText(currentDoor);
     }
@@ -227,27 +301,45 @@ public class DoorActivity extends BaseActivity {
      * 选择控件进行显示或者隐藏
      */
     public void selectShowHide() {
-        switch (currentPosition) {
-            case 0:
-                isVisible(true, llDoor);
-                isVisible(false, llPassword, llKey);
-                break;
-            case 1:
-            case 2:
-                isVisible(true, llKey, llPassword);
-                isVisible(false, llDoor);
-                break;
-            case 3:
-                isVisible(true, llDoor, llPassword);
-                isVisible(false, llKey);
-                break;
-            case 4:
-                isVisible(true, llDoor, llKey);
-                isVisible(false, llPassword);
-                break;
-            default:
-                break;
-        }
+        uiHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                switch (currentPosition) {
+                    case 0:
+                        DoorBean.Door1SBean door1S = doorBean.getDoor1_S();
+                        swDoorToggle.setChecked(door1S.getDoor_s() == 1);
+                        isVisible(true, llDoor);
+                        isVisible(false, llPassword, llKey);
+                        break;
+                    case 1:
+                        DoorBean.Door2SBean door2S = doorBean.getDoor2_S();
+                        swLockToggle.setChecked(door2S.getLock_s() == 1);
+                        isVisible(true, llKey, llPassword);
+                        isVisible(false, llDoor);
+                    case 2:
+                        DoorBean.Door3SBean door3S = doorBean.getDoor3_S();
+                        swLockToggle.setChecked(door3S.getLock_s() == 1);
+                        isVisible(true, llKey, llPassword);
+                        isVisible(false, llDoor);
+                        break;
+                    case 3:
+                        DoorBean.Door4SBean door4S = doorBean.getDoor4_S();
+                        swDoorToggle.setChecked(door4S.getDoor_s() == 1);
+                        isVisible(true, llDoor, llPassword);
+                        isVisible(false, llKey);
+                        break;
+                    case 4:
+                        DoorBean.Door5SBean door5S = doorBean.getDoor5_S();
+                        swDoorToggle.setChecked(door5S.getDoor_s() == 1);
+                        swLockToggle.setChecked(door5S.getLock_s() == 1);
+                        isVisible(true, llDoor, llKey);
+                        isVisible(false, llPassword);
+                        break;
+                    default:
+                        break;
+                }
+            }
+        });
     }
 
     /**
@@ -257,15 +349,12 @@ public class DoorActivity extends BaseActivity {
      * @param views     需要显示或隐藏的控件
      */
     private void isVisible(boolean isVisible, View... views) {
-        uiHandler.post(() -> {
-            for (View view : views) {
-                if (isVisible) {
-                    view.setVisibility(View.VISIBLE);
-                } else {
-                    view.setVisibility(View.GONE);
-                }
+        for (View view : views) {
+            if (isVisible) {
+                view.setVisibility(View.VISIBLE);
+            } else {
+                view.setVisibility(View.GONE);
             }
-        });
-        ;
+        }
     }
 }

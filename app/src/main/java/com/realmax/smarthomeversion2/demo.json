@@ -2,7 +2,7 @@
   "door1_C": {
     "pass_c": 1234,
     "lock_c": 1,
-    "door_C": 0
+    "door_C": 1
   },
   "door1_S": {
     "pass": 1234,
@@ -12,7 +12,7 @@
   "door2_C": {
     "pass_c": 1234,
     "lock_c": 1,
-    "door_C": 0
+    "door_C": 1
   },
   "door2_S": {
     "pass": 1234,
@@ -22,7 +22,7 @@
   "door3_C": {
     "pass_c": 1234,
     "lock_c": 1,
-    "door_C": 0
+    "door_C": 1
   },
   "door3_S": {
     "pass": 1234,
@@ -32,7 +32,7 @@
   "door4_C": {
     "pass_c": 1234,
     "lock_c": 1,
-    "door_C": 0
+    "door_C": 1
   },
   "door4_S": {
     "pass": 1234,
@@ -42,7 +42,7 @@
   "door5_C": {
     "pass_c": 1234,
     "lock_c": 1,
-    "door_C": 0
+    "door_C": 1
   },
   "door5_S": {
     "pass": 1234,
