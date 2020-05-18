@@ -1,6 +1,5 @@
 package com.realmax.smarthomeversion2.audio;
 
-import android.graphics.MaskFilter;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -9,14 +8,13 @@ import androidx.annotation.LayoutRes;
 import com.google.gson.Gson;
 import com.realmax.smarthomeversion2.R;
 import com.realmax.smarthomeversion2.activity.BaseActivity;
+import com.realmax.smarthomeversion2.bean.LightOrCurtainBean;
 import com.realmax.smarthomeversion2.bean.MessageBean;
 import com.realmax.smarthomeversion2.bean.RoomBean;
-import com.realmax.smarthomeversion2.bean.LightOrCurtainBean;
 import com.realmax.smarthomeversion2.tcp.CustomerHandlerBase;
 import com.realmax.smarthomeversion2.util.CustomerThreadManager;
 import com.realmax.smarthomeversion2.util.L;
 import com.realmax.smarthomeversion2.util.ValueUtil;
-import com.tencent.qcloudtts.LongTextTTS.LongTextTtsController;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,13 +22,12 @@ import java.util.List;
 public abstract class AudioControl {
     private static final String TAG = "AudioControl";
     private static final String CLOSE_REGEX = ".*退下.*";
-    public static final String LIGTH = "灯";
-    public static final String DOOR = "门";
-    public static final String CURTAIN = "窗帘";
+    private static final String LIGTH = "灯";
+    private static final String DOOR = "门";
+    private static final String CURTAIN = "窗帘";
     private final BaseActivity mActivity;
 
     private final ArrayList<MessageBean> messageBeans;
-    private final CommendActivity.CustomerAdapter customerAdapter;
     private final ArrayList<RoomBean> roomBeans;
 
     private static final String OPEN_LIGHT = ".*[开|灯].*[开|灯].*";
@@ -58,7 +55,6 @@ public abstract class AudioControl {
     AudioControl(BaseActivity mActivity, ArrayList<MessageBean> messageBeans, CommendActivity.CustomerAdapter customerAdapter) {
         this.mActivity = mActivity;
         this.messageBeans = messageBeans;
-        this.customerAdapter = customerAdapter;
         roomBeans = mActivity.roomBeans;
     }
 
@@ -79,7 +75,7 @@ public abstract class AudioControl {
      *
      * @param str 识别完成的字符串
      */
-    public void onSegmentSuccess(String str) {
+    void onSegmentSuccess(String str) {
         // 回调识别完成时的字符串
         onSuccessString(str);
         // 添加普通的聊天布局
@@ -101,16 +97,13 @@ public abstract class AudioControl {
      * @param layout 反馈的布局
      */
     private void feedBack(String msg, @LayoutRes int layout) {
-        mActivity.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                SpeechMessage.getInstance()
-                        .initLongTextTtsController(1301676932, "AKIDYqrzrcNJHyjEagH3M4WbRWLsCJNBB3D8", "mIXEfKjz0sVstdQ2VjhPqAMSIwgCTSAc")
-                        .start(msg, (s, i) -> {
-                            Log.d(TAG, "run: :::::::::" + s);
-                        });
-                addSimpleList(msg, layout);
-            }
+        mActivity.runOnUiThread(() -> {
+            SpeechMessage.getInstance()
+                    .initLongTextTtsController(1301676932, "AKIDYqrzrcNJHyjEagH3M4WbRWLsCJNBB3D8", "mIXEfKjz0sVstdQ2VjhPqAMSIwgCTSAc")
+                    .start(msg, (s, i) -> {
+                        Log.d(TAG, "run: :::::::::" + s);
+                    });
+            addSimpleList(msg, layout);
         });
     }
 
@@ -123,14 +116,15 @@ public abstract class AudioControl {
     private void addSimpleList(String str, int layout) {
         mActivity.runOnUiThread(() -> {
             messageBeans.add(messageBeans.size(), new MessageBean(str, layout));
+            // 刷新列表
             updateItem();
-            /*customerAdapter.notifyDataSetChanged();*/
         });
     }
 
     /**
      * 非场景模式，执行普通场景模式的选择指令
-     * * @param str
+     *
+     * @param str 识别出的文字
      */
     private void notScenes(String str) {
         if (str.matches(CLOSE_REGEX)) {

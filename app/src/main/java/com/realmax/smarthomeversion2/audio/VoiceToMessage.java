@@ -96,9 +96,9 @@ public class VoiceToMessage {
      * 初始化
      */
     public void init(Context context,
-                     AudioRecognizeResultListener audioRecognizeResultlistener,
-                     AudioRecognizeStateListener audioRecognizeStateListener,
-                     AudioRecognizeTimeoutListener audioRecognizeTimeoutListener) {
+                     final AudioRecognizeResultListener audioRecognizeResultlistener,
+                     final AudioRecognizeStateListener audioRecognizeStateListener,
+                     final AudioRecognizeTimeoutListener audioRecognizeTimeoutListener) {
         this.context = context;
         // 签名鉴权类，sdk中给出了一个本地的鉴权类，但由于需要用户提供secretKey，这可能会导致一些安全上的问题，
         // 因此，请用户自行实现CredentialProvider接口
@@ -126,34 +126,34 @@ public class VoiceToMessage {
     /**
      * 识别结果回调监听器
      *
-     * @param audioRecognizeResultlistener
+     * @param audioRecognizeResultlistener 音频识别结果侦听器
      */
-    public void setAudioRecognizeResultlistener(AudioRecognizeResultListener audioRecognizeResultlistener) {
+    private void setAudioRecognizeResultlistener(AudioRecognizeResultListener audioRecognizeResultlistener) {
         this.audioRecognizeResultlistener = audioRecognizeResultlistener;
     }
 
     /**
      * 识别状态监听器
      *
-     * @param audioRecognizeStateListener
+     * @param audioRecognizeStateListener 音频识别状态监听器
      */
-    public void setAudioRecognizeStateListener(AudioRecognizeStateListener audioRecognizeStateListener) {
+    private void setAudioRecognizeStateListener(AudioRecognizeStateListener audioRecognizeStateListener) {
         this.audioRecognizeStateListener = audioRecognizeStateListener;
     }
 
     /**
      * 识别超时监听器
      *
-     * @param audioRecognizeTimeoutListener
+     * @param audioRecognizeTimeoutListener 音频识别超时侦听器
      */
-    public void setAudioRecognizeTimeoutListener(AudioRecognizeTimeoutListener audioRecognizeTimeoutListener) {
+    private void setAudioRecognizeTimeoutListener(AudioRecognizeTimeoutListener audioRecognizeTimeoutListener) {
         this.audioRecognizeTimeoutListener = audioRecognizeTimeoutListener;
     }
 
     /**
      * 开始录音
      */
-    public void startVoice() {
+    void startVoice() {
         AudioRecognizeRequest.Builder builder = new AudioRecognizeRequest.Builder();
 
         // 初始化识别请求
