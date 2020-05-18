@@ -17,6 +17,7 @@ import com.realmax.smarthomeversion2.App;
 import com.realmax.smarthomeversion2.R;
 import com.realmax.smarthomeversion2.activity.BaseActivity;
 import com.realmax.smarthomeversion2.bean.MessageBean;
+import com.tencent.qcloudtts.LongTextTTS.LongTextTtsController;
 
 import java.util.ArrayList;
 
@@ -53,8 +54,6 @@ public class CommendActivity extends BaseActivity {
         customerAdapter = new CustomerAdapter();
         rcList.setAdapter(customerAdapter);
 
-        SpeechMessage.initTts("哈喽啊远!", this);
-
         App.setAudioControl(new AudioControl(this, messageBeans, customerAdapter) {
             @Override
             public void onSliceSuccess(String msg) {
@@ -73,6 +72,7 @@ public class CommendActivity extends BaseActivity {
                     @Override
                     public void run() {
                         Log.d(TAG, "onSuccessString: 隐藏文字");
+                        rcList.scrollToPosition(messageBeans.size() - 1);
                         tvMessage.setVisibility(View.GONE);
                     }
                 });

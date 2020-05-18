@@ -63,7 +63,7 @@ public class EncodeAndDecode {
         StringBuffer unicode = new StringBuffer();
         char c;
         int bit;
-        String tmp = null;
+        String tmp;
         for (int i = 0; i < inStr.length(); i++) {
             c = inStr.charAt(i);
             if (c > 255) {
@@ -88,8 +88,10 @@ public class EncodeAndDecode {
     }
 
     /**
-     * @param drawable
-     * @return
+     * drawable转bitmap
+     *
+     * @param drawable 需要转换的drawable
+     * @return 返回转换成功后的bitmap
      */
     @RequiresApi(api = Build.VERSION_CODES.O)
     public static Bitmap drawableToBitmap(Drawable drawable) {
@@ -102,6 +104,12 @@ public class EncodeAndDecode {
         return bitmap;
     }
 
+    /**
+     * bitmap转base64
+     *
+     * @param bitmap 需要转换的bitmap
+     * @return 返回bitmap的base64字符串
+     */
     public static String bitmapToBase64(Bitmap bitmap) {
         String result = null;
         ByteArrayOutputStream baos = null;
@@ -132,10 +140,10 @@ public class EncodeAndDecode {
         return result;
     }
 
-    public static ByteArrayInputStream bitmapToByte(Bitmap bitmap) {
+    public static byte[] bitmapToByte(Bitmap bitmap) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
-        return new ByteArrayInputStream(baos.toByteArray());
-        /*return baos.toByteArray();*/
+        /*return new ByteArrayInputStream(baos.toByteArray());*/
+        return baos.toByteArray();
     }
 }

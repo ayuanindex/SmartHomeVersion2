@@ -1,6 +1,7 @@
 package com.realmax.smarthomeversion2.audio;
 
 import android.content.Context;
+import android.media.AudioManager;
 import android.util.Log;
 
 import com.tencent.aai.AAIClient;
@@ -31,6 +32,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class VoiceToMessage {
     private static final String TAG = "VoiceToMessage";
+    private static VoiceToMessage voiceToMessage;
     private int appId = 1301676932;
     private int projectId = 0;
     private String secretId = "AKIDYqrzrcNJHyjEagH3M4WbRWLsCJNBB3D8";
@@ -76,6 +78,17 @@ public class VoiceToMessage {
         this.secretId = secretId;
         this.secretKey = secretKey;
         this.realTimeMonitoring = realTimeMonitoring;
+    }
+
+    public static VoiceToMessage getInstance() {
+        if (voiceToMessage == null) {
+            synchronized (VoiceToMessage.class) {
+                if (voiceToMessage == null) {
+                    voiceToMessage = new VoiceToMessage(true);
+                }
+            }
+        }
+        return voiceToMessage;
     }
 
 
@@ -260,5 +273,11 @@ public class VoiceToMessage {
                 }
             });
         }
+    }
+
+    public void setMic(boolean isStart) {
+        AudioManager audioManager = (AudioManager) this.context.getSystemService(Context.AUDIO_SERVICE);
+        assert audioManager != null;
+        audioManager.setMicrophoneMute(isStart);
     }
 }

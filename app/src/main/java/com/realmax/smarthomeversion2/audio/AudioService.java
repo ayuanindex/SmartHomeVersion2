@@ -41,7 +41,7 @@ public class AudioService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d(TAG, "onStartCommand: 服务启动");
 
-        voiceToMessage = new VoiceToMessage(true);
+        voiceToMessage = VoiceToMessage.getInstance();
 
         voiceToMessage.init(getApplicationContext(), new AudioRecognizeResultListener() {
             @Override

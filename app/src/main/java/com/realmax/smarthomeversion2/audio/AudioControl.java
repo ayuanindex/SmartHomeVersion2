@@ -1,6 +1,8 @@
 package com.realmax.smarthomeversion2.audio;
 
+import android.graphics.MaskFilter;
 import android.text.TextUtils;
+import android.util.Log;
 
 import androidx.annotation.LayoutRes;
 
@@ -14,6 +16,7 @@ import com.realmax.smarthomeversion2.tcp.CustomerHandlerBase;
 import com.realmax.smarthomeversion2.util.CustomerThreadManager;
 import com.realmax.smarthomeversion2.util.L;
 import com.realmax.smarthomeversion2.util.ValueUtil;
+import com.tencent.qcloudtts.LongTextTTS.LongTextTtsController;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -99,7 +102,12 @@ public abstract class AudioControl {
         mActivity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                SpeechMessage.initTts(msg, mActivity);
+                /*SpeechMessage.initTts(msg, mActivity);*/
+                SpeechMessage.getInstance()
+                        .initLongTextTtsController(1301676932, "AKIDYqrzrcNJHyjEagH3M4WbRWLsCJNBB3D8", "mIXEfKjz0sVstdQ2VjhPqAMSIwgCTSAc")
+                        .start(msg, (s, i) -> {
+                            Log.d(TAG, "run: :::::::::" + s);
+                        });
                 addSimpleList(msg, layout);
             }
         });
@@ -173,6 +181,7 @@ public abstract class AudioControl {
     private boolean selectRoom(String str) {
         roomToBeOperatedList.clear();
         for (RoomBean roomBean : roomBeans) {
+            // 检查有没有提到的房间
             String regex = ".*" + roomBean.getRoomName() + ".*";
             if (str.matches(regex)) {
                 // 设置待操作房间
@@ -219,6 +228,7 @@ public abstract class AudioControl {
             feedBack("正在" + (isOpen ? "开" : "关") + "灯", R.layout.item_left_message);
         });
 
+        // 获取最近收到的等的状态json数据
         String currentCommand = lightHandler.getCurrentCommand();
         L.e("灯的当前状态" + currentCommand);
         if (!TextUtils.isEmpty(currentCommand)) {

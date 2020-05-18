@@ -11,7 +11,6 @@ import android.widget.TextView;
 
 import com.realmax.smarthomeversion2.R;
 import com.realmax.smarthomeversion2.audio.AudioService;
-import com.realmax.smarthomeversion2.audio.CommendActivity;
 
 import java.util.HashMap;
 
