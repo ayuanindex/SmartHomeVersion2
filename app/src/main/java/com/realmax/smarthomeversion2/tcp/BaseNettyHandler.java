@@ -24,6 +24,7 @@ public abstract class BaseNettyHandler extends SimpleChannelInboundHandler<ByteB
     private int rightCount = 0;
     private static final char left = '{';
     private static final char right = '}';
+    public String currentCommand = "";
 
 
     @Override
@@ -32,6 +33,7 @@ public abstract class BaseNettyHandler extends SimpleChannelInboundHandler<ByteB
         ByteBuf buf = msg.readBytes(msg.readableBytes());
         String s = buf.toString(StandardCharsets.UTF_8);
         /*String s = buf.toString(StandardCharsets.UTF_8);*/
+        currentCommand = s;
         callbackFunction(s);
     }
 

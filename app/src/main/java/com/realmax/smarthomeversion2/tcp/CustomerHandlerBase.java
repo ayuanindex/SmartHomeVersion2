@@ -13,7 +13,7 @@ public class CustomerHandlerBase extends BaseNettyHandler {
     private CustomerCallback customerCallback;
     private boolean flag = false;
     private StringBuffer strings = new StringBuffer();
-    private String currentCommand = "";
+    /*private String currentCommand = "";*/
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
