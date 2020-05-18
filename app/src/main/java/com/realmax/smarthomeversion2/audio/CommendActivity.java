@@ -71,11 +71,17 @@ public class CommendActivity extends BaseActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+
                         Log.d(TAG, "onSuccessString: 隐藏文字");
-                        rcList.scrollToPosition(messageBeans.size() - 1);
                         tvMessage.setVisibility(View.GONE);
                     }
                 });
+            }
+
+            @Override
+            public void updateItem() {
+                customerAdapter.notifyDataSetChanged();
+                rcList.scrollToPosition(messageBeans.size() - 1);
             }
         });
     }

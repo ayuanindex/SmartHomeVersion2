@@ -182,7 +182,7 @@ public class VoiceToMessage {
                 .maxAudioStartSilenceTime(10000)
                 // 音量回调时间
                 .minVolumeCallbackTime(80)
-                .sensitive(10)
+                .sensitive(1)
                 .build();
 
         if (aaiClient == null) {

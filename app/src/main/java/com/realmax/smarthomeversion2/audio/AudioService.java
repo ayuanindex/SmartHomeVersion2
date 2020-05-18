@@ -161,6 +161,7 @@ public class AudioService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        Log.e(TAG, "onDestroy: ::::::::::::服务被销毁");
         // 服务销毁时关闭语音
         if (voiceToMessage != null) {
             voiceToMessage.close();

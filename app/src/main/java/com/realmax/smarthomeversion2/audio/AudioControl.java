@@ -71,6 +71,8 @@ public abstract class AudioControl {
 
     public abstract void onSuccessString(String msg);
 
+    public abstract void updateItem();
+
     /**
      * 识别完成时的回调,调用识别完成时的抽象方法
      * 在此方法中可以根据语音提到的相关命令来执行对应的操作
@@ -102,7 +104,6 @@ public abstract class AudioControl {
         mActivity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                /*SpeechMessage.initTts(msg, mActivity);*/
                 SpeechMessage.getInstance()
                         .initLongTextTtsController(1301676932, "AKIDYqrzrcNJHyjEagH3M4WbRWLsCJNBB3D8", "mIXEfKjz0sVstdQ2VjhPqAMSIwgCTSAc")
                         .start(msg, (s, i) -> {
@@ -122,7 +123,8 @@ public abstract class AudioControl {
     private void addSimpleList(String str, int layout) {
         mActivity.runOnUiThread(() -> {
             messageBeans.add(messageBeans.size(), new MessageBean(str, layout));
-            customerAdapter.notifyDataSetChanged();
+            updateItem();
+            /*customerAdapter.notifyDataSetChanged();*/
         });
     }
 
@@ -165,7 +167,8 @@ public abstract class AudioControl {
             }
         } else if (!selectRoom(str)) {
             // 没有检测到有关房间的指令
-            feedBack("嗯...啊远大人，你要我干什么呢？", R.layout.item_left_message);
+            /*feedBack("嗯...啊远大人，你要我干什么呢？", R.layout.item_left_message);*/
+            feedBack("Um ... Ah Master, what do you want me to do?", R.layout.item_left_message);
         }/* else {
             // 没有匹配到任何指令
             addSimpleList("抱歉，我不知道你在说什么");
@@ -219,7 +222,7 @@ public abstract class AudioControl {
         CustomerHandlerBase lightHandler = ValueUtil.getHandlerHashMap().get("light");
         if (lightHandler == null) {
             mActivity.runOnUiThread(() -> {
-                feedBack("灯的连接尚未开启，请开启后再试吧", R.layout.item_left_message);
+                feedBack("灯的连接尚未开启，请开启后再试吧……", R.layout.item_left_message);
             });
             return;
         }
