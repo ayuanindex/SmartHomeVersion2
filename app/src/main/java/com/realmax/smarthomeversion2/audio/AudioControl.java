@@ -405,17 +405,12 @@ public abstract class AudioControl {
         ValueUtil.sendDoorCmd(field, door, lock, pass);
     }
 
-    public void sendPassword(int passwordInt, EditText etPutPassword) {
+    public void sendPassword(int passwordInt) {
         if (passwordInt == pass) {
             feedBack("密码输入正确，请稍后", R.layout.item_left_message);
-            etPutPassword.setEnabled(false);
-            etPutPassword.setVisibility(View.GONE);
             ValueUtil.sendDoorCmd(field, door, lock, passwordInt);
         } else {
-            etPutPassword.setText("");
-            etPutPassword.setVisibility(View.VISIBLE);
-            etPutPassword.setEnabled(true);
-            feedBack("密码输入错误，请重试", R.layout.item_passoword);
+            feedBack("密码输入错误", R.layout.item_left_message);
         }
     }
 

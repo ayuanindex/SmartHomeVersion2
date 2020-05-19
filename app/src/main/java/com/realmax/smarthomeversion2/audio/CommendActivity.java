@@ -1,6 +1,7 @@
 package com.realmax.smarthomeversion2.audio;
 
 import android.annotation.SuppressLint;
+import android.opengl.ETC1;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -155,7 +156,10 @@ public class CommendActivity extends BaseActivity {
                 }
 
                 int passwordInt = Integer.parseInt(passwordStr);
-                audioControl.sendPassword(passwordInt, holder.etPutPassword);
+                holder.etPutPassword.setText("");
+                messageBeans.remove(position);
+                customerAdapter.notifyDataSetChanged();
+                audioControl.sendPassword(passwordInt);
             });
         }
 
