@@ -6,7 +6,7 @@ public class MessageBean {
     /**
      * 识别出的文字
      */
-    private String messge;
+    private String message;
 
     /**
      * 处理后需要的布局
@@ -16,17 +16,17 @@ public class MessageBean {
     public MessageBean() {
     }
 
-    public MessageBean(String messge, @LayoutRes int layout) {
-        this.messge = messge;
+    public MessageBean(String message, @LayoutRes int layout) {
+        this.message = message;
         this.layout = layout;
     }
 
-    public String getMessge() {
-        return messge;
+    public String getMessage() {
+        return message;
     }
 
-    public void setMessge(String messge) {
-        this.messge = messge;
+    public void setMessage(String message) {
+        this.message = message;
     }
 
     public int getLayout() {
@@ -40,7 +40,7 @@ public class MessageBean {
     @Override
     public String toString() {
         return "MessageBean{" +
-                "messge='" + messge + '\'' +
+                "messge='" + message + '\'' +
                 ", layout=" + layout +
                 '}';
     }

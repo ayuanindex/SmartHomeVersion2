@@ -1,10 +1,11 @@
 package com.realmax.smarthomeversion2.audio;
 
 import android.annotation.SuppressLint;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -17,7 +18,6 @@ import com.realmax.smarthomeversion2.App;
 import com.realmax.smarthomeversion2.R;
 import com.realmax.smarthomeversion2.activity.BaseActivity;
 import com.realmax.smarthomeversion2.bean.MessageBean;
-import com.tencent.qcloudtts.LongTextTTS.LongTextTtsController;
 
 import java.util.ArrayList;
 
@@ -28,6 +28,7 @@ public class CommendActivity extends BaseActivity {
     private CustomerAdapter customerAdapter;
     private ArrayList<MessageBean> messageBeans;
     private TextView tvMessage;
+    private AudioControl audioControl;
 
     @Override
     protected int getLayout() {
@@ -54,7 +55,7 @@ public class CommendActivity extends BaseActivity {
         customerAdapter = new CustomerAdapter();
         rcList.setAdapter(customerAdapter);
 
-        App.setAudioControl(new AudioControl(this, messageBeans, customerAdapter) {
+        audioControl = new AudioControl(this, messageBeans, customerAdapter) {
             @Override
             public void onSliceSuccess(String msg) {
                 runOnUiThread(new Runnable() {
@@ -83,7 +84,8 @@ public class CommendActivity extends BaseActivity {
                 customerAdapter.notifyDataSetChanged();
                 rcList.scrollToPosition(messageBeans.size() - 1);
             }
-        });
+        };
+        App.setAudioControl(audioControl);
     }
 
     class CustomerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -95,6 +97,9 @@ public class CommendActivity extends BaseActivity {
                 case R.layout.item_left_select_light:
                     view = View.inflate(CommendActivity.this, R.layout.item_left_select_light, null);
                     return new SelectLightViewHolder(view);
+                case R.layout.item_passoword:
+                    view = View.inflate(CommendActivity.this, R.layout.item_passoword, null);
+                    return new PutPasswordViewHolder(view);
                 default:
                     view = View.inflate(CommendActivity.this, R.layout.item_left_message, null);
                     return new MessageViewHolder(view);
@@ -105,13 +110,56 @@ public class CommendActivity extends BaseActivity {
         @Override
         public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
             if (holder instanceof MessageViewHolder) {
-                Log.d(TAG, "onBindViewHolder: message");
-                MessageViewHolder messageViewHolder = (MessageViewHolder) holder;
-                messageViewHolder.tvMessage.setText(messageBeans.get(position).getMessge());
+                loadSimpleViewHolder((MessageViewHolder) holder, position);
             } else if (holder instanceof SelectLightViewHolder) {
-                SelectLightViewHolder selectLightViewHolder = (SelectLightViewHolder) holder;
-                selectLightViewHolder.tvMsg.setText(messageBeans.get(position).getMessge());
+                loadSelectLightViewHolder((SelectLightViewHolder) holder, position);
+            } else if (holder instanceof PutPasswordViewHolder) {
+                loadPutPasswordViewHolder((PutPasswordViewHolder) holder, position);
             }
+        }
+
+        /**
+         * 加载普通的ViewHolder
+         *
+         * @param holder   holder
+         * @param position 当前的元素
+         */
+        private void loadSimpleViewHolder(@NonNull MessageViewHolder holder, int position) {
+            Log.d(TAG, "onBindViewHolder: message");
+            holder.tvMessage.setText(messageBeans.get(position).getMessage());
+        }
+
+        /**
+         * 加载选择灯的ViewHolder
+         *
+         * @param holder   holder
+         * @param position 当前的元素
+         */
+        private void loadSelectLightViewHolder(@NonNull SelectLightViewHolder holder, int position) {
+            holder.tvMsg.setText(messageBeans.get(position).getMessage());
+        }
+
+        /**
+         * 加载输入密码的ViewHolder
+         *
+         * @param holder   holder
+         * @param position 当前的元素
+         */
+        private void loadPutPasswordViewHolder(@NonNull PutPasswordViewHolder holder, int position) {
+            holder.tvMessage.setText(messageBeans.get(position).getMessage());
+            holder.cardOk.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    String passwordStr = holder.etPutPassword.getText().toString().trim();
+                    if (TextUtils.isEmpty(passwordStr)) {
+                        App.showToast("请输入密码");
+                        return;
+                    }
+
+                    int passwordInt = Integer.parseInt(passwordStr);
+                    audioControl.sendPassword(passwordInt);
+                }
+            });
         }
 
         @Override
@@ -153,6 +201,22 @@ public class CommendActivity extends BaseActivity {
                 this.tvMsg = rootView.findViewById(R.id.tv_msg);
                 this.lvList = rootView.findViewById(R.id.lv_list);
             }
+        }
+
+        class PutPasswordViewHolder extends RecyclerView.ViewHolder {
+            View rootView;
+            TextView tvMessage;
+            EditText etPutPassword;
+            CardView cardOk;
+
+            PutPasswordViewHolder(View rootView) {
+                super(rootView);
+                this.rootView = rootView;
+                this.tvMessage = (TextView) rootView.findViewById(R.id.tv_message);
+                this.etPutPassword = (EditText) rootView.findViewById(R.id.et_putPassword);
+                this.cardOk = rootView.findViewById(R.id.cardOk);
+            }
+
         }
     }
 

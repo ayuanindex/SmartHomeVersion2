@@ -5,9 +5,11 @@ import android.util.Log;
 
 import androidx.annotation.LayoutRes;
 
+import com.google.android.material.appbar.AppBarLayout;
 import com.google.gson.Gson;
 import com.realmax.smarthomeversion2.R;
 import com.realmax.smarthomeversion2.activity.BaseActivity;
+import com.realmax.smarthomeversion2.bean.DoorBean;
 import com.realmax.smarthomeversion2.bean.LightOrCurtainBean;
 import com.realmax.smarthomeversion2.bean.MessageBean;
 import com.realmax.smarthomeversion2.bean.RoomBean;
@@ -51,6 +53,11 @@ public abstract class AudioControl {
      * 待操作房间集合
      */
     private ArrayList<String> roomToBeOperatedList = new ArrayList<>(0);
+    private int passwordInt;
+    private int door;
+    private String field;
+    private int lock;
+    private int pass;
 
     AudioControl(BaseActivity mActivity, ArrayList<MessageBean> messageBeans, CommendActivity.CustomerAdapter customerAdapter) {
         this.mActivity = mActivity;
@@ -65,8 +72,16 @@ public abstract class AudioControl {
      */
     public abstract void onSliceSuccess(String msg);
 
+    /**
+     * 识别完成时的回调
+     *
+     * @param msg 识别出的文字
+     */
     public abstract void onSuccessString(String msg);
 
+    /**
+     * 更新列表
+     */
     public abstract void updateItem();
 
     /**
@@ -161,11 +176,11 @@ public abstract class AudioControl {
             }
         } else if (!selectRoom(str)) {
             // 没有检测到有关房间的指令
-            /*feedBack("嗯...啊远大人，你要我干什么呢？", R.layout.item_left_message);*/
-            feedBack("Um ... Ah Master, what do you want me to do?", R.layout.item_left_message);
+            feedBack("嗯...啊远大人，你要我干什么呢？", R.layout.item_left_message);
+            /*feedBack("Um ... Ah Master, what do you want me to do?", R.layout.item_left_message);*/
         }/* else {
             // 没有匹配到任何指令
-            addSimpleList("抱歉，我不知道你在说什么");
+            feedBack("抱歉，我不知道你在说什么", R.layout.item_left_message);
         }*/
     }
 
@@ -234,9 +249,11 @@ public abstract class AudioControl {
             List<Integer> lightS = lightOrCurtainBean.getLight_S();
             changeState((RoomBean roomBean) -> {
                 int[] lightId = roomBean.getLightId();
-                for (int i : lightId) {
-                    // 将需要修改的房间等的状态修改
-                    lightS.set(i - 1, isOpen ? 1 : 0);
+                if (lightId.length > 0) {
+                    for (int i : lightId) {
+                        // 将需要修改的房间等的状态修改
+                        lightS.set(i - 1, isOpen ? 1 : 0);
+                    }
                 }
             });
 
@@ -273,9 +290,11 @@ public abstract class AudioControl {
             List<Integer> curtainS = lightOrCurtainBean.getCurtain_S();
             changeState((RoomBean roomBean) -> {
                 int[] curtailId = roomBean.getCurtailId();
-                for (int i : curtailId) {
-                    // 将需要修改房间窗帘的状态修改
-                    curtainS.set(i - 1, isOpen ? 1 : 0);
+                if (curtailId.length > 0) {
+                    for (int i : curtailId) {
+                        // 将需要修改房间窗帘的状态修改
+                        curtainS.set(i - 1, isOpen ? 1 : 0);
+                    }
                 }
             });
 
@@ -285,8 +304,111 @@ public abstract class AudioControl {
         }
     }
 
+    /**
+     * 切换门的状态
+     *
+     * @param isOpen true表示打开，false表示关闭
+     */
     private void doorInstruction(boolean isOpen) {
+        // 获取当前提到的房间的门的状态
+        CustomerHandlerBase doorHandler = ValueUtil.getHandlerHashMap().get("door");
+        if (doorHandler == null) {
+            mActivity.runOnUiThread(() -> feedBack("门的连接尚未开启，请开启后再试吧", R.layout.item_left_message));
+        }
 
+        String currentCommand = doorHandler.getCurrentCommand();
+        Log.e(TAG, "门的当前状态：" + currentCommand);
+        if (!TextUtils.isEmpty(currentCommand)) {
+            DoorBean doorBean = new Gson().fromJson(currentCommand, DoorBean.class);
+
+            // 验证提到的房间有没有门
+            changeState((RoomBean roomBean) -> {
+                int[] doorId = roomBean.getDoorId();
+                if (doorId.length == 0) {
+                    feedBack(roomBean.getRoomName() + "的门不可以远程控制哦", R.layout.item_left_message);
+                } else {
+                    feedBack("正在" + (isOpen ? "打开" : "关闭") + "门", R.layout.item_left_message);
+                    for (int i : doorId) {
+                        setDoorStatus(i, isOpen, doorBean);
+                    }
+                }
+            });
+        }
+    }
+
+    /**
+     * 修改门的状态
+     *
+     * @param i        对应房间的门的编号
+     * @param isOpen   开关状态
+     * @param doorBean 门的状态集合
+     */
+    private void setDoorStatus(int i, boolean isOpen, DoorBean doorBean) {
+        field = "";
+
+        door = -1;
+        lock = -1;
+        pass = -1;
+
+
+        switch (i) {
+            case 1:
+                // 客厅大门--->电动门
+                DoorBean.Door1SBean door1S = doorBean.getDoor1_S();
+                field = "door1_C";
+                door = isOpen ? 1 : 0;
+                break;
+            case 2:
+                // 门厅--->锁+密码
+                DoorBean.Door2SBean door2S = doorBean.getDoor2_S();
+                field = "door2_C";
+                lock = isOpen ? 1 : 0;
+                // 返回信息，输入密码
+                if (isOpen) {
+                    feedBack("这扇门需要输入密码才能打开哦", R.layout.item_passoword);
+                }
+                Log.d(TAG, "setDoorStatus: 当前输入的密码：" + this.passwordInt);
+                pass = door2S.getPass();
+                break;
+            case 3:
+                // 院墙小门--->锁+密码
+                DoorBean.Door3SBean door3S = doorBean.getDoor3_S();
+                field = "door3_C";
+                lock = isOpen ? 1 : 0;
+                if (isOpen) {
+                    feedBack("这扇门需要输入密码才能打开哦", R.layout.item_passoword);
+                }
+                pass = door3S.getPass();
+                break;
+            case 4:
+                // 院墙大门--->锁+密码
+                DoorBean.Door4SBean door4S = doorBean.getDoor4_S();
+                field = "door4_C";
+                lock = isOpen ? 1 : 0;
+                if (isOpen) {
+                    feedBack("这扇门需要输入密码才能打开哦", R.layout.item_passoword);
+                }
+                pass = door4S.getPass();
+                break;
+            case 5:
+                // 车库门--->电动门+锁
+                DoorBean.Door5SBean door5S = doorBean.getDoor5_S();
+                field = "door5_C";
+                door = isOpen ? 1 : 0;
+                lock = isOpen ? 1 : 0;
+                break;
+            default:
+                break;
+        }
+
+        // 发送指令开灯
+        ValueUtil.sendDoorCmd(field, door, lock, pass);
+    }
+
+    public void sendPassword(int passwordInt) {
+        this.passwordInt = passwordInt;
+        ValueUtil.sendDoorCmd(field, door, lock, passwordInt);
+        feedBack("正在验证您输入的密码，请稍后", R.layout.item_left_message);
     }
 
     private void changeState(ChangeStatusListener changeStatusListener) {
@@ -312,7 +434,7 @@ public abstract class AudioControl {
      */
     public void finish() {
         mActivity.runOnUiThread(() -> {
-            feedBack("下次再聊", R.layout.item_left_message);
+            feedBack("好嘞，下次再聊", R.layout.item_left_message);
         });
 
         CustomerThreadManager.threadPoolExecutor.execute(() -> {

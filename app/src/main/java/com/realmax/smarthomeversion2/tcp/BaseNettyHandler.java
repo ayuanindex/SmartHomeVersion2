@@ -28,7 +28,7 @@ public abstract class BaseNettyHandler extends SimpleChannelInboundHandler<ByteB
 
 
     @Override
-    protected void messageReceived(ChannelHandlerContext channelHandlerContext, ByteBuf msg) throws Exception {
+    protected void messageReceived(ChannelHandlerContext channelHandlerContext, ByteBuf msg) {
         Log.i(TAG, "channelRead0: client channelRead..哈哈哈");
         ByteBuf buf = msg.readBytes(msg.readableBytes());
         String s = buf.toString(StandardCharsets.UTF_8);
@@ -45,7 +45,7 @@ public abstract class BaseNettyHandler extends SimpleChannelInboundHandler<ByteB
     public abstract void callbackFunction(String jsonStr);
 
     @Override
-    public void exceptionCaught(ChannelHandlerContext channelHandlerContext, Throwable cause) throws Exception {
+    public void exceptionCaught(ChannelHandlerContext channelHandlerContext, Throwable cause) {
         cause.printStackTrace();
         channelHandlerContext.close();
     }

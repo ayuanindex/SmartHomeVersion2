@@ -17,6 +17,7 @@ import androidx.appcompat.widget.SwitchCompat;
 import androidx.cardview.widget.CardView;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import com.realmax.smarthomeversion2.App;
 import com.realmax.smarthomeversion2.R;
 import com.realmax.smarthomeversion2.bean.DoorBean;
@@ -124,9 +125,13 @@ public class DoorActivity extends BaseActivity {
 
                 @Override
                 public void getResultData(String msg) {
-                    doorBean = new Gson().fromJson(msg, DoorBean.class);
-                    L.e("toString:" + doorBean.toString());
-                    selectShowHide();
+                    try {
+                        doorBean = new Gson().fromJson(msg, DoorBean.class);
+                        L.e("toString:" + doorBean.toString());
+                        selectShowHide();
+                    } catch (JsonSyntaxException e) {
+                        e.printStackTrace();
+                    }
                 }
             });
         }
@@ -155,7 +160,7 @@ public class DoorActivity extends BaseActivity {
                 door = door1S.getDoor_s() == 1 ? 0 : 1;
                 break;
             case 1:
-                // 庭院后门--->锁+密码
+                // 门厅--->锁+密码
                 DoorBean.Door2SBean door2S = doorBean.getDoor2_S();
                 field = "door2_C";
                 lock = door2S.getLock_s() == 1 ? 0 : 1;

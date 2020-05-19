@@ -8,12 +8,14 @@ public class RoomBean {
     private int[] lightId;
     private int[] curtailId;
     private int[] cameraId;
+    private int[] doorId;
 
-    public RoomBean(String roomName, int[] lightId, int[] curtailId, int[] cameraId) {
+    public RoomBean(String roomName, int[] lightId, int[] curtailId, int[] cameraId, int[] doorId) {
         this.roomName = roomName;
         this.lightId = lightId;
         this.curtailId = curtailId;
         this.cameraId = cameraId;
+        this.doorId = doorId;
     }
 
     public String getRoomName() {
@@ -46,5 +48,13 @@ public class RoomBean {
 
     public void setCameraId(int[] cameraId) {
         this.cameraId = cameraId;
+    }
+
+    public int[] getDoorId() {
+        return doorId;
+    }
+
+    public void setDoorId(int[] doorId) {
+        this.doorId = doorId;
     }
 }
