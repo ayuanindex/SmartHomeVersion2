@@ -147,18 +147,15 @@ public class CommendActivity extends BaseActivity {
          */
         private void loadPutPasswordViewHolder(@NonNull PutPasswordViewHolder holder, int position) {
             holder.tvMessage.setText(messageBeans.get(position).getMessage());
-            holder.cardOk.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    String passwordStr = holder.etPutPassword.getText().toString().trim();
-                    if (TextUtils.isEmpty(passwordStr)) {
-                        App.showToast("请输入密码");
-                        return;
-                    }
-
-                    int passwordInt = Integer.parseInt(passwordStr);
-                    audioControl.sendPassword(passwordInt);
+            holder.cardOk.setOnClickListener((View v) -> {
+                String passwordStr = holder.etPutPassword.getText().toString().trim();
+                if (TextUtils.isEmpty(passwordStr)) {
+                    App.showToast("请输入密码");
+                    return;
                 }
+
+                int passwordInt = Integer.parseInt(passwordStr);
+                audioControl.sendPassword(passwordInt, holder.etPutPassword);
             });
         }
 

@@ -2,6 +2,8 @@ package com.realmax.smarthomeversion2.audio;
 
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.View;
+import android.widget.EditText;
 
 import androidx.annotation.LayoutRes;
 
@@ -53,7 +55,6 @@ public abstract class AudioControl {
      * 待操作房间集合
      */
     private ArrayList<String> roomToBeOperatedList = new ArrayList<>(0);
-    private int passwordInt;
     private int door;
     private String field;
     private int lock;
@@ -367,7 +368,6 @@ public abstract class AudioControl {
                 if (isOpen) {
                     feedBack("这扇门需要输入密码才能打开哦", R.layout.item_passoword);
                 }
-                Log.d(TAG, "setDoorStatus: 当前输入的密码：" + this.passwordInt);
                 pass = door2S.getPass();
                 break;
             case 3:
@@ -405,10 +405,18 @@ public abstract class AudioControl {
         ValueUtil.sendDoorCmd(field, door, lock, pass);
     }
 
-    public void sendPassword(int passwordInt) {
-        this.passwordInt = passwordInt;
-        ValueUtil.sendDoorCmd(field, door, lock, passwordInt);
-        feedBack("正在验证您输入的密码，请稍后", R.layout.item_left_message);
+    public void sendPassword(int passwordInt, EditText etPutPassword) {
+        if (passwordInt == pass) {
+            feedBack("密码输入正确，请稍后", R.layout.item_left_message);
+            etPutPassword.setEnabled(false);
+            etPutPassword.setVisibility(View.GONE);
+            ValueUtil.sendDoorCmd(field, door, lock, passwordInt);
+        } else {
+            etPutPassword.setText("");
+            etPutPassword.setVisibility(View.VISIBLE);
+            etPutPassword.setEnabled(true);
+            feedBack("密码输入错误，请重试", R.layout.item_passoword);
+        }
     }
 
     private void changeState(ChangeStatusListener changeStatusListener) {

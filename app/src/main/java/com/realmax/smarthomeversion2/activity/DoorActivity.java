@@ -28,6 +28,8 @@ import com.realmax.smarthomeversion2.util.ValueUtil;
 
 import java.util.ArrayList;
 
+import javax.xml.transform.dom.DOMResult;
+
 /**
  * @author ayuan
  */
@@ -311,10 +313,12 @@ public class DoorActivity extends BaseActivity {
             public void run() {
                 switch (currentPosition) {
                     case 0:
-                        DoorBean.Door1SBean door1S = doorBean.getDoor1_S();
-                        swDoorToggle.setChecked(door1S.getDoor_s() == 1);
-                        isVisible(true, llDoor);
-                        isVisible(false, llPassword, llKey);
+                        if (doorBean.getDoor2_S() != null) {
+                            DoorBean.Door1SBean door1S = doorBean.getDoor1_S();
+                            swDoorToggle.setChecked(door1S.getDoor_s() == 1);
+                            isVisible(true, llDoor);
+                            isVisible(false, llPassword, llKey);
+                        }
                         break;
                     case 1:
                         DoorBean.Door2SBean door2S = doorBean.getDoor2_S();
