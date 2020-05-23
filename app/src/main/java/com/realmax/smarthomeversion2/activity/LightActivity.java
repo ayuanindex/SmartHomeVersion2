@@ -18,6 +18,8 @@ import com.google.gson.Gson;
 import com.realmax.smarthomeversion2.App;
 import com.realmax.smarthomeversion2.R;
 import com.realmax.smarthomeversion2.bean.LightOrCurtainBean;
+import com.realmax.smarthomeversion2.mqtt.LightControl;
+import com.realmax.smarthomeversion2.mqtt.MqttControl;
 import com.realmax.smarthomeversion2.tcp.CustomerCallback;
 import com.realmax.smarthomeversion2.tcp.CustomerHandlerBase;
 import com.realmax.smarthomeversion2.util.L;
@@ -210,12 +212,29 @@ public class LightActivity extends BaseActivity {
             cbCheck.setChecked(getItem(position) == 1);
 
             swToggle.setOnTouchListener((View v, MotionEvent event) -> {
-                if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
-                    L.e("onTouch:" + position);
-                    ArrayList<Integer> lightC = new ArrayList<>(lightOrCurtainBean.getLight_S());
-                    lightC.set(lightId[position] - 1, getItem(position) == OPEN ? CLOSE : OPEN);
-                    LightOrCurtainBean bean = new LightOrCurtainBean(lightC, LightActivity.this.lightOrCurtainBean.getCurtain_S());
-                    ValueUtil.sendLightOpenOrCloseCmd(bean);
+                try {
+                    if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
+                        L.e("onTouch:" + position);
+
+                        // 将设置指令同步至云端
+                        MqttControl light = ValueUtil.getMqttControlHashMap().get("light");
+                        if (light != null) {
+                            LightControl lightControl = (LightControl) light;
+                            JSONObject property = new JSONObject();
+                            for (int value : lightId) {
+                                property.put("light" + value, getItem(position) == OPEN ? CLOSE : OPEN);
+                            }
+                            lightControl.publish(property);
+                        }
+
+                        // 向控制起发送控制灯的指令
+                        ArrayList<Integer> lightC = new ArrayList<>(lightOrCurtainBean.getLight_S());
+                        lightC.set(lightId[position] - 1, getItem(position) == OPEN ? CLOSE : OPEN);
+                        LightOrCurtainBean bean = new LightOrCurtainBean(lightC, LightActivity.this.lightOrCurtainBean.getCurtain_S());
+                        ValueUtil.sendLightOpenOrCloseCmd(bean);
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
                 return true;
             });

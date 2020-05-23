@@ -11,6 +11,9 @@ import android.widget.TextView;
 
 import com.realmax.smarthomeversion2.R;
 import com.realmax.smarthomeversion2.audio.AudioService;
+import com.realmax.smarthomeversion2.mqtt.LightControl;
+import com.realmax.smarthomeversion2.mqtt.MqttControl;
+import com.realmax.smarthomeversion2.util.ValueUtil;
 
 import java.util.HashMap;
 
@@ -75,6 +78,11 @@ public class MainActivity extends BaseActivity {
                 "监控",
                 "空调",
         };
+
+        // 初始化MQTT控制类
+        HashMap<String, MqttControl> mqttControllerHashMap = new HashMap<>(1);
+        mqttControllerHashMap.put("light", new LightControl(this, "Light.json", "06V3HX2FPV", "light01", "3hbuP84EWDVYRGf0AzyQJA=="));
+        ValueUtil.setMqttControlHashMap(mqttControllerHashMap);
 
         CustomerAdapter customerAdapter = new CustomerAdapter();
         gvView.setAdapter(customerAdapter);

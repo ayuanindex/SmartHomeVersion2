@@ -27,4 +27,12 @@ public class LightOrCurtainBean {
     public void setCurtain_S(List<Integer> Curtain_S) {
         this.Curtain_S = Curtain_S;
     }
+
+    @Override
+    public String toString() {
+        return "LightOrCurtainBean{" +
+                "Light_S=" + Light_S +
+                ", Curtain_S=" + Curtain_S +
+                '}';
+    }
 }

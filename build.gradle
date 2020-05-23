@@ -18,6 +18,12 @@ buildscript {
     }
 }
 
+ext {
+
+    mqttJavaSdkVer = '1.2.4'
+
+}
+
 allprojects {
     repositories {
         flatDir {

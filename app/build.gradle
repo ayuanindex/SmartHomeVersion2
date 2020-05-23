@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         applicationId "com.realmax.smarthomeversion2"
-        minSdkVersion 21
+        minSdkVersion 28
         targetSdkVersion 29
         versionCode 1
         versionName "1.0"
@@ -57,13 +57,14 @@ dependencies {
     implementation(name: 'aai-2.1.8', ext: 'aar')
 
     /*OkHttp*/
-    implementation 'com.squareup.okhttp3:okhttp:4.6.0'
+    implementation 'com.squareup.okhttp3:okhttp:4.7.2'
     implementation 'com.squareup.okio:okio:2.6.0'
 
-    implementation 'org.slf4j:slf4j-api:1.7.25'
+    implementation 'org.slf4j:slf4j-api:1.7.30'
 
     /*腾讯云SDK*/
-    implementation 'com.tencentcloudapi:tencentcloud-sdk-java:3.0.93'
+    implementation 'com.tencentcloudapi:tencentcloud-sdk-java:3.1.56'
     // 腾讯云语音合成的依赖aar
     implementation(name: 'libqcloudtts_1.2.8_release', ext: 'aar')
+    implementation project(path: ':iot_explorer')
 }

@@ -1,6 +1,7 @@
 package com.realmax.smarthomeversion2.util;
 
 import com.realmax.smarthomeversion2.bean.LightOrCurtainBean;
+import com.realmax.smarthomeversion2.mqtt.MqttControl;
 import com.realmax.smarthomeversion2.tcp.CustomerHandlerBase;
 
 import org.json.JSONObject;
@@ -26,6 +27,9 @@ public class ValueUtil {
      */
     private static HashMap<String, Boolean> isConnected = new HashMap<>();
 
+
+    private static HashMap<String, MqttControl> mqttControlHashMap;
+
     /*public static String getRoom() {
         return "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     }*/
@@ -36,6 +40,14 @@ public class ValueUtil {
 
     public static HashMap<String, Boolean> getIsConnected() {
         return isConnected;
+    }
+
+    public static HashMap<String, MqttControl> getMqttControlHashMap() {
+        return mqttControlHashMap;
+    }
+
+    public static void setMqttControlHashMap(HashMap<String, MqttControl> mqttControlHashMap) {
+        ValueUtil.mqttControlHashMap = mqttControlHashMap;
     }
 
     /**
