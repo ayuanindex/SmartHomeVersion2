@@ -2,6 +2,8 @@ package com.realmax.smarthomeversion2.tcp;
 
 import android.util.Log;
 
+import com.google.gson.JsonSyntaxException;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -30,6 +32,8 @@ public class CustomerHandlerBase extends BaseNettyHandler {
                 customerCallback.getResultData(jsonStr);
             } catch (JSONException e) {
                 getJson(jsonStr);
+            } catch (JsonSyntaxException e) {
+                e.printStackTrace();
             }
         }
     }

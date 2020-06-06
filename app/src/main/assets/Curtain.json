@@ -1,0 +1,67 @@
+{
+  "version": "1.0",
+  "profile": {
+    "ProductId": "8BIE588RHI",
+    "CategoryId": "1"
+  },
+  "properties": [
+    {
+      "id": "curtain1",
+      "name": "客厅",
+      "desc": "",
+      "mode": "rw",
+      "define": {
+        "type": "bool",
+        "mapping": {
+          "0": "关",
+          "1": "开"
+        }
+      },
+      "required": false
+    },
+    {
+      "id": "curtain2",
+      "name": "客厅",
+      "desc": "",
+      "mode": "rw",
+      "define": {
+        "type": "bool",
+        "mapping": {
+          "0": "关",
+          "1": "开"
+        }
+      },
+      "required": false
+    },
+    {
+      "id": "curtain3",
+      "name": "餐厅",
+      "desc": "",
+      "mode": "rw",
+      "define": {
+        "type": "bool",
+        "mapping": {
+          "0": "关",
+          "1": "开"
+        }
+      },
+      "required": false
+    },
+    {
+      "id": "curtain4",
+      "name": "门厅",
+      "desc": "",
+      "mode": "rw",
+      "define": {
+        "type": "bool",
+        "mapping": {
+          "0": "关",
+          "1": "开"
+        }
+      },
+      "required": false
+    }
+  ],
+  "events": [],
+  "actions": []
+}

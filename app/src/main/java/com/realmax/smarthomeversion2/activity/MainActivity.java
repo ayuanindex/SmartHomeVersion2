@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.realmax.smarthomeversion2.R;
 import com.realmax.smarthomeversion2.audio.AudioService;
+import com.realmax.smarthomeversion2.mqtt.CurtainControl;
 import com.realmax.smarthomeversion2.mqtt.LightControl;
 import com.realmax.smarthomeversion2.mqtt.MqttControl;
 import com.realmax.smarthomeversion2.util.ValueUtil;
@@ -82,6 +83,7 @@ public class MainActivity extends BaseActivity {
         // 初始化MQTT控制类
         HashMap<String, MqttControl> mqttControllerHashMap = new HashMap<>(1);
         mqttControllerHashMap.put("light", new LightControl(this, "Light.json", "06V3HX2FPV", "light01", "3hbuP84EWDVYRGf0AzyQJA=="));
+        mqttControllerHashMap.put("Curtain", new CurtainControl(this, "Curtain.json", "8BIE588RHI", "curtain01", "NWn3s6pj+qlCGBTBXhIMSw=="));
         ValueUtil.setMqttControlHashMap(mqttControllerHashMap);
 
         CustomerAdapter customerAdapter = new CustomerAdapter();

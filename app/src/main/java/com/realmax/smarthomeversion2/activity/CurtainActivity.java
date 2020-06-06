@@ -18,6 +18,9 @@ import com.google.gson.Gson;
 import com.realmax.smarthomeversion2.App;
 import com.realmax.smarthomeversion2.R;
 import com.realmax.smarthomeversion2.bean.LightOrCurtainBean;
+import com.realmax.smarthomeversion2.mqtt.CurtainControl;
+import com.realmax.smarthomeversion2.mqtt.LightControl;
+import com.realmax.smarthomeversion2.mqtt.MqttControl;
 import com.realmax.smarthomeversion2.tcp.CustomerCallback;
 import com.realmax.smarthomeversion2.tcp.CustomerHandlerBase;
 import com.realmax.smarthomeversion2.util.L;
@@ -89,7 +92,12 @@ public class CurtainActivity extends BaseActivity {
             customerHandler.setCustomerCallback(new CustomerCallback() {
                 @Override
                 public void disConnected() {
-                    App.showToast("窗帘断开连接");
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            App.showToast("窗帘断开连接");
+                        }
+                    });
                     L.e("窗帘断开连接");
                     ValueUtil.getIsConnected().put(tag, false);
                     ValueUtil.getHandlerHashMap().put(tag, null);
@@ -220,11 +228,26 @@ public class CurtainActivity extends BaseActivity {
             swToggle.setChecked(getItem(position) == 1);
 
             swToggle.setOnTouchListener((View v, MotionEvent event) -> {
-                if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
-                    ArrayList<Integer> curtainC = new ArrayList<>(lightOrCurtainBean.getCurtain_S());
-                    curtainC.set(curtailId[position] - 1, getItem(position) == OPEN ? CLOSE : OPEN);
-                    LightOrCurtainBean bean = new LightOrCurtainBean(CurtainActivity.this.lightOrCurtainBean.getLight_S(), curtainC);
-                    ValueUtil.sendCurtainOpenOrCloseCmd(bean);
+                try {
+                    if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
+                        // 将设置指令同步至云端
+                        MqttControl curtain = ValueUtil.getMqttControlHashMap().get("Curtain");
+                        if (curtain != null) {
+                            CurtainControl curtainControl = (CurtainControl) curtain;
+                            JSONObject property = new JSONObject();
+                            for (int value : curtailId) {
+                                property.put("curtain" + value, getItem(position) == OPEN ? CLOSE : OPEN);
+                            }
+                            curtainControl.publish(property);
+                        }
+
+                        ArrayList<Integer> curtainC = new ArrayList<>(lightOrCurtainBean.getCurtain_S());
+                        curtainC.set(curtailId[position] - 1, getItem(position) == OPEN ? CLOSE : OPEN);
+                        LightOrCurtainBean bean = new LightOrCurtainBean(CurtainActivity.this.lightOrCurtainBean.getLight_S(), curtainC);
+                        ValueUtil.sendCurtainOpenOrCloseCmd(bean);
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
                 return true;
             });

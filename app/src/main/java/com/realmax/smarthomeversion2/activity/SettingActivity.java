@@ -2,7 +2,6 @@ package com.realmax.smarthomeversion2.activity;
 
 import android.annotation.SuppressLint;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -15,26 +14,17 @@ import android.widget.TextView;
 import androidx.appcompat.app.AlertDialog;
 import androidx.cardview.widget.CardView;
 
-import com.qcloud.iot_explorer.common.Status;
-import com.qcloud.iot_explorer.data_template.TXDataTemplateDownStreamCallBack;
-import com.qcloud.iot_explorer.mqtt.TXMqttActionCallBack;
 import com.realmax.smarthomeversion2.App;
 import com.realmax.smarthomeversion2.R;
 import com.realmax.smarthomeversion2.bean.LinkBean;
-import com.realmax.smarthomeversion2.mqtt.MqttControl;
 import com.realmax.smarthomeversion2.tcp.CustomerCallback;
 import com.realmax.smarthomeversion2.tcp.CustomerHandlerBase;
 import com.realmax.smarthomeversion2.tcp.NettyLinkUtil;
 import com.realmax.smarthomeversion2.util.L;
-import com.realmax.smarthomeversion2.util.ValueUtil;
-
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 
 import io.netty.channel.EventLoopGroup;
-
-import static com.qcloud.iot_explorer.data_template.TXDataTemplate.TAG;
 
 /**
  * @author ayuan
@@ -67,6 +57,33 @@ public class SettingActivity extends BaseActivity {
                 App.showToast("已连接");
             }
         });
+    }
+
+    static class ViewHolder {
+
+        View rootView;
+        EditText etIp;
+        EditText etPort;
+        CardView cardCancel;
+        CardView cardOk;
+        ViewHolder(View rootView) {
+            this.rootView = rootView;
+            this.etIp = rootView.findViewById(R.id.et_ip);
+            this.etPort = rootView.findViewById(R.id.et_port);
+            this.cardCancel = rootView.findViewById(R.id.cardCancel);
+            this.cardOk = rootView.findViewById(R.id.cardOk);
+        }
+
+    }
+    @Override
+    protected void initData() {
+        linkBeans = new ArrayList<>();
+        linkBeans.add(new LinkBean("电灯&窗帘", "light"));
+        linkBeans.add(new LinkBean("门", "door"));
+        linkBeans.add(new LinkBean("摄像头", "camera"));
+
+        customerAdapter = new CustomerAdapter();
+        lvList.setAdapter(customerAdapter);
     }
 
     /**
@@ -105,11 +122,11 @@ public class SettingActivity extends BaseActivity {
             linkBean.connected(ip, port, customerHandler, new NettyLinkUtil.Callback() {
                 @Override
                 public void success(EventLoopGroup eventLoopGroup) {
-                    // 连接MQTT
+                    /*// 连接MQTT
                     MqttControl mqttControl = ValueUtil.getMqttControlHashMap().get(linkBean.getTag());
                     if (mqttControl != null) {
                         mqttControl.connected();
-                    }
+                    }*/
 
                     runOnUiThread(() -> {
                         linkBean.setConnected(true);
@@ -125,11 +142,11 @@ public class SettingActivity extends BaseActivity {
                         customerCallback.disConnected();
                     }
 
-                    // 断开MQTT连接
+                    /*// 断开MQTT连接
                     MqttControl mqttControl = ValueUtil.getMqttControlHashMap().get(linkBean.getTag());
                     if (mqttControl != null) {
                         mqttControl.disConnected();
-                    }
+                    }*/
 
                     runOnUiThread(() -> {
                         customerAdapter.notifyDataSetChanged();
@@ -147,33 +164,6 @@ public class SettingActivity extends BaseActivity {
             alertDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
         }
         alertDialog.show();
-    }
-
-    static class ViewHolder {
-        View rootView;
-        EditText etIp;
-        EditText etPort;
-        CardView cardCancel;
-        CardView cardOk;
-
-        ViewHolder(View rootView) {
-            this.rootView = rootView;
-            this.etIp = rootView.findViewById(R.id.et_ip);
-            this.etPort = rootView.findViewById(R.id.et_port);
-            this.cardCancel = rootView.findViewById(R.id.cardCancel);
-            this.cardOk = rootView.findViewById(R.id.cardOk);
-        }
-    }
-
-    @Override
-    protected void initData() {
-        linkBeans = new ArrayList<>();
-        linkBeans.add(new LinkBean("电灯&窗帘", "light"));
-        linkBeans.add(new LinkBean("门", "door"));
-        linkBeans.add(new LinkBean("摄像头", "camera"));
-
-        customerAdapter = new CustomerAdapter();
-        lvList.setAdapter(customerAdapter);
     }
 
     /**

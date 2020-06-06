@@ -48,6 +48,13 @@ public class ValueUtil {
 
     public static void setMqttControlHashMap(HashMap<String, MqttControl> mqttControlHashMap) {
         ValueUtil.mqttControlHashMap = mqttControlHashMap;
+        mqttConnected();
+    }
+
+    public static void mqttConnected() {
+        mqttControlHashMap.forEach((String s, MqttControl mqttControl) -> {
+            mqttControl.connected();
+        });
     }
 
     /**
@@ -96,7 +103,7 @@ public class ValueUtil {
         hashMap.put("Curtain_C", lightOrCurtainBean.getCurtain_S());
         JSONObject jsonObject = new JSONObject(hashMap);
         String s = jsonObject.toString();
-        L.e(s);
+        L.e("发送的数据-------------" + s);
         handlerContext.writeAndFlush(Unpooled.copiedBuffer(EncodeAndDecode.getStrUnicode(s).getBytes()));
     }
 

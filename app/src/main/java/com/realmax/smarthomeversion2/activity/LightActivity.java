@@ -88,7 +88,12 @@ public class LightActivity extends BaseActivity {
             customerHandler.setCustomerCallback(new CustomerCallback() {
                 @Override
                 public void disConnected() {
-                    App.showToast("小灯断开连接");
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            App.showToast("小灯断开连接");
+                        }
+                    });
                     L.e("小灯断开连接");
                     ValueUtil.getIsConnected().put(tag, false);
                     ValueUtil.getHandlerHashMap().put(tag, null);
@@ -97,7 +102,7 @@ public class LightActivity extends BaseActivity {
                 @Override
                 public void getResultData(String msg) {
                     try {
-                        L.e("msg:" + msg);
+                        /*L.e("msg:" + msg);*/
                         if (!TextUtils.isEmpty(msg)) {
                             JSONObject jsonObject = new JSONObject(msg);
                             // 验证是否是当前电灯的json数据
