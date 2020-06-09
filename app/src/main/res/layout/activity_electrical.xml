@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -11,7 +12,8 @@
         android:id="@+id/rl_back"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp">
+        android:layout_margin="10dp"
+        android:foreground="?attr/actionBarItemBackground">
 
         <ImageView
             android:id="@+id/iv_back"
@@ -52,7 +54,8 @@
                 android:layout_height="46dp"
                 android:background="@drawable/xml_check_select_power_toggle"
                 android:button="@null"
-                android:checked="false" />
+                android:checked="false"
+                android:foreground="?attr/actionBarItemBackground" />
         </LinearLayout>
 
         <LinearLayout
@@ -78,7 +81,8 @@
                 android:layout_height="46dp"
                 android:background="@drawable/xml_check_select_mute"
                 android:button="@null"
-                android:checked="false" />
+                android:checked="false"
+                android:foreground="?attr/actionBarItemBackground" />
         </LinearLayout>
     </LinearLayout>
 
@@ -112,14 +116,24 @@
             android:orientation="vertical">
 
             <!--音量加-->
-            <ImageView
-                android:id="@+id/iv_soundAdd"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
+            <androidx.cardview.widget.CardView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
-                android:layout_centerInParent="true"
+                android:layout_centerHorizontal="true"
                 android:layout_marginTop="10dp"
-                android:src="@drawable/pic_mute_add" />
+                app:cardCornerRadius="100dp">
+
+                <ImageView
+                    android:id="@+id/iv_soundAdd"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_alignParentTop="true"
+                    android:layout_centerInParent="true"
+                    android:layout_gravity="center"
+                    android:foreground="?attr/actionBarItemBackground"
+                    android:src="@drawable/pic_mute_add" />
+            </androidx.cardview.widget.CardView>
 
             <ImageView
                 android:layout_width="30dp"
@@ -128,14 +142,23 @@
                 android:src="@drawable/pic_mute_open" />
 
             <!--音量减-->
-            <ImageView
-                android:id="@+id/iv_soundReduce"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
-                android:layout_centerInParent="true"
+                android:layout_centerHorizontal="true"
                 android:layout_marginBottom="10dp"
-                android:src="@drawable/pic_mute_remove" />
+                app:cardCornerRadius="100dp">
+
+                <ImageView
+                    android:id="@+id/iv_soundReduce"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_gravity="center"
+                    android:foreground="?attr/actionBarItemBackground"
+                    android:src="@drawable/pic_mute_remove" />
+            </androidx.cardview.widget.CardView>
         </RelativeLayout>
 
         <!--频道-->
@@ -149,14 +172,23 @@
             android:background="@drawable/xml_radio_frame_white">
 
             <!--频道加-->
-            <ImageView
-                android:id="@+id/iv_programAdd"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
+            <androidx.cardview.widget.CardView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
                 android:layout_centerInParent="true"
                 android:layout_marginTop="10dp"
-                android:src="@drawable/pic_mute_add" />
+                app:cardCornerRadius="100dp">
+
+                <ImageView
+                    android:id="@+id/iv_programAdd"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_gravity="center"
+                    android:foreground="?attr/actionBarItemBackground"
+                    android:src="@drawable/pic_mute_add" />
+            </androidx.cardview.widget.CardView>
+
 
             <ImageView
                 android:layout_width="30dp"
@@ -165,14 +197,21 @@
                 android:src="@drawable/pic_cycle" />
 
             <!--频道减-->
-            <ImageView
-                android:id="@+id/iv_programReduce"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
+            <androidx.cardview.widget.CardView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
                 android:layout_centerInParent="true"
                 android:layout_marginBottom="10dp"
-                android:src="@drawable/pic_mute_remove" />
+                app:cardCornerRadius="100dp">
+
+                <ImageView
+                    android:id="@+id/iv_programReduce"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:foreground="?attr/actionBarItemBackground"
+                    android:src="@drawable/pic_mute_remove" />
+            </androidx.cardview.widget.CardView>
         </RelativeLayout>
     </RelativeLayout>
 
@@ -181,7 +220,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="10dp">
 
-        <ImageView
+        <!--<ImageView
             android:id="@+id/iv_switchLeft"
             android:layout_width="40dp"
             android:layout_height="35dp"
@@ -197,16 +236,17 @@
             android:layout_alignParentEnd="true"
             android:layout_centerInParent="true"
             android:layout_marginStart="10dp"
-            android:src="@drawable/pic_arrow_right" />
+            android:src="@drawable/pic_arrow_right" />-->
 
-        <TextView
-            android:id="@+id/tv_currentRoom"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:layout_margin="8dp"
-            android:text="客厅"
-            android:textColor="#ffffff"
-            android:textSize="16sp" />
     </RelativeLayout>
+
+    <TextView
+        android:id="@+id/tv_currentRoom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="8dp"
+        android:text="客厅"
+        android:textColor="#ffffff"
+        android:textSize="16sp" />
 </LinearLayout>

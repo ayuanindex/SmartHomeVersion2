@@ -1,10 +1,7 @@
 package com.realmax.smarthomeversion2.activity;
 
-import android.annotation.SuppressLint;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -15,8 +12,6 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-
-import androidx.annotation.Nullable;
 
 import com.realmax.smarthomeversion2.R;
 import com.realmax.smarthomeversion2.util.L;
@@ -34,15 +29,8 @@ public class ElectricalActivity extends BaseActivity {
     private ImageView iv_soundReduce;
     private ImageView iv_programAdd;
     private ImageView iv_programReduce;
-    private ImageView iv_switchLeft;
-    private ImageView iv_switchRight;
     private TextView tv_currentRoom;
     private int currentPosition = 0;
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState, @Nullable PersistableBundle persistentState) {
-        super.onCreate(savedInstanceState, persistentState);
-    }
 
     @Override
     protected int getLayout() {
@@ -59,8 +47,6 @@ public class ElectricalActivity extends BaseActivity {
         iv_soundReduce = (ImageView) findViewById(R.id.iv_soundReduce);
         iv_programAdd = (ImageView) findViewById(R.id.iv_programAdd);
         iv_programReduce = (ImageView) findViewById(R.id.iv_programReduce);
-        iv_switchLeft = (ImageView) findViewById(R.id.iv_switchLeft);
-        iv_switchRight = (ImageView) findViewById(R.id.iv_switchRight);
         tv_currentRoom = (TextView) findViewById(R.id.tv_currentRoom);
     }
 
@@ -127,34 +113,14 @@ public class ElectricalActivity extends BaseActivity {
                 // TODO: 2020/4/7 减
             }
         });
-
-        iv_switchLeft.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                switchPage(0);
-            }
-        });
-
-        iv_switchRight.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                switchPage(1);
-            }
-        });
     }
 
     @Override
     protected void initData() {
         numbers = new ArrayList<>();
-        numbers.add("1");
-        numbers.add("2");
-        numbers.add("3");
-        numbers.add("4");
-        numbers.add("5");
-        numbers.add("6");
-        numbers.add("7");
-        numbers.add("8");
-        numbers.add("9");
+        for (int i = 0; i < 9; i++) {
+            numbers.add(String.valueOf(i + 1));
+        }
         numbers.add("");
         numbers.add("0");
         numbers.add("");
@@ -164,47 +130,6 @@ public class ElectricalActivity extends BaseActivity {
         // 去除按钮点击效果
         gv_numbers.setSelector(new ColorDrawable(Color.TRANSPARENT));
     }
-
-    /**
-     * 切换客厅
-     */
-    @SuppressLint("SetTextI18n")
-    private void switchPage(int type) {
-        // 切换客厅
-        switch (type) {
-            case 0:
-                if (currentPosition > 0) {
-                    currentPosition--;
-                    /*int[] lightId = roomBeans.get(currentPosition).getLightId();
-                    for (int i : lightId) {
-                        L.e("" + i);
-                        if (i - 1 < lightBean.getLigth_S().size()) {
-                            currentLightStatus.add(lightBean.getLigth_S().get(i - 1));
-                            currentLightControl.add(lightBean.getLight_C().get(i - 1));
-                        }
-                    }*/
-                }
-                break;
-            case 1:
-                if (currentPosition < roomBeans.size() - 1) {
-                    currentPosition++;
-                    /*int[] lightId = roomBeans.get(currentPosition).getLightId();
-                    for (int i : lightId) {
-                        L.e("" + i);
-                        if (i - 1 < lightBean.getLigth_S().size()) {
-                            currentLightStatus.add(lightBean.getLigth_S().get(i - 1));
-                            currentLightControl.add(lightBean.getLight_C().get(i - 1));
-                        }
-                    }*/
-                }
-                break;
-            default:
-                break;
-        }
-        tv_currentRoom.setText(roomBeans.get(currentPosition).getRoomName());
-        /*customerAdapter.notifyDataSetChanged();*/
-    }
-
 
     class CustomerAdapter extends BaseAdapter {
 

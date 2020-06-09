@@ -1,0 +1,18 @@
+{
+  "deviceType": "电器",
+  "tv": {
+    "powerControl": 0,
+    "mute": 0,
+    "volume": 10,
+    "currentShow": 0
+  },
+  "acList": [
+    {
+      "power": 0,
+      "mode": 0,
+      "currentTemperature": 21,
+      "setTemperature": 13,
+      "windSpeed": 5
+    }
+  ]
+}

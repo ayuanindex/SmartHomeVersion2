@@ -20,9 +20,8 @@
                 android:id="@+id/iv_image"
                 android:layout_width="46dp"
                 android:layout_height="46dp"
+                android:foreground="?attr/actionBarItemBackground"
                 android:padding="10dp" />
         </LinearLayout>
-
     </LinearLayout>
-
 </LinearLayout>

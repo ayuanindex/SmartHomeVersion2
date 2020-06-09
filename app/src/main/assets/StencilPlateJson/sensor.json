@@ -1,0 +1,30 @@
+{
+  "rooms": [
+    {
+      "roomTag": "A",
+      "humanBodySensing": [
+        1,
+        2,
+        3
+      ],
+      "lightIntensity": [
+        100,
+        200,
+        300
+      ],
+      "audibleAlarm": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "gasSensor": [
+        {
+          "humidity": 1,
+          "smoke": 1
+        }
+      ]
+    }
+  ]
+}

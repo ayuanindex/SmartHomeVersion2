@@ -1,0 +1,9 @@
+{
+  "ac": {
+    "powerControl": 0,
+    "mode": 1,
+    "currentTemperature": 25,
+    "setTemperature": 21,
+    "windSpeed": 3
+  }
+}
