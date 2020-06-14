@@ -1,28 +1,23 @@
 {
   "doors": [
     {
-      "doorName": "客厅门",
       "doorLock": 0,
       "doorSwitch": 0,
       "setPassword": 1234,
       "outsideDetection": 0
     },
     {
-      "doorName": "后门",
       "doorLock": 0,
       "setPassword": 1234
     },
     {
-      "doorName": "小门",
       "doorLock": 0,
       "setPassword": 1234
     },
     {
-      "doorName": "大门",
       "doorSwitch": 0
     },
     {
-      "doorName": "车库门",
       "doorLock": 0,
       "doorSwitch": 0
     }

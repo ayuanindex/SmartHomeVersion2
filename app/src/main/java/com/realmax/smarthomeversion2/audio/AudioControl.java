@@ -9,6 +9,7 @@ import com.google.gson.Gson;
 import com.realmax.smarthomeversion2.R;
 import com.realmax.smarthomeversion2.activity.BaseActivity;
 import com.realmax.smarthomeversion2.activity.bean.CurtainAndAcBean;
+import com.realmax.smarthomeversion2.activity.bean.DoorAndAirQualityBean;
 import com.realmax.smarthomeversion2.activity.bean.LightBean;
 import com.realmax.smarthomeversion2.bean.DoorBean;
 import com.realmax.smarthomeversion2.bean.MessageBean;
@@ -59,6 +60,8 @@ public abstract class AudioControl {
     private int pass;
     private String tag1 = "control_01";
     private String tag2 = "control_02";
+    private String tag3 = "control_03";
+    private DoorAndAirQualityBean.DoorsSBean doorsSBean;
 
     AudioControl(BaseActivity mActivity, ArrayList<MessageBean> messageBeans, CommendActivity.CustomerAdapter customerAdapter) {
         this.mActivity = mActivity;
@@ -320,7 +323,7 @@ public abstract class AudioControl {
         String currentCommand = doorHandler.getCurrentCommand();
         Log.e(TAG, "门的当前状态：" + currentCommand);
         if (!TextUtils.isEmpty(currentCommand)) {
-            DoorBean doorBean = new Gson().fromJson(currentCommand, DoorBean.class);
+            DoorAndAirQualityBean doorAndAirQualityBean = new Gson().fromJson(currentCommand, DoorAndAirQualityBean.class);
 
             // 验证提到的房间有没有门
             changeState((RoomBean roomBean) -> {
@@ -330,7 +333,7 @@ public abstract class AudioControl {
                 } else {
                     feedBack("正在" + (isOpen ? "打开" : "关闭") + "门", R.layout.item_left_message);
                     for (int i : doorId) {
-                        setDoorStatus(i, isOpen, doorBean);
+                        setDoorStatus(i, isOpen, doorAndAirQualityBean);
                     }
                 }
             });
@@ -344,71 +347,33 @@ public abstract class AudioControl {
      * @param isOpen   开关状态
      * @param doorBean 门的状态集合
      */
-    private void setDoorStatus(int i, boolean isOpen, DoorBean doorBean) {
-        field = "";
+    private void setDoorStatus(int i, boolean isOpen, DoorAndAirQualityBean doorBean) {
+        if (doorBean == null) {
+            return;
+        }
+
+        doorsSBean = doorBean.getDoors_S().get(i);
 
         door = -1;
         lock = -1;
         pass = -1;
 
+        if (doorsSBean != null) {
+            door = doorsSBean.getDoorSwitch() == -1 ? door : (isOpen ? 1 : 0);
+            lock = doorsSBean.getDoorLock() == -1 ? lock : (isOpen ? 1 : 0);
+            pass = doorsSBean.getSetPassword() == -1 ? pass : doorsSBean.getSetPassword();
+            ValueUtil.sendDoorCmd(door, lock, pass, tag3);
 
-        switch (i) {
-            case 1:
-                // 客厅大门--->电动门
-                DoorBean.Door1SBean door1S = doorBean.getDoor1_S();
-                field = "door1_C";
-                door = isOpen ? 1 : 0;
-                break;
-            case 2:
-                // 门厅--->锁+密码
-                DoorBean.Door2SBean door2S = doorBean.getDoor2_S();
-                field = "door2_C";
-                lock = isOpen ? 1 : 0;
-                // 返回信息，输入密码
-                if (isOpen) {
-                    feedBack("这扇门需要输入密码才能打开哦", R.layout.item_passoword);
-                }
-                pass = door2S.getPass();
-                break;
-            case 3:
-                // 院墙小门--->锁+密码
-                DoorBean.Door3SBean door3S = doorBean.getDoor3_S();
-                field = "door3_C";
-                lock = isOpen ? 1 : 0;
-                if (isOpen) {
-                    feedBack("这扇门需要输入密码才能打开哦", R.layout.item_passoword);
-                }
-                pass = door3S.getPass();
-                break;
-            case 4:
-                // 院墙大门--->锁+密码
-                DoorBean.Door4SBean door4S = doorBean.getDoor4_S();
-                field = "door4_C";
-                lock = isOpen ? 1 : 0;
-                if (isOpen) {
-                    feedBack("这扇门需要输入密码才能打开哦", R.layout.item_passoword);
-                }
-                pass = door4S.getPass();
-                break;
-            case 5:
-                // 车库门--->电动门+锁
-                DoorBean.Door5SBean door5S = doorBean.getDoor5_S();
-                field = "door5_C";
-                door = isOpen ? 1 : 0;
-                lock = isOpen ? 1 : 0;
-                break;
-            default:
-                break;
+            if (isOpen && pass != -1) {
+                feedBack("这扇门需要输入密码", R.layout.item_passoword);
+            }
         }
-
-        // 发送指令开灯
-        ValueUtil.sendDoorCmd(field, door, lock, pass);
     }
 
     public void sendPassword(int passwordInt) {
         if (passwordInt == pass) {
             feedBack("密码输入正确，请稍后", R.layout.item_left_message);
-            ValueUtil.sendDoorCmd(field, door, lock, passwordInt);
+            ValueUtil.sendDoorCmd(doorsSBean.getDoorSwitch(), doorsSBean.getDoorLock(), passwordInt, tag3);
         } else {
             feedBack("密码输入错误", R.layout.item_left_message);
         }

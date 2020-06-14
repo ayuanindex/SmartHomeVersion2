@@ -7,6 +7,7 @@ import com.realmax.smarthomeversion2.tcp.CustomerHandlerBase;
 
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -120,37 +121,40 @@ public class ValueUtil {
         }
     }
 
-    public static void sendDoorCmd(String field, int door, int key, int password) {
-        CustomerHandlerBase customerHandler = getHandlerHashMap().get("door");
-        if (customerHandler == null) {
-            return;
+    /**
+     * 开关门指令发送
+     *
+     * @param door     门的状态
+     * @param key      锁的状态
+     * @param password 密码
+     * @param tag      标签
+     */
+    public static void sendDoorCmd(int door, int key, int password, String tag) {
+        CustomerHandlerBase customerHandler = getHandlerHashMap().get(tag);
+        if (customerHandler != null) {
+            ChannelHandlerContext handlerContext = customerHandler.getHandlerContext();
+            if (handlerContext != null) {
+                HashMap<String, Object> parentMap = new HashMap<>(1);
+                ArrayList<Object> value = new ArrayList<>();
+                HashMap<Object, Object> hashMap = new HashMap<>();
+                value.add(hashMap);
+                if (door != -1) {
+                    hashMap.put("doorSwitch", door);
+                }
+                if (key != -1) {
+                    hashMap.put("doorLock", key);
+                }
+                if (password != -1) {
+                    hashMap.put("setPassword", password);
+                }
+                parentMap.put("doors_C", value);
+                JSONObject jsonObject = new JSONObject(parentMap);
+                String s = jsonObject.toString();
+                L.e("msg:" + s);
+                handlerContext.writeAndFlush(Unpooled.copiedBuffer(EncodeAndDecode.getStrUnicode(s).getBytes()));
+            }
         }
 
-        ChannelHandlerContext handlerContext = customerHandler.getHandlerContext();
-
-        if (handlerContext == null) {
-            return;
-        }
-
-        HashMap<String, Object> childMap = new HashMap<>(1);
-        if (door != -1) {
-            childMap.put("door_C", door);
-        }
-        if (key != -1) {
-            childMap.put("lock_c", key);
-        }
-        if (password != -1) {
-            childMap.put("pass_c", password);
-        }
-
-        HashMap<String, Object> hashMap = new HashMap<>(1);
-        hashMap.put(field, childMap);
-
-        JSONObject jsonObject = new JSONObject(hashMap);
-        String s = jsonObject.toString();
-
-        L.e("msg:" + s);
-        handlerContext.writeAndFlush(Unpooled.copiedBuffer(EncodeAndDecode.getStrUnicode(s).getBytes()));
     }
 
     /**
