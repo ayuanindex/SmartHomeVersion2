@@ -1,7 +1,5 @@
 package com.realmax.smarthomeversion2.tcp;
 
-import android.util.Log;
-
 import com.google.gson.JsonSyntaxException;
 
 import org.json.JSONException;
@@ -15,7 +13,7 @@ public class CustomerHandlerBase extends BaseNettyHandler {
     private CustomerCallback customerCallback;
     private boolean flag = false;
     private StringBuffer strings = new StringBuffer();
-    /*private String currentCommand = "";*/
+    private String currentCommand = "";
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {

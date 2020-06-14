@@ -30,10 +30,6 @@ public class ValueUtil {
 
     private static HashMap<String, MqttControl> mqttControlHashMap;
 
-    /*public static String getRoom() {
-        return "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    }*/
-
     public static HashMap<String, CustomerHandlerBase> getHandlerHashMap() {
         return handlerHashMap;
     }

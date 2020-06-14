@@ -10,7 +10,7 @@ import com.qcloud.iot_explorer.data_template.TXDataTemplateDownStreamCallBack;
 import com.qcloud.iot_explorer.mqtt.TXMqttActionCallBack;
 import com.realmax.smarthomeversion2.bean.LightOrCurtainBean;
 import com.realmax.smarthomeversion2.tcp.CustomerHandlerBase;
-import com.realmax.smarthomeversion2.util.CustomerThreadManager;
+import com.realmax.smarthomeversion2.util.CustomerThread;
 import com.realmax.smarthomeversion2.util.ValueUtil;
 
 import org.json.JSONObject;
@@ -96,7 +96,7 @@ public class CurtainControl extends MqttControl {
      * @param data 当前状态的json数据
      */
     private void executeInstruction(JSONObject data) {
-        CustomerThreadManager.threadPoolExecutor.execute(() -> {
+        CustomerThread.poolExecutor.execute(() -> {
             CustomerHandlerBase light = ValueUtil.getHandlerHashMap().get("light");
             if (light != null) {
                 String currentCommand = light.getCurrentCommand();

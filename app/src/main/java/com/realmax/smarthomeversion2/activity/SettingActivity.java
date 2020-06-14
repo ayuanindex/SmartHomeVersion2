@@ -2,6 +2,7 @@ package com.realmax.smarthomeversion2.activity;
 
 import android.annotation.SuppressLint;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -20,9 +21,12 @@ import com.realmax.smarthomeversion2.bean.LinkBean;
 import com.realmax.smarthomeversion2.tcp.CustomerCallback;
 import com.realmax.smarthomeversion2.tcp.CustomerHandlerBase;
 import com.realmax.smarthomeversion2.tcp.NettyLinkUtil;
+import com.realmax.smarthomeversion2.util.CustomerThread;
 import com.realmax.smarthomeversion2.util.L;
+import com.realmax.smarthomeversion2.util.ValueUtil;
 
 import java.util.ArrayList;
+import java.util.FormatFlagsConversionMismatchException;
 
 import io.netty.channel.EventLoopGroup;
 
@@ -59,31 +63,45 @@ public class SettingActivity extends BaseActivity {
         });
     }
 
-    static class ViewHolder {
-
-        View rootView;
-        EditText etIp;
-        EditText etPort;
-        CardView cardCancel;
-        CardView cardOk;
-        ViewHolder(View rootView) {
-            this.rootView = rootView;
-            this.etIp = rootView.findViewById(R.id.et_ip);
-            this.etPort = rootView.findViewById(R.id.et_port);
-            this.cardCancel = rootView.findViewById(R.id.cardCancel);
-            this.cardOk = rootView.findViewById(R.id.cardOk);
-        }
-
-    }
     @Override
     protected void initData() {
         linkBeans = new ArrayList<>();
-        linkBeans.add(new LinkBean("电灯&窗帘", "light"));
-        linkBeans.add(new LinkBean("门", "door"));
-        linkBeans.add(new LinkBean("摄像头", "camera"));
+        linkBeans.add(new LinkBean("虚拟场景", "virtual"));
+        // 控制所有灯光
+        linkBeans.add(new LinkBean("控制器1", "control_01"));
+        // 控制所有窗帘和1号空调
+        linkBeans.add(new LinkBean("控制器2", "control_02"));
+        // 控制所有门和空气质量传感器
+        linkBeans.add(new LinkBean("控制器3", "control_03"));
+        // 控制剩下的空调以及电视和音乐
+        linkBeans.add(new LinkBean("控制器4", "control_04"));
+        // 所有人体传感器 + 扫地机器人 + 报警器
+        linkBeans.add(new LinkBean("控制器5", "control_05"));
 
         customerAdapter = new CustomerAdapter();
         lvList.setAdapter(customerAdapter);
+
+        // 验证已经连接的
+        for (LinkBean linkBean : linkBeans) {
+            if (linkBean.isConnected()) {
+                CustomerHandlerBase customerHandlerBase = ValueUtil.getHandlerHashMap().get(linkBean.getTag());
+                if (customerHandlerBase != null) {
+                    customerHandlerBase.setCustomerCallback(new CustomerCallback() {
+                        @Override
+                        public void disConnected() {
+                            linkBean.setConnected(false);
+                            L.e("连接已经断开");
+                            runOnUiThread(() -> customerAdapter.notifyDataSetChanged());
+                        }
+
+                        @Override
+                        public void getResultData(String msg) {
+
+                        }
+                    });
+                }
+            }
+        }
     }
 
     /**
@@ -118,52 +136,58 @@ public class SettingActivity extends BaseActivity {
                 return;
             }
 
-            CustomerHandlerBase customerHandler = new CustomerHandlerBase();
-            linkBean.connected(ip, port, customerHandler, new NettyLinkUtil.Callback() {
-                @Override
-                public void success(EventLoopGroup eventLoopGroup) {
-                    /*// 连接MQTT
-                    MqttControl mqttControl = ValueUtil.getMqttControlHashMap().get(linkBean.getTag());
-                    if (mqttControl != null) {
-                        mqttControl.connected();
-                    }*/
-
-                    runOnUiThread(() -> {
-                        linkBean.setConnected(true);
-                        runOnUiThread(() -> customerAdapter.notifyDataSetChanged());
-                    });
-                }
-
-                @Override
-                public void error() {
-                    linkBean.setConnected(false);
-                    CustomerCallback customerCallback = customerHandler.getCustomerCallback();
-                    if (customerCallback != null) {
-                        customerCallback.disConnected();
+            CustomerThread.poolExecutor.execute(() -> {
+                CustomerHandlerBase customerHandler = new CustomerHandlerBase();
+                linkBean.connected(ip, port, customerHandler, new NettyLinkUtil.Callback() {
+                    @Override
+                    public void success(EventLoopGroup eventLoopGroup) {
+                        runOnUiThread(() -> {
+                            linkBean.setConnected(true);
+                            runOnUiThread(() -> customerAdapter.notifyDataSetChanged());
+                        });
                     }
 
-                    /*// 断开MQTT连接
-                    MqttControl mqttControl = ValueUtil.getMqttControlHashMap().get(linkBean.getTag());
-                    if (mqttControl != null) {
-                        mqttControl.disConnected();
-                    }*/
+                    @Override
+                    public void error() {
+                        linkBean.setConnected(false);
+                        CustomerCallback customerCallback = customerHandler.getCustomerCallback();
+                        if (customerCallback != null) {
+                            customerCallback.disConnected();
+                        }
 
-                    runOnUiThread(() -> {
-                        customerAdapter.notifyDataSetChanged();
-                        App.showToast("请检查服务端是否打开、网络是否在通畅");
-                    });
-                }
+                        runOnUiThread(() -> {
+                            customerAdapter.notifyDataSetChanged();
+                            App.showToast("请检查服务端是否打开、网络是否在通畅");
+                        });
+                    }
+                });
             });
-
             alertDialog.dismiss();
         });
 
         viewHolder.cardCancel.setOnClickListener((View v) -> alertDialog.dismiss());
-
         if (alertDialog.getWindow() != null) {
             alertDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
         }
         alertDialog.show();
+    }
+
+    static class ViewHolder {
+
+        View rootView;
+        EditText etIp;
+        EditText etPort;
+        CardView cardCancel;
+        CardView cardOk;
+
+        ViewHolder(View rootView) {
+            this.rootView = rootView;
+            this.etIp = rootView.findViewById(R.id.et_ip);
+            this.etPort = rootView.findViewById(R.id.et_port);
+            this.cardCancel = rootView.findViewById(R.id.cardCancel);
+            this.cardOk = rootView.findViewById(R.id.cardOk);
+        }
+
     }
 
     /**

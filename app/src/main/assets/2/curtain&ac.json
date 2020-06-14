@@ -1,0 +1,10 @@
+{
+  "curtain": [0,1,2,3,4,5,6,7,8,9,10],
+  "ac": {
+    "acPower": 0,
+    "mode": 0,
+    "windSpeed": 5,
+    "temperature": 19,
+    "currentTemperature": 20
+  }
+}

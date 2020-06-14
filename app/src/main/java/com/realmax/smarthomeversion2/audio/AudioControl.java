@@ -2,12 +2,9 @@ package com.realmax.smarthomeversion2.audio;
 
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.View;
-import android.widget.EditText;
 
 import androidx.annotation.LayoutRes;
 
-import com.google.android.material.appbar.AppBarLayout;
 import com.google.gson.Gson;
 import com.realmax.smarthomeversion2.R;
 import com.realmax.smarthomeversion2.activity.BaseActivity;
@@ -16,7 +13,7 @@ import com.realmax.smarthomeversion2.bean.LightOrCurtainBean;
 import com.realmax.smarthomeversion2.bean.MessageBean;
 import com.realmax.smarthomeversion2.bean.RoomBean;
 import com.realmax.smarthomeversion2.tcp.CustomerHandlerBase;
-import com.realmax.smarthomeversion2.util.CustomerThreadManager;
+import com.realmax.smarthomeversion2.util.CustomerThread;
 import com.realmax.smarthomeversion2.util.L;
 import com.realmax.smarthomeversion2.util.ValueUtil;
 
@@ -440,7 +437,7 @@ public abstract class AudioControl {
             feedBack("好嘞，下次再聊", R.layout.item_left_message);
         });
 
-        CustomerThreadManager.threadPoolExecutor.execute(() -> {
+        CustomerThread.poolExecutor.execute(() -> {
             try {
                 Thread.sleep(1000);
                 mActivity.finish();

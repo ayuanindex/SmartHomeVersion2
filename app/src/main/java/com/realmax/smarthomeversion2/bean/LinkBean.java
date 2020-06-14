@@ -2,6 +2,7 @@ package com.realmax.smarthomeversion2.bean;
 
 import com.realmax.smarthomeversion2.tcp.CustomerHandlerBase;
 import com.realmax.smarthomeversion2.tcp.NettyLinkUtil;
+import com.realmax.smarthomeversion2.util.CustomerThread;
 import com.realmax.smarthomeversion2.util.SpUtil;
 import com.realmax.smarthomeversion2.util.ValueUtil;
 
@@ -39,11 +40,16 @@ public class LinkBean {
     }
 
     public String getmHOST() {
-        return SpUtil.getString(tag + "1", "192.168.50.247");
+        return SpUtil.getString(tag + "ip", "192.168.50.247");
     }
 
     public int getPORT() {
-        return SpUtil.getInt(tag + "2", 8527);
+        return SpUtil.getInt(tag + "port", 8527);
+    }
+
+    public void setConnected(boolean connected) {
+        this.connected = connected;
+        ValueUtil.getIsConnected().put(this.tag, connected);
     }
 
     public boolean isConnected() {
@@ -55,9 +61,30 @@ public class LinkBean {
         }
     }
 
-    public void setConnected(boolean connected) {
-        this.connected = connected;
-        ValueUtil.getIsConnected().put(this.tag, connected);
+    /**
+     * 开启连接
+     *
+     * @param ip              连接的IP
+     * @param port            连接的端口号
+     * @param customerHandler 接受/发送数据
+     * @param status          回调
+     */
+    public void connected(String ip, String port, CustomerHandlerBase customerHandler, NettyLinkUtil.Callback status) {
+        try {
+            ValueUtil.getHandlerHashMap().put(LinkBean.this.tag, customerHandler);
+
+            int portInt = Integer.parseInt(port);
+            NettyLinkUtil nettyLinkUtil = new NettyLinkUtil(ip, portInt);
+            // 连接成功后将host和port存入sp中
+            LinkBean.this.mHOST = ip;
+            LinkBean.this.PORT = portInt;
+            SpUtil.putString(tag + "ip", LinkBean.this.mHOST);
+            SpUtil.putInt(tag + "port", LinkBean.this.PORT);
+            nettyLinkUtil.start(status, customerHandler);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     @Override
@@ -67,30 +94,5 @@ public class LinkBean {
                 ", tag='" + tag + '\'' +
                 ", connected=" + connected +
                 '}';
-    }
-
-    public void connected(String ip, String port, CustomerHandlerBase customerHandler, NettyLinkUtil.Callback status) {
-        new Thread() {
-            @Override
-            public void run() {
-                super.run();
-                try {
-                    /*CustomerHandler customerHandler = new CustomerHandler();*/
-                    ValueUtil.getHandlerHashMap().put(LinkBean.this.tag, customerHandler);
-
-                    int portInt = Integer.parseInt(port);
-                    NettyLinkUtil nettyLinkUtil = new NettyLinkUtil(ip, portInt);
-                    // 连接成功后将host和port存入sp中
-                    LinkBean.this.mHOST = ip;
-                    LinkBean.this.PORT = portInt;
-                    SpUtil.putString(tag + "1", LinkBean.this.mHOST);
-                    SpUtil.putInt(tag + "2", LinkBean.this.PORT);
-                    nettyLinkUtil.start(status, customerHandler);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
-            }
-        }.start();
     }
 }

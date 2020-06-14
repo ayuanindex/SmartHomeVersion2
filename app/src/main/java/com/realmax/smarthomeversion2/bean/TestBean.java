@@ -1,105 +1,82 @@
 package com.realmax.smarthomeversion2.bean;
 
 import java.util.List;
-import java.util.function.Consumer;
 
 public class TestBean {
 
-    private List<RoomsBean> rooms;
+    private List<DoorsBean> doors;
 
-    public List<RoomsBean> getRooms() {
-        rooms.forEach(new Consumer<RoomsBean>() {
-            @Override
-            public void accept(RoomsBean roomsBean) {
-
-            }
-        });
-        return rooms;
+    public List<DoorsBean> getDoors() {
+        return doors;
     }
 
-    public void setRooms(List<RoomsBean> rooms) {
-        this.rooms = rooms;
+    public void setDoors(List<DoorsBean> doors) {
+        this.doors = doors;
     }
 
-    public static class RoomsBean {
+    public static class DoorsBean {
         /**
-         * roomTag : A
-         * humanBodySensing : [1,2,3]
-         * lightIntensity : [100,200,300]
-         * audibleAlarm : [0,1,2,3,4]
-         * gasSensor : [{"humidity":1,"smoke":1}]
+         * doorName : 客厅门
+         * doorLock : 0
+         * doorSwitch : 0
+         * setPassword : 1234
+         * outsideDetection : 0
+         * 门内检测 : 1
          */
 
-        private String roomTag;
-        private List<Integer> humanBodySensing;
-        private List<Integer> lightIntensity;
-        private List<Integer> audibleAlarm;
-        private List<GasSensorBean> gasSensor;
+        private String doorName;
+        private int doorLock;
+        private int doorSwitch;
+        private int setPassword;
+        private int outsideDetection;
+        private int 门内检测;
 
-        public String getRoomTag() {
-            return roomTag;
+        public String getDoorName() {
+            return doorName;
         }
 
-        public void setRoomTag(String roomTag) {
-            this.roomTag = roomTag;
+        public void setDoorName(String doorName) {
+            this.doorName = doorName;
         }
 
-        public List<Integer> getHumanBodySensing() {
-            return humanBodySensing;
+        public int getDoorLock() {
+            return doorLock;
         }
 
-        public void setHumanBodySensing(List<Integer> humanBodySensing) {
-            this.humanBodySensing = humanBodySensing;
+        public void setDoorLock(int doorLock) {
+            this.doorLock = doorLock;
         }
 
-        public List<Integer> getLightIntensity() {
-            return lightIntensity;
+        public int getDoorSwitch() {
+            return doorSwitch;
         }
 
-        public void setLightIntensity(List<Integer> lightIntensity) {
-            this.lightIntensity = lightIntensity;
+        public void setDoorSwitch(int doorSwitch) {
+            this.doorSwitch = doorSwitch;
         }
 
-        public List<Integer> getAudibleAlarm() {
-            return audibleAlarm;
+        public int getSetPassword() {
+            return setPassword;
         }
 
-        public void setAudibleAlarm(List<Integer> audibleAlarm) {
-            this.audibleAlarm = audibleAlarm;
+        public void setSetPassword(int setPassword) {
+            this.setPassword = setPassword;
         }
 
-        public List<GasSensorBean> getGasSensor() {
-            return gasSensor;
+        public int getOutsideDetection() {
+            return outsideDetection;
         }
 
-        public void setGasSensor(List<GasSensorBean> gasSensor) {
-            this.gasSensor = gasSensor;
+        public void setOutsideDetection(int outsideDetection) {
+            this.outsideDetection = outsideDetection;
         }
 
-        public static class GasSensorBean {
-            /**
-             * humidity : 1
-             * smoke : 1
-             */
+        public int get门内检测() {
+            return 门内检测;
+        }
 
-            private int humidity;
-            private int smoke;
-
-            public int getHumidity() {
-                return humidity;
-            }
-
-            public void setHumidity(int humidity) {
-                this.humidity = humidity;
-            }
-
-            public int getSmoke() {
-                return smoke;
-            }
-
-            public void setSmoke(int smoke) {
-                this.smoke = smoke;
-            }
+        public void set门内检测(int 门内检测) {
+            this.门内检测 = 门内检测;
         }
     }
 }
