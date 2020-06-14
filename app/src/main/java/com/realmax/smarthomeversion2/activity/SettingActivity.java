@@ -2,7 +2,6 @@ package com.realmax.smarthomeversion2.activity;
 
 import android.annotation.SuppressLint;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -26,7 +25,6 @@ import com.realmax.smarthomeversion2.util.L;
 import com.realmax.smarthomeversion2.util.ValueUtil;
 
 import java.util.ArrayList;
-import java.util.FormatFlagsConversionMismatchException;
 
 import io.netty.channel.EventLoopGroup;
 

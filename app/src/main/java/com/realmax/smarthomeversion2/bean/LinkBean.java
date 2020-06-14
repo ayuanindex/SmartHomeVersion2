@@ -2,7 +2,6 @@ package com.realmax.smarthomeversion2.bean;
 
 import com.realmax.smarthomeversion2.tcp.CustomerHandlerBase;
 import com.realmax.smarthomeversion2.tcp.NettyLinkUtil;
-import com.realmax.smarthomeversion2.util.CustomerThread;
 import com.realmax.smarthomeversion2.util.SpUtil;
 import com.realmax.smarthomeversion2.util.ValueUtil;
 
