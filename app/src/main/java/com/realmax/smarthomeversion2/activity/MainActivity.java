@@ -99,8 +99,6 @@ public class MainActivity extends BaseActivity {
                 break;
             case 1:// 窗
                 intent = new Intent(MainActivity.this, CurtainActivity.class);
-                /*intent.putExtra("tag", "curtain");*/
-                intent.putExtra("tag", "light");
                 break;
             case 2:// 门
                 intent = new Intent(MainActivity.this, DoorActivity.class);

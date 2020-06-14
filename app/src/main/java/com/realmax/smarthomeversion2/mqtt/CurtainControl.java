@@ -8,6 +8,7 @@ import com.google.gson.Gson;
 import com.qcloud.iot_explorer.common.Status;
 import com.qcloud.iot_explorer.data_template.TXDataTemplateDownStreamCallBack;
 import com.qcloud.iot_explorer.mqtt.TXMqttActionCallBack;
+import com.realmax.smarthomeversion2.activity.bean.CurtainAndAcBean;
 import com.realmax.smarthomeversion2.bean.LightOrCurtainBean;
 import com.realmax.smarthomeversion2.tcp.CustomerHandlerBase;
 import com.realmax.smarthomeversion2.util.CustomerThread;
@@ -19,6 +20,7 @@ import java.util.Iterator;
 
 public class CurtainControl extends MqttControl {
     private static final String TAG = "LightControl";
+    private String tag = "control_02";
 
     public CurtainControl(Context context, String mJsonFileName, String mProductId, String mDevName, String mDevPsk) {
         super(context, mJsonFileName, mProductId, mDevName, mDevPsk);
@@ -101,7 +103,7 @@ public class CurtainControl extends MqttControl {
             if (light != null) {
                 String currentCommand = light.getCurrentCommand();
                 if (!TextUtils.isEmpty(currentCommand)) {
-                    LightOrCurtainBean lightOrCurtainBean = new Gson().fromJson(currentCommand, LightOrCurtainBean.class);
+                    CurtainAndAcBean curtainAndAcBean = new Gson().fromJson(currentCommand, CurtainAndAcBean.class);
 
                     JSONObject control = data.optJSONObject("control");
                     if (control != null) {
@@ -110,13 +112,13 @@ public class CurtainControl extends MqttControl {
                             String next = keys.next();
                             if (next.matches("curtain.*")) {
                                 int curtainKey = Integer.parseInt(next.replace("curtain", ""));
-                                if (curtainKey - 1 < lightOrCurtainBean.getCurtain_S().size()) {
-                                    lightOrCurtainBean.getCurtain_S().set(curtainKey - 1, control.optInt(next));
-                                    Log.d(TAG, "在获取状态回复回电上：" + lightOrCurtainBean.getCurtain_S().get(curtainKey - 1));
+                                if (curtainKey - 1 < curtainAndAcBean.getCurtain_S().size()) {
+                                    curtainAndAcBean.getCurtain_S().set(curtainKey - 1, control.optInt(next));
+                                    Log.d(TAG, "在获取状态回复回电上：" + curtainAndAcBean.getCurtain_S().get(curtainKey - 1));
                                 }
                             }
                         }
-                        ValueUtil.sendCurtainOpenOrCloseCmd(lightOrCurtainBean);
+                        ValueUtil.sendCurtainOpenOrCloseCmd(curtainAndAcBean, tag);
                     }
                 } else {
                     Log.d(TAG, "在获取状态回复回电上：命令为空");

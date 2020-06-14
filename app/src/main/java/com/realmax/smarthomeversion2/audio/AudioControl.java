@@ -8,8 +8,9 @@ import androidx.annotation.LayoutRes;
 import com.google.gson.Gson;
 import com.realmax.smarthomeversion2.R;
 import com.realmax.smarthomeversion2.activity.BaseActivity;
+import com.realmax.smarthomeversion2.activity.bean.CurtainAndAcBean;
+import com.realmax.smarthomeversion2.activity.bean.LightBean;
 import com.realmax.smarthomeversion2.bean.DoorBean;
-import com.realmax.smarthomeversion2.bean.LightOrCurtainBean;
 import com.realmax.smarthomeversion2.bean.MessageBean;
 import com.realmax.smarthomeversion2.bean.RoomBean;
 import com.realmax.smarthomeversion2.tcp.CustomerHandlerBase;
@@ -56,6 +57,8 @@ public abstract class AudioControl {
     private String field;
     private int lock;
     private int pass;
+    private String tag1 = "control_01";
+    private String tag2 = "control_02";
 
     AudioControl(BaseActivity mActivity, ArrayList<MessageBean> messageBeans, CommendActivity.CustomerAdapter customerAdapter) {
         this.mActivity = mActivity;
@@ -243,8 +246,8 @@ public abstract class AudioControl {
         L.e("灯的当前状态" + currentCommand);
         if (!TextUtils.isEmpty(currentCommand)) {
             // 根据获取到的状态信息生成JavaBean对象
-            LightOrCurtainBean lightOrCurtainBean = new Gson().fromJson(currentCommand, LightOrCurtainBean.class);
-            List<Integer> lightS = lightOrCurtainBean.getLight_S();
+            LightBean lightBean = new Gson().fromJson(currentCommand, LightBean.class);
+            List<Integer> lightS = lightBean.getLightList_S();
             changeState((RoomBean roomBean) -> {
                 int[] lightId = roomBean.getLightId();
                 if (lightId.length > 0) {
@@ -255,9 +258,9 @@ public abstract class AudioControl {
                 }
             });
 
-            L.e(lightOrCurtainBean.toString());
+            L.e(lightBean.toString());
             // 开始执行控制指令
-            /*ValueUtil.sendLightOpenOrCloseCmd(lightOrCurtainBean, "light");*/
+            ValueUtil.sendLightOpenOrCloseCmd(lightBean, tag1);
         }
     }
 
@@ -284,8 +287,8 @@ public abstract class AudioControl {
         L.e("窗帘的当前状态" + currentCommand);
         if (!TextUtils.isEmpty(currentCommand)) {
             // 根据获取到的状态信息生成JavaBean对象
-            LightOrCurtainBean lightOrCurtainBean = new Gson().fromJson(currentCommand, LightOrCurtainBean.class);
-            List<Integer> curtainS = lightOrCurtainBean.getCurtain_S();
+            CurtainAndAcBean curtainAndAcBean = new Gson().fromJson(currentCommand, CurtainAndAcBean.class);
+            List<Integer> curtainS = curtainAndAcBean.getCurtain_S();
             changeState((RoomBean roomBean) -> {
                 int[] curtailId = roomBean.getCurtailId();
                 if (curtailId.length > 0) {
@@ -296,9 +299,9 @@ public abstract class AudioControl {
                 }
             });
 
-            L.e(lightOrCurtainBean.toString());
+            L.e(curtainAndAcBean.toString());
             // 开始执行控制指令
-            ValueUtil.sendCurtainOpenOrCloseCmd(lightOrCurtainBean);
+            ValueUtil.sendCurtainOpenOrCloseCmd(curtainAndAcBean, tag2);
         }
     }
 

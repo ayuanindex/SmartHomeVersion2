@@ -17,9 +17,9 @@ import androidx.appcompat.widget.SwitchCompat;
 import com.google.gson.Gson;
 import com.realmax.smarthomeversion2.App;
 import com.realmax.smarthomeversion2.R;
-import com.realmax.smarthomeversion2.bean.LightOrCurtainBean;
+import com.realmax.smarthomeversion2.activity.bean.CurtainAndAcBean;
+import com.realmax.smarthomeversion2.activity.bean.RoomBean;
 import com.realmax.smarthomeversion2.mqtt.CurtainControl;
-import com.realmax.smarthomeversion2.mqtt.LightControl;
 import com.realmax.smarthomeversion2.mqtt.MqttControl;
 import com.realmax.smarthomeversion2.tcp.CustomerCallback;
 import com.realmax.smarthomeversion2.tcp.CustomerHandlerBase;
@@ -41,13 +41,14 @@ public class CurtainActivity extends BaseActivity {
     private ImageView ivSwitchRight;
     private TextView tvCurrentRoom;
     private CustomerAdapter customerAdapter;
-    private String tag;
+    private String tag = "control_02";
     private ArrayList<Integer> currentCurtainStatus;
     /**
      * 当前位置
      */
     private int currentPosition;
-    private LightOrCurtainBean lightOrCurtainBean;
+    private ArrayList<RoomBean> roomBeans;
+    private CurtainAndAcBean curtainAndAcBean;
 
     @Override
     protected int getLayout() {
@@ -75,10 +76,21 @@ public class CurtainActivity extends BaseActivity {
 
     @Override
     protected void initData() {
-        tag = getIntent().getStringExtra("tag");
         currentPosition = 0;
 
-        lightOrCurtainBean = new LightOrCurtainBean(new ArrayList<>(), new ArrayList<>());
+        roomBeans = new ArrayList<>();
+        roomBeans.add(new RoomBean("客厅", new int[]{1, 2}));
+        roomBeans.add(new RoomBean("餐厅", new int[]{3}));
+        roomBeans.add(new RoomBean("门厅", new int[]{4}));
+        roomBeans.add(new RoomBean("走廊", new int[]{5}));
+        roomBeans.add(new RoomBean("卧室A", new int[]{6}));
+        roomBeans.add(new RoomBean("卧室B", new int[]{7}));
+        roomBeans.add(new RoomBean("卧室C", new int[]{8}));
+        roomBeans.add(new RoomBean("车库", new int[]{9}));
+        roomBeans.add(new RoomBean("书房", new int[]{10}));
+
+
+        curtainAndAcBean = new CurtainAndAcBean(new ArrayList<>());
 
         currentCurtainStatus = new ArrayList<>();
 
@@ -92,12 +104,7 @@ public class CurtainActivity extends BaseActivity {
             customerHandler.setCustomerCallback(new CustomerCallback() {
                 @Override
                 public void disConnected() {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            App.showToast("窗帘断开连接");
-                        }
-                    });
+                    uiHandler.post(() -> App.showToast("窗帘断开连接"));
                     L.e("窗帘断开连接");
                     ValueUtil.getIsConnected().put(tag, false);
                     ValueUtil.getHandlerHashMap().put(tag, null);
@@ -108,19 +115,20 @@ public class CurtainActivity extends BaseActivity {
                     try {
                         if (!TextUtils.isEmpty(msg)) {
                             JSONObject jsonObject = new JSONObject(msg);
-                            String curtainS = "Curtain_S";
+                            String curtainS = "curtain_S";
                             if (jsonObject.has(curtainS)) {
-                                lightOrCurtainBean = new Gson().fromJson(msg, LightOrCurtainBean.class);
+                                curtainAndAcBean = new Gson().fromJson(msg, CurtainAndAcBean.class);
 
                                 // 获取到数据刷新列表
-                                runOnUiThread(() -> {
+                                uiHandler.post(() -> {
                                     currentCurtainStatus.clear();
-                                    for (int i : roomBeans.get(currentPosition).getCurtailId()) {
-                                        if (i - 1 < lightOrCurtainBean.getCurtain_S().size()) {
+                                    for (int i : roomBeans.get(currentPosition).getModel()) {
+                                        currentCurtainStatus.add(curtainAndAcBean.getCurtain_S().get(i - 1));
+                                       /* if (i - 1 < curtainAndAcBean.getCurtain_S().size()) {
                                             L.e("i:" + i);
                                             // 现实中指定客厅的灯
-                                            currentCurtainStatus.add(lightOrCurtainBean.getCurtain_S().get(i - 1));
-                                        }
+                                            currentCurtainStatus.add(curtainAndAcBean.getCurtain_S().get(i - 1));
+                                        }*/
                                     }
                                     customerAdapter.notifyDataSetChanged();
                                 });
@@ -141,7 +149,7 @@ public class CurtainActivity extends BaseActivity {
      */
     @SuppressLint("SetTextI18n")
     private void switchPage(int type) {
-        if (lightOrCurtainBean == null) {
+        if (curtainAndAcBean == null) {
             return;
         }
 
@@ -151,11 +159,11 @@ public class CurtainActivity extends BaseActivity {
                 if (currentPosition > 0) {
                     currentCurtainStatus.clear();
                     currentPosition--;
-                    int[] curtailId = roomBeans.get(currentPosition).getCurtailId();
+                    int[] curtailId = roomBeans.get(currentPosition).getModel();
                     for (int i : curtailId) {
                         L.e("" + i);
-                        if (i - 1 < lightOrCurtainBean.getCurtain_S().size()) {
-                            currentCurtainStatus.add(lightOrCurtainBean.getCurtain_S().get(i - 1));
+                        if (i - 1 < curtainAndAcBean.getCurtain_S().size()) {
+                            currentCurtainStatus.add(curtainAndAcBean.getCurtain_S().get(i - 1));
                         }
                     }
                 }
@@ -163,13 +171,12 @@ public class CurtainActivity extends BaseActivity {
             case 1:
                 if (currentPosition < roomBeans.size() - 1) {
                     currentCurtainStatus.clear();
-                    /*currentCurtainControl.clear();*/
                     currentPosition++;
-                    int[] curtailId = roomBeans.get(currentPosition).getCurtailId();
+                    int[] curtailId = roomBeans.get(currentPosition).getModel();
                     for (int i : curtailId) {
                         L.e("" + i);
-                        if (i - 1 < lightOrCurtainBean.getCurtain_S().size()) {
-                            currentCurtainStatus.add(lightOrCurtainBean.getCurtain_S().get(i - 1));
+                        if (i - 1 < curtainAndAcBean.getCurtain_S().size()) {
+                            currentCurtainStatus.add(curtainAndAcBean.getCurtain_S().get(i - 1));
                         }
                     }
                 }
@@ -217,7 +224,7 @@ public class CurtainActivity extends BaseActivity {
                 view = convertView;
             }
             initView(view);
-            int[] curtailId = roomBeans.get(currentPosition).getCurtailId();
+            int[] curtailId = roomBeans.get(currentPosition).getModel();
             tvLabel.setText(roomBeans.get(currentPosition).getRoomName() + curtailId[position] + "号窗帘");
 
             // 设置当前电灯的状态
@@ -241,10 +248,10 @@ public class CurtainActivity extends BaseActivity {
                             curtainControl.publish(property);
                         }
 
-                        ArrayList<Integer> curtainC = new ArrayList<>(lightOrCurtainBean.getCurtain_S());
+                        ArrayList<Integer> curtainC = new ArrayList<>(curtainAndAcBean.getCurtain_S());
                         curtainC.set(curtailId[position] - 1, getItem(position) == OPEN ? CLOSE : OPEN);
-                        LightOrCurtainBean bean = new LightOrCurtainBean(CurtainActivity.this.lightOrCurtainBean.getLight_S(), curtainC);
-                        ValueUtil.sendCurtainOpenOrCloseCmd(bean);
+                        CurtainAndAcBean curtainAndAcBean = new CurtainAndAcBean(curtainC);
+                        ValueUtil.sendCurtainOpenOrCloseCmd(curtainAndAcBean, tag);
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -258,6 +265,8 @@ public class CurtainActivity extends BaseActivity {
             tvLabel = view.findViewById(R.id.tv_label);
             cbCheck = view.findViewById(R.id.cb_check);
             swToggle = view.findViewById(R.id.sw_toggle);
+
+            cbCheck.setBackgroundResource(R.drawable.xml_check_select_curtain);
         }
     }
 }

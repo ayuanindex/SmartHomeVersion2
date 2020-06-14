@@ -8,7 +8,7 @@ import com.google.gson.Gson;
 import com.qcloud.iot_explorer.common.Status;
 import com.qcloud.iot_explorer.data_template.TXDataTemplateDownStreamCallBack;
 import com.qcloud.iot_explorer.mqtt.TXMqttActionCallBack;
-import com.realmax.smarthomeversion2.bean.LightOrCurtainBean;
+import com.realmax.smarthomeversion2.activity.bean.LightBean;
 import com.realmax.smarthomeversion2.tcp.CustomerHandlerBase;
 import com.realmax.smarthomeversion2.util.CustomerThread;
 import com.realmax.smarthomeversion2.util.ValueUtil;
@@ -19,6 +19,7 @@ import java.util.Iterator;
 
 public class LightControl extends MqttControl {
     private static final String TAG = "LightControl";
+    private String tag = "control_01";
 
     public LightControl(Context context, String mJsonFileName, String mProductId, String mDevName, String mDevPsk) {
         super(context, mJsonFileName, mProductId, mDevName, mDevPsk);
@@ -101,7 +102,7 @@ public class LightControl extends MqttControl {
             if (light != null) {
                 String currentCommand = light.getCurrentCommand();
                 if (!TextUtils.isEmpty(currentCommand)) {
-                    LightOrCurtainBean lightOrCurtainBean = new Gson().fromJson(currentCommand, LightOrCurtainBean.class);
+                    LightBean lightBean = new Gson().fromJson(currentCommand, LightBean.class);
 
                     JSONObject control = data.optJSONObject("control");
                     if (control != null) {
@@ -110,13 +111,13 @@ public class LightControl extends MqttControl {
                             String next = keys.next();
                             if (next.matches("light.*")) {
                                 int lightKey = Integer.parseInt(next.replace("light", ""));
-                                if (lightKey - 1 < lightOrCurtainBean.getLight_S().size()) {
-                                    lightOrCurtainBean.getLight_S().set(lightKey - 1, control.optInt(next));
-                                    Log.d(TAG, "在获取状态回复回电上：" + lightOrCurtainBean.getLight_S().get(lightKey - 1));
+                                if (lightKey - 1 < lightBean.getLightList_S().size()) {
+                                    lightBean.getLightList_S().set(lightKey - 1, control.optInt(next));
+                                    Log.d(TAG, "在获取状态回复回电上：" + lightBean.getLightList_S().get(lightKey - 1));
                                 }
                             }
                         }
-                        /*ValueUtil.sendLightOpenOrCloseCmd(lightOrCurtainBean, "light");*/
+                        ValueUtil.sendLightOpenOrCloseCmd(lightBean, tag);
                     }
                 } else {
                     Log.d(TAG, "在获取状态回复回电上：命令为空");

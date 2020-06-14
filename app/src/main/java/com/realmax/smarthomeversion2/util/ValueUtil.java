@@ -1,7 +1,7 @@
 package com.realmax.smarthomeversion2.util;
 
+import com.realmax.smarthomeversion2.activity.bean.CurtainAndAcBean;
 import com.realmax.smarthomeversion2.activity.bean.LightBean;
-import com.realmax.smarthomeversion2.bean.LightOrCurtainBean;
 import com.realmax.smarthomeversion2.mqtt.MqttControl;
 import com.realmax.smarthomeversion2.tcp.CustomerHandlerBase;
 
@@ -102,28 +102,22 @@ public class ValueUtil {
     /**
      * 发送开启电灯或关闭电灯的指令
      *
-     * @param lightOrCurtainBean 需要修改的对象
+     * @param curtainAndAcBean 需要修改的对象
+     * @param tag              识别标签
      */
-    public static void sendCurtainOpenOrCloseCmd(LightOrCurtainBean lightOrCurtainBean) {
-        CustomerHandlerBase customerHandler = getHandlerHashMap().get("light");
-        /*CustomerHandler customerHandler = getHandlerHashMap().get("curtain");*/
-        if (customerHandler == null) {
-            return;
+    public static void sendCurtainOpenOrCloseCmd(CurtainAndAcBean curtainAndAcBean, String tag) {
+        CustomerHandlerBase customerHandler = getHandlerHashMap().get(tag);
+        if (customerHandler != null) {
+            ChannelHandlerContext handlerContext = customerHandler.getHandlerContext();
+            if (handlerContext != null) {
+                HashMap<String, List<Integer>> hashMap = new HashMap<>(2);
+                hashMap.put("curtain_C", curtainAndAcBean.getCurtain_S());
+                JSONObject jsonObject = new JSONObject(hashMap);
+                String s = jsonObject.toString();
+                L.e(s);
+                handlerContext.writeAndFlush(Unpooled.copiedBuffer(EncodeAndDecode.getStrUnicode(s).getBytes()));
+            }
         }
-
-        ChannelHandlerContext handlerContext = customerHandler.getHandlerContext();
-
-        if (handlerContext == null) {
-            return;
-        }
-
-        HashMap<String, List<Integer>> hashMap = new HashMap<>(2);
-        hashMap.put("Light_C", lightOrCurtainBean.getLight_S());
-        hashMap.put("Curtain_C", lightOrCurtainBean.getCurtain_S());
-        JSONObject jsonObject = new JSONObject(hashMap);
-        String s = jsonObject.toString();
-        L.e(s);
-        handlerContext.writeAndFlush(Unpooled.copiedBuffer(EncodeAndDecode.getStrUnicode(s).getBytes()));
     }
 
     public static void sendDoorCmd(String field, int door, int key, int password) {
