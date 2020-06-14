@@ -116,7 +116,7 @@ public class LightControl extends MqttControl {
                                 }
                             }
                         }
-                        ValueUtil.sendLightOpenOrCloseCmd(lightOrCurtainBean);
+                        /*ValueUtil.sendLightOpenOrCloseCmd(lightOrCurtainBean, "light");*/
                     }
                 } else {
                     Log.d(TAG, "在获取状态回复回电上：命令为空");

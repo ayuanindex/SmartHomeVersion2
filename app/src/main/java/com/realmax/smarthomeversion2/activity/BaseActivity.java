@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Looper;
 
 import androidx.annotation.LayoutRes;
@@ -26,12 +27,14 @@ import java.util.List;
  */
 public abstract class BaseActivity extends AppCompatActivity {
     public ArrayList<RoomBean> roomBeans;
+    public Handler uiHandler;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(getLayout());
         initView();
+        uiHandler = new Handler(Looper.getMainLooper());
         initEvent();
         checkPermissions();
     }
@@ -40,7 +43,6 @@ public abstract class BaseActivity extends AppCompatActivity {
      * 权限验证
      */
     private void checkPermissions() {
-
         List<String> permissions = new LinkedList<>();
         addPermission(permissions, Manifest.permission.WRITE_EXTERNAL_STORAGE);
         addPermission(permissions, Manifest.permission.RECORD_AUDIO);

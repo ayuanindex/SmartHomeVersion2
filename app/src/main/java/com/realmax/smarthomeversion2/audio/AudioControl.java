@@ -257,7 +257,7 @@ public abstract class AudioControl {
 
             L.e(lightOrCurtainBean.toString());
             // 开始执行控制指令
-            ValueUtil.sendLightOpenOrCloseCmd(lightOrCurtainBean);
+            /*ValueUtil.sendLightOpenOrCloseCmd(lightOrCurtainBean, "light");*/
         }
     }
 

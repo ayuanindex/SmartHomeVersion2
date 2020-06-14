@@ -96,7 +96,6 @@ public class MainActivity extends BaseActivity {
         switch (position) {
             case 0:// 灯光
                 intent = new Intent(MainActivity.this, LightActivity.class);
-                intent.putExtra("tag", "light");
                 break;
             case 1:// 窗
                 intent = new Intent(MainActivity.this, CurtainActivity.class);

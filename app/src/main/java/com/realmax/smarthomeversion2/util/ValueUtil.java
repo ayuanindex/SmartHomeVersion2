@@ -1,5 +1,6 @@
 package com.realmax.smarthomeversion2.util;
 
+import com.realmax.smarthomeversion2.activity.bean.LightBean;
 import com.realmax.smarthomeversion2.bean.LightOrCurtainBean;
 import com.realmax.smarthomeversion2.mqtt.MqttControl;
 import com.realmax.smarthomeversion2.tcp.CustomerHandlerBase;
@@ -80,27 +81,22 @@ public class ValueUtil {
     /**
      * 发送开启电灯或关闭电灯的指令
      *
-     * @param lightOrCurtainBean 需要修改的对象
+     * @param lightBean 需要修改的对象
+     * @param tag       标签
      */
-    public static void sendLightOpenOrCloseCmd(LightOrCurtainBean lightOrCurtainBean) {
-        CustomerHandlerBase customerHandler = getHandlerHashMap().get("light");
-        if (customerHandler == null) {
-            return;
+    public static void sendLightOpenOrCloseCmd(LightBean lightBean, String tag) {
+        CustomerHandlerBase customerHandler = getHandlerHashMap().get(tag);
+        if (customerHandler != null) {
+            ChannelHandlerContext handlerContext = customerHandler.getHandlerContext();
+            if (handlerContext != null) {
+                HashMap<String, List<Integer>> hashMap = new HashMap<>(1);
+                hashMap.put("lightList_C", lightBean.getLightList_S());
+                JSONObject jsonObject = new JSONObject(hashMap);
+                String s = jsonObject.toString();
+                L.e("发送的数据-------------" + s);
+                handlerContext.writeAndFlush(Unpooled.copiedBuffer(EncodeAndDecode.getStrUnicode(s).getBytes()));
+            }
         }
-
-        ChannelHandlerContext handlerContext = customerHandler.getHandlerContext();
-
-        if (handlerContext == null) {
-            return;
-        }
-
-        HashMap<String, List<Integer>> hashMap = new HashMap<>(2);
-        hashMap.put("Light_C", lightOrCurtainBean.getLight_S());
-        hashMap.put("Curtain_C", lightOrCurtainBean.getCurtain_S());
-        JSONObject jsonObject = new JSONObject(hashMap);
-        String s = jsonObject.toString();
-        L.e("发送的数据-------------" + s);
-        handlerContext.writeAndFlush(Unpooled.copiedBuffer(EncodeAndDecode.getStrUnicode(s).getBytes()));
     }
 
     /**
