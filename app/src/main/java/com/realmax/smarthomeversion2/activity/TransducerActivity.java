@@ -285,6 +285,7 @@ public class TransducerActivity extends BaseActivity {
      *
      * @param weatherBean 需要显示的数据
      */
+    @SuppressLint("SetTextI18n")
     private void refreshUI(WeatherBean weatherBean) {
         int numberPicOne = getNumberPic(weatherBean.getTime().charAt(0));
         int numberPicTwo = getNumberPic(weatherBean.getTime().charAt(1));
