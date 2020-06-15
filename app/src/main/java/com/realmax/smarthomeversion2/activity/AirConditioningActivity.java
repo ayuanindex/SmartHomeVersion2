@@ -1,7 +1,9 @@
 package com.realmax.smarthomeversion2.activity;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.os.PersistableBundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.ImageView;
@@ -9,8 +11,23 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
+import androidx.exifinterface.media.ExifInterface;
 
+import com.google.gson.Gson;
 import com.realmax.smarthomeversion2.R;
+import com.realmax.smarthomeversion2.activity.bean.AcAndTvAndMusicBean;
+import com.realmax.smarthomeversion2.activity.bean.CurtainAndAcBean;
+import com.realmax.smarthomeversion2.activity.bean.RoomBean;
+import com.realmax.smarthomeversion2.activity.bean.WeatherBean;
+import com.realmax.smarthomeversion2.tcp.CustomerCallback;
+import com.realmax.smarthomeversion2.tcp.CustomerHandlerBase;
+import com.realmax.smarthomeversion2.util.L;
+import com.realmax.smarthomeversion2.util.ValueUtil;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
 
 /**
  * @author ayuan
@@ -36,11 +53,12 @@ public class AirConditioningActivity extends BaseActivity {
     private ImageView ivSwitchLeft;
     private ImageView ivSwitchRight;
     private TextView tvCurrentRoom;
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState, @Nullable PersistableBundle persistentState) {
-        super.onCreate(savedInstanceState, persistentState);
-    }
+    private String tag = "virtual";
+    private String control2 = "control_02";
+    private String control4 = "control_04";
+    private ArrayList<RoomBean> roomBeans;
+    private int currentPosition = 0;
+    private AcAndTvAndMusicBean.AcSBean currentBean;
 
     @Override
     protected int getLayout() {
@@ -78,16 +96,234 @@ public class AirConditioningActivity extends BaseActivity {
 
     @Override
     protected void initEvent() {
-        rlBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
+        rlBack.setOnClickListener(v -> {
+            finish();
         });
+
+        ivSwitchLeft.setOnClickListener((View v) -> switchPage(0));
+
+        ivSwitchRight.setOnClickListener((View v) -> switchPage(1));
     }
 
     @Override
     protected void initData() {
+        currentPosition = 0;
 
+        roomBeans = new ArrayList<>();
+        roomBeans.add(new RoomBean("客厅", new int[]{1}));
+        roomBeans.add(new RoomBean("餐厅", new int[]{2}));
+        roomBeans.add(new RoomBean("卧室A", new int[]{3}));
+        roomBeans.add(new RoomBean("卧室B", new int[]{4}));
+        roomBeans.add(new RoomBean("卧室C", new int[]{5}));
+        roomBeans.add(new RoomBean("书房", new int[]{6}));
+
+        currentBean = new AcAndTvAndMusicBean.AcSBean();
+
+        setWeatherListener();
+        setAcListener();
     }
+
+    /**
+     * 设置天气的TCP接收监听
+     */
+    private void setWeatherListener() {
+        CustomerHandlerBase virtualHandler = ValueUtil.getHandlerHashMap().get(tag);
+        if (virtualHandler != null) {
+            virtualHandler.setCustomerCallback(new CustomerCallback() {
+                @Override
+                public void disConnected() {
+                    L.e("连接断开");
+                    ValueUtil.getIsConnected().put(tag, false);
+                    ValueUtil.getHandlerHashMap().put(tag, null);
+                }
+
+                @Override
+                public void getResultData(String msg) {
+                    try {
+                        if (!TextUtils.isEmpty(msg)) {
+                            L.e("msg-------" + msg);
+                            JSONObject jsonObject = new JSONObject(msg);
+                            if (jsonObject.optString("cmd").equals("ans")) {
+                                WeatherBean weatherBean = new Gson().fromJson(msg, WeatherBean.class);
+                                setWeatherUi(weatherBean);
+                            }
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        }
+
+        ValueUtil.sendWeatherCmd(tag);
+    }
+
+    /**
+     * 设置空调的监听
+     */
+    private void setAcListener() {
+        CustomerHandlerBase control2Handler = ValueUtil.getHandlerHashMap().get(control2);
+        if (control2Handler != null) {
+            control2Handler.setCustomerCallback(new CustomerCallback() {
+                @Override
+                public void disConnected() {
+                    L.e("控制器2断开连接");
+                    ValueUtil.getIsConnected().put(control2, false);
+                    ValueUtil.getHandlerHashMap().put(control2, null);
+                }
+
+                @Override
+                public void getResultData(String msg) {
+                    try {
+                        if (!TextUtils.isEmpty(msg)) {
+                            L.e("msg----" + msg);
+                            JSONObject jsonObject = new JSONObject(msg);
+                            if (jsonObject.has("ac_S")) {
+                                CurtainAndAcBean curtainAndAcBean = new Gson().fromJson(msg, CurtainAndAcBean.class);
+                                if (currentPosition == 0) {
+                                    CurtainAndAcBean.AcSBean ac_s = curtainAndAcBean.getAc_S();
+                                    currentBean.setAcPower(ac_s.getAcPower());
+                                    currentBean.setCurrentTemperature(ac_s.getCurrentTemperature());
+                                    currentBean.setMode(ac_s.getMode());
+                                    currentBean.setTemperature(ac_s.getTemperature());
+                                    currentBean.setWindSpeed(ac_s.getWindSpeed());
+                                    // 刷新界面UI
+                                    refreshUi();
+                                }
+                            }
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        }
+
+        CustomerHandlerBase control4Handler = ValueUtil.getHandlerHashMap().get(control4);
+        if (control4Handler != null) {
+            control4Handler.setCustomerCallback(new CustomerCallback() {
+                @Override
+                public void disConnected() {
+                    L.e("控制器4断开连接");
+                    ValueUtil.getIsConnected().put(control4, false);
+                    ValueUtil.getHandlerHashMap().put(control4, null);
+                }
+
+                @Override
+                public void getResultData(String msg) {
+                    try {
+                        if (!TextUtils.isEmpty(msg)) {
+                            JSONObject jsonObject = new JSONObject(msg);
+                            if (jsonObject.has("ac_S")) {
+                                AcAndTvAndMusicBean acAndTvAndMusicBean = new Gson().fromJson(msg, AcAndTvAndMusicBean.class);
+                                if (currentPosition > 0) {
+                                    currentBean = acAndTvAndMusicBean.getAc_S().get(currentPosition - 1);
+                                    refreshUi();
+                                }
+                            }
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        }
+    }
+
+    @SuppressLint("SetTextI18n")
+    private void refreshUi() {
+        uiHandler.post(() -> {
+            L.e("当前空调状态------————" + currentBean.toString());
+            tvTemperature.setText("当前温度：" + currentBean.getCurrentTemperature() + "℃");
+            tvSetTemperature.setText("设定温度：" + currentBean.getTemperature() + "℃");
+            tvWindSpeed.setText("风速：" + currentBean.getWindSpeed());
+            tvMode.setText("模式：" + (currentBean.getMode() == 0 ? "冷风" : "暖风"));
+            cbPowerSwitch.setChecked(currentBean.getAcPower() == 1);
+        });
+    }
+
+    /**
+     * 将获取到的天气数据设置到界面控件中
+     *
+     * @param weatherBean 天气数据
+     */
+    private void setWeatherUi(WeatherBean weatherBean) {
+        int numberPicOne = getNumberPic(weatherBean.getTime().charAt(0));
+        int numberPicTwo = getNumberPic(weatherBean.getTime().charAt(1));
+        int numberPicThree = getNumberPic(weatherBean.getTime().charAt(3));
+        int numberPicFour = getNumberPic(weatherBean.getTime().charAt(4));
+        int weatherPic = getWeatherPic(weatherBean.getWeather());
+        uiHandler.post(() -> {
+            ivOne.setImageResource(numberPicOne);
+            ivTwo.setImageResource(numberPicTwo);
+            ivThree.setImageResource(numberPicThree);
+            ivFour.setImageResource(numberPicFour);
+
+            ivWeather.setImageResource(weatherPic);
+        });
+    }
+
+    /**
+     * 获取对应的天气图片
+     *
+     * @param weather 天气状态
+     * @return 返回天气状态图片的资源ID
+     */
+    private int getWeatherPic(String weather) {
+        String wt = "pic_weather_";
+        switch (weather) {
+            case "晴天":
+                wt += "tianqing";
+                break;
+            case "多云":
+                wt += "duoyun";
+                break;
+            case "雨天":
+                wt += "dayu";
+                break;
+            case "雪天":
+                wt += "daxue";
+                break;
+            default:
+                break;
+        }
+        return getResources().getIdentifier(wt, "drawable", getPackageName());
+    }
+
+    /**
+     * 获取指定数字的图片
+     *
+     * @param c 指定位置的Char
+     * @return 返回指定图片的ID
+     */
+    private int getNumberPic(char c) {
+        return getResources().getIdentifier("pic_number" + c, "drawable", getPackageName());
+    }
+
+    /**
+     * 切换客厅
+     *
+     * @param type 0表示向左，1表示向右
+     */
+    @SuppressLint("SetTextI18n")
+    private void switchPage(int type) {
+        // 切换客厅
+        switch (type) {
+            case 0:
+                if (currentPosition > 0) {
+                    currentPosition--;
+                }
+                break;
+            case 1:
+                if (currentPosition < roomBeans.size() - 1) {
+                    currentPosition++;
+                }
+                break;
+            default:
+                break;
+        }
+
+        tvCurrentRoom.setText(roomBeans.get(currentPosition).getRoomName());
+    }
+
 }

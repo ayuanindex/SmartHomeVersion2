@@ -100,6 +100,17 @@ public class CurtainAndAcBean {
         public void setCurrentTemperature(int currentTemperature) {
             this.currentTemperature = currentTemperature;
         }
+
+        @Override
+        public String toString() {
+            return "AcSBean{" +
+                    "acPower=" + acPower +
+                    ", mode=" + mode +
+                    ", windSpeed=" + windSpeed +
+                    ", temperature=" + temperature +
+                    ", currentTemperature=" + currentTemperature +
+                    '}';
+        }
     }
 
     @Override

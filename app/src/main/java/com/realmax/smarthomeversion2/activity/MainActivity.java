@@ -111,11 +111,9 @@ public class MainActivity extends BaseActivity {
                 break;
             case 5:// 监控
                 intent = new Intent(MainActivity.this, CameraActivity.class);
-                intent.putExtra("tag", "camera");
                 break;
             case 6:// 空调
                 intent = new Intent(MainActivity.this, AirConditioningActivity.class);
-                intent.putExtra("tag", "camera");
                 break;
             default:
                 break;

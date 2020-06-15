@@ -13,6 +13,27 @@
       "windSpeed": 5,
       "temperature": 19,
       "currentTemperature": 20
+    },
+    {
+      "acPower": 0,
+      "mode": 0,
+      "windSpeed": 5,
+      "temperature": 19,
+      "currentTemperature": 20
+    },
+    {
+      "acPower": 0,
+      "mode": 0,
+      "windSpeed": 5,
+      "temperature": 19,
+      "currentTemperature": 20
+    },
+    {
+      "acPower": 0,
+      "mode": 0,
+      "windSpeed": 5,
+      "temperature": 19,
+      "currentTemperature": 20
     }
   ],
   "tv_S": {
