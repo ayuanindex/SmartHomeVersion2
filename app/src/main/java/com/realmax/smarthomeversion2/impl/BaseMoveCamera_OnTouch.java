@@ -15,7 +15,7 @@ public abstract class BaseMoveCamera_OnTouch implements View.OnTouchListener {
     public boolean onTouch(View v, MotionEvent event) {
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                MoveCamera.move(getType(), getDeviceId(), (float a, float b) -> getActivity().runOnUiThread(() -> getAngle(a, b)));
+                MoveCamera.move(getType(), getDeviceId(), getTag(), (float a, float b) -> getActivity().runOnUiThread(() -> getAngle(a, b)));
                 break;
             case MotionEvent.ACTION_UP:
                 MoveCamera.stop();
@@ -27,6 +27,8 @@ public abstract class BaseMoveCamera_OnTouch implements View.OnTouchListener {
     }
 
     abstract int getType();
+
+    abstract String getTag();
 
     public abstract Activity getActivity();
 

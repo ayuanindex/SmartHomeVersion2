@@ -17,6 +17,7 @@ import androidx.annotation.RequiresApi;
 import com.google.gson.Gson;
 import com.realmax.smarthomeversion2.App;
 import com.realmax.smarthomeversion2.R;
+import com.realmax.smarthomeversion2.activity.bean.RoomBean;
 import com.realmax.smarthomeversion2.bean.CameraBodyBean;
 import com.realmax.smarthomeversion2.tcp.CustomerCallback;
 import com.realmax.smarthomeversion2.tcp.CustomerHandlerBase;
@@ -27,6 +28,8 @@ import com.realmax.smarthomeversion2.util.ValueUtil;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
 
 /**
  * @author ayuan
@@ -42,7 +45,7 @@ public class CameraActivity extends BaseActivity {
     private ImageView ivSwitchLeft;
     private ImageView ivSwitchRight;
     private TextView tvCurrentRoom;
-    private String tag;
+    private String tag = "virtual";
     private int currentCamera = 0;
     private int currentPosition = 0;
     private LinearLayout llTip;
@@ -58,6 +61,7 @@ public class CameraActivity extends BaseActivity {
      * 手指放在照片上时的X坐标
      */
     private float initX;
+    private ArrayList<RoomBean> roomBeans;
 
 
     @Override
@@ -118,11 +122,26 @@ public class CameraActivity extends BaseActivity {
 
     @Override
     protected void initData() {
-        tag = getIntent().getStringExtra("tag");
 
-        if (roomBeans.get(currentPosition).getCameraId().length > 0) {
-            currentCamera = roomBeans.get(currentPosition).getCameraId()[0];
-            ValueUtil.sendCameraCmd(currentCamera, 0, 45);
+        roomBeans = new ArrayList<>();
+        roomBeans.add(new RoomBean("客厅", new int[]{5}));
+        roomBeans.add(new RoomBean("餐厅", new int[]{6}));
+        roomBeans.add(new RoomBean("门厅", new int[]{7}));
+        roomBeans.add(new RoomBean("车库", new int[]{8}));
+        roomBeans.add(new RoomBean("走廊", new int[]{9}));
+        roomBeans.add(new RoomBean("卧室A", new int[]{10}));
+        roomBeans.add(new RoomBean("卧室B", new int[]{11}));
+        roomBeans.add(new RoomBean("卧室C", new int[]{12}));
+        roomBeans.add(new RoomBean("书房", new int[]{13}));
+        roomBeans.add(new RoomBean("庭院西", new int[]{4}));
+        roomBeans.add(new RoomBean("院墙", new int[]{2}));
+        roomBeans.add(new RoomBean("院墙", new int[]{1}));
+        roomBeans.add(new RoomBean("院墙", new int[]{3}));
+        roomBeans.add(new RoomBean("机器人", new int[]{14}));
+
+        if (roomBeans.get(currentPosition).getModel().length > 0) {
+            currentCamera = roomBeans.get(currentPosition).getModel()[0];
+            ValueUtil.sendCameraCmd(currentCamera, 0, 45, tag);
         }
 
         // 获取Netty的Hander
@@ -154,25 +173,34 @@ public class CameraActivity extends BaseActivity {
             case 0:
                 if (currentPosition > 0) {
                     currentPosition--;
-                    if (roomBeans.get(currentPosition).getCameraId().length > 0) {
-                        currentCamera = roomBeans.get(currentPosition).getCameraId()[0];
-                        ValueUtil.sendCameraCmd(currentCamera, 0, 45);
+                    if (roomBeans.get(currentPosition).getModel().length > 0) {
+                        currentCamera = roomBeans.get(currentPosition).getModel()[0];
+                        ValueUtil.sendCameraCmd(currentCamera, 0, 45, tag);
                     }
                 }
                 break;
             case 1:
                 if (currentPosition < roomBeans.size() - 1) {
                     currentPosition++;
-                    if (roomBeans.get(currentPosition).getCameraId().length > 0) {
-                        currentCamera = roomBeans.get(currentPosition).getCameraId()[0];
-                        ValueUtil.sendCameraCmd(currentCamera, 0, 45);
+                    if (roomBeans.get(currentPosition).getModel().length > 0) {
+                        currentCamera = roomBeans.get(currentPosition).getModel()[0];
+                        ValueUtil.sendCameraCmd(currentCamera, 0, 45, tag);
                     }
                 }
                 break;
             default:
                 break;
         }
-        tvCurrentRoom.setText(roomBeans.get(currentPosition).getRoomName());
+
+        String roomName = roomBeans.get(currentPosition).getRoomName();
+        if (roomName.equals("机器人")) {
+            ivBtnUp.setVisibility(View.GONE);
+            ivBtnDown.setVisibility(View.GONE);
+        } else {
+            ivBtnUp.setVisibility(View.VISIBLE);
+            ivBtnDown.setVisibility(View.VISIBLE);
+        }
+        tvCurrentRoom.setText(roomName);
     }
 
     /**
@@ -246,7 +274,7 @@ public class CameraActivity extends BaseActivity {
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 llTip.setVisibility(View.VISIBLE);
-                MoveCamera.move(direction, currentCamera, (a, b) -> runOnUiThread(() -> {
+                MoveCamera.move(direction, currentCamera, tag, (a, b) -> runOnUiThread(() -> {
                     tvAngleA.setText("A:" + a + "º");
                     tvAngleB.setText("B:" + b + "º");
                 }));

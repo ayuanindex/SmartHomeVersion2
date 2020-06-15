@@ -1,6 +1,6 @@
 package com.realmax.smarthomeversion2.util;
 
-import android.nfc.cardemulation.HostNfcFService;
+import android.database.CursorJoiner;
 
 import com.realmax.smarthomeversion2.activity.bean.AcAndTvAndMusicBean;
 import com.realmax.smarthomeversion2.activity.bean.CurtainAndAcBean;
@@ -13,8 +13,6 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
-import javax.crypto.interfaces.PBEKey;
 
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
@@ -66,22 +64,18 @@ public class ValueUtil {
      * @param deviceId 摄像头的设备ID
      * @param angleA   横向旋转角度---默认0
      * @param angleB   纵向旋转角度---默认45
+     * @param tag      标签
      */
-    public static void sendCameraCmd(int deviceId, float angleA, float angleB) {
-        CustomerHandlerBase customerHandler = getHandlerHashMap().get("camera");
-        if (customerHandler == null) {
-            return;
+    public static void sendCameraCmd(int deviceId, float angleA, float angleB, String tag) {
+        CustomerHandlerBase customerHandler = getHandlerHashMap().get(tag);
+        if (customerHandler != null) {
+            ChannelHandlerContext handlerContext = customerHandler.getHandlerContext();
+            if (handlerContext != null) {
+                String command = "{\"cmd\": \"start\", \"deviceId\": " + deviceId + ", \"angleA\": " + angleA + ", \"angleB\": " + angleB + "}";
+                /*String command = "{\"cmd\": \"start\", \"deviceType\": \"十字交叉路口\", \"deviceId\": 1, \"cameraNum\": 1}";*/
+                handlerContext.writeAndFlush(Unpooled.copiedBuffer(option(EncodeAndDecode.getStrUnicode(command), (byte) 0x82)));
+            }
         }
-
-        ChannelHandlerContext handlerContext = customerHandler.getHandlerContext();
-
-        if (handlerContext == null) {
-            return;
-        }
-
-        String command = "{\"cmd\": \"start\", \"deviceId\": " + deviceId + ", \"angleA\": " + angleA + ", \"angleB\": " + angleB + "}";
-        /*String command = "{\"cmd\": \"start\", \"deviceType\": \"十字交叉路口\", \"deviceId\": 1, \"cameraNum\": 1}";*/
-        handlerContext.writeAndFlush(Unpooled.copiedBuffer(option(EncodeAndDecode.getStrUnicode(command), (byte) 0x82)));
     }
 
     /**

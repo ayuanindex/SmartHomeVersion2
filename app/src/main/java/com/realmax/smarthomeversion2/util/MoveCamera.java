@@ -32,6 +32,7 @@ public class MoveCamera {
      * 设备的ID，相当于摄像头的编号
      */
     private static int DEVICEID = 0;
+    private static String tag;
 
     /**
      * 移动摄像头
@@ -39,7 +40,8 @@ public class MoveCamera {
      * @param type     移动方向
      * @param deviceId 需要移动的摄像头ID
      */
-    public static void move(int type, int deviceId, Result result) {
+    public static void move(int type, int deviceId, String tag, Result result) {
+        MoveCamera.tag = tag;
         // 重置角度
         if (MoveCamera.DEVICEID != deviceId) {
             HORIZONTAL = 0;
@@ -76,7 +78,7 @@ public class MoveCamera {
             public void run() {
                 if (LONGITUDINAL < 70f) {
                     LONGITUDINAL++;
-                    ValueUtil.sendCameraCmd(DEVICEID, HORIZONTAL, LONGITUDINAL);
+                    ValueUtil.sendCameraCmd(DEVICEID, HORIZONTAL, LONGITUDINAL, tag);
                     result.resultAngle(HORIZONTAL, LONGITUDINAL);
                 }
             }
@@ -96,7 +98,7 @@ public class MoveCamera {
             public void run() {
                 if (LONGITUDINAL > -70f) {
                     LONGITUDINAL--;
-                    ValueUtil.sendCameraCmd(DEVICEID, HORIZONTAL, LONGITUDINAL);
+                    ValueUtil.sendCameraCmd(DEVICEID, HORIZONTAL, LONGITUDINAL, tag);
                     result.resultAngle(HORIZONTAL, LONGITUDINAL);
                 }
             }
@@ -116,7 +118,7 @@ public class MoveCamera {
             public void run() {
                 if (HORIZONTAL > -180f) {
                     HORIZONTAL--;
-                    ValueUtil.sendCameraCmd(DEVICEID, HORIZONTAL, LONGITUDINAL);
+                    ValueUtil.sendCameraCmd(DEVICEID, HORIZONTAL, LONGITUDINAL, tag);
                     result.resultAngle(HORIZONTAL, LONGITUDINAL);
                 }
             }
@@ -136,7 +138,7 @@ public class MoveCamera {
             public void run() {
                 if (HORIZONTAL < 180f) {
                     HORIZONTAL++;
-                    ValueUtil.sendCameraCmd(DEVICEID, HORIZONTAL, LONGITUDINAL);
+                    ValueUtil.sendCameraCmd(DEVICEID, HORIZONTAL, LONGITUDINAL, tag);
                     result.resultAngle(HORIZONTAL, LONGITUDINAL);
                 }
             }
@@ -159,7 +161,7 @@ public class MoveCamera {
         timerTask = new TimerTask() {
             @Override
             public void run() {
-                ValueUtil.sendCameraCmd(DEVICEID, HORIZONTAL, LONGITUDINAL);
+                ValueUtil.sendCameraCmd(DEVICEID, HORIZONTAL, LONGITUDINAL, tag);
             }
         };
         timer.schedule(timerTask, 0, 10);
