@@ -1,17 +1,12 @@
 package com.realmax.smarthomeversion2.activity;
 
 import android.annotation.SuppressLint;
-import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-
-import androidx.annotation.Nullable;
-import androidx.exifinterface.media.ExifInterface;
 
 import com.google.gson.Gson;
 import com.realmax.smarthomeversion2.R;
@@ -59,6 +54,8 @@ public class AirConditioningActivity extends BaseActivity {
     private ArrayList<RoomBean> roomBeans;
     private int currentPosition = 0;
     private AcAndTvAndMusicBean.AcSBean currentBean;
+    private AcAndTvAndMusicBean acAndTvAndMusicBean;
+    private CurtainAndAcBean curtainAndAcBean;
 
     @Override
     protected int getLayout() {
@@ -103,6 +100,166 @@ public class AirConditioningActivity extends BaseActivity {
         ivSwitchLeft.setOnClickListener((View v) -> switchPage(0));
 
         ivSwitchRight.setOnClickListener((View v) -> switchPage(1));
+
+        cbPowerSwitch.setOnClickListener((View v) -> {
+            cbPowerSwitch.toggle();
+            if (currentPosition > 0) {
+                if (acAndTvAndMusicBean != null) {
+                    int acPower = acAndTvAndMusicBean.getAc_S().get(currentPosition - 1).getAcPower();
+                    acAndTvAndMusicBean.getAc_S().get(currentPosition - 1).setAcPower(acPower == 1 ? 0 : 1);
+                    ValueUtil.sendAcCmd(acAndTvAndMusicBean.getAc_S(), control4);
+                }
+            } else if (currentPosition == 0) {
+                if (curtainAndAcBean != null) {
+                    ValueUtil.sendSingleAc(
+                            curtainAndAcBean.getAc_S().getAcPower() == 1 ? 0 : 1,
+                            curtainAndAcBean.getAc_S().getMode(),
+                            curtainAndAcBean.getAc_S().getWindSpeed(),
+                            curtainAndAcBean.getAc_S().getTemperature(),
+                            control2);
+                }
+            }
+        });
+
+        ivCold.setOnClickListener((View v) -> {
+            if (currentPosition > 0) {
+                if (acAndTvAndMusicBean != null) {
+                    acAndTvAndMusicBean.getAc_S().get(currentPosition - 1).setMode(0);
+                    ValueUtil.sendAcCmd(acAndTvAndMusicBean.getAc_S(), control4);
+                }
+            } else if (currentPosition == 0) {
+                if (curtainAndAcBean != null) {
+                    ValueUtil.sendSingleAc(
+                            curtainAndAcBean.getAc_S().getAcPower(),
+                            0,
+                            curtainAndAcBean.getAc_S().getWindSpeed(),
+                            curtainAndAcBean.getAc_S().getTemperature(),
+                            control2);
+                }
+            }
+        });
+
+        ivHot.setOnClickListener((View v) -> {
+            if (currentPosition > 0) {
+                if (acAndTvAndMusicBean != null) {
+                    acAndTvAndMusicBean.getAc_S().get(currentPosition - 1).setMode(1);
+                    ValueUtil.sendAcCmd(acAndTvAndMusicBean.getAc_S(), control4);
+                }
+            } else if (currentPosition == 0) {
+                if (curtainAndAcBean != null) {
+                    ValueUtil.sendSingleAc(
+                            curtainAndAcBean.getAc_S().getAcPower(),
+                            1,
+                            curtainAndAcBean.getAc_S().getWindSpeed(),
+                            curtainAndAcBean.getAc_S().getTemperature(),
+                            control2);
+                }
+            }
+        });
+
+        ivPlus.setOnClickListener((View v) -> {
+            if (currentPosition > 0) {
+                if (acAndTvAndMusicBean != null) {
+                    int windSpeed = acAndTvAndMusicBean.getAc_S().get(currentPosition - 1).getWindSpeed();
+                    if (windSpeed < 5) {
+                        windSpeed += 1;
+                    }
+                    acAndTvAndMusicBean.getAc_S().get(currentPosition - 1).setWindSpeed(windSpeed);
+                    ValueUtil.sendAcCmd(acAndTvAndMusicBean.getAc_S(), control4);
+                }
+            } else if (currentPosition == 0) {
+                if (curtainAndAcBean != null) {
+                    int windSpeed = curtainAndAcBean.getAc_S().getWindSpeed();
+                    if (windSpeed < 5) {
+                        windSpeed += 1;
+                    }
+                    ValueUtil.sendSingleAc(
+                            curtainAndAcBean.getAc_S().getAcPower(),
+                            curtainAndAcBean.getAc_S().getMode(),
+                            windSpeed,
+                            curtainAndAcBean.getAc_S().getTemperature(),
+                            control2);
+                }
+            }
+        });
+
+        ivReduce.setOnClickListener((View v) -> {
+            if (currentPosition > 0) {
+                if (acAndTvAndMusicBean != null) {
+                    int windSpeed = acAndTvAndMusicBean.getAc_S().get(currentPosition - 1).getWindSpeed();
+                    if (windSpeed > 1) {
+                        windSpeed -= 1;
+                    }
+                    acAndTvAndMusicBean.getAc_S().get(currentPosition - 1).setWindSpeed(windSpeed);
+                    ValueUtil.sendAcCmd(acAndTvAndMusicBean.getAc_S(), control4);
+                }
+            } else if (currentPosition == 0) {
+                if (curtainAndAcBean != null) {
+                    int windSpeed = curtainAndAcBean.getAc_S().getWindSpeed();
+                    if (windSpeed > 1) {
+                        windSpeed -= 1;
+                    }
+                    ValueUtil.sendSingleAc(
+                            curtainAndAcBean.getAc_S().getAcPower(),
+                            curtainAndAcBean.getAc_S().getMode(),
+                            windSpeed,
+                            curtainAndAcBean.getAc_S().getTemperature(),
+                            control2);
+                }
+            }
+        });
+
+        ivUp.setOnClickListener((View v) -> {
+            if (currentPosition > 0) {
+                if (acAndTvAndMusicBean != null) {
+                    int temperature = acAndTvAndMusicBean.getAc_S().get(currentPosition - 1).getTemperature();
+                    if (temperature < 28) {
+                        temperature += 1;
+                    }
+                    acAndTvAndMusicBean.getAc_S().get(currentPosition - 1).setTemperature(temperature);
+                    ValueUtil.sendAcCmd(acAndTvAndMusicBean.getAc_S(), control4);
+                }
+            } else if (currentPosition == 0) {
+                if (curtainAndAcBean != null) {
+                    int temperature = curtainAndAcBean.getAc_S().getTemperature();
+                    if (temperature < 28) {
+                        temperature += 1;
+                    }
+                    ValueUtil.sendSingleAc(
+                            curtainAndAcBean.getAc_S().getAcPower(),
+                            curtainAndAcBean.getAc_S().getMode(),
+                            curtainAndAcBean.getAc_S().getWindSpeed(),
+                            temperature,
+                            control2);
+                }
+            }
+        });
+
+        ivDown.setOnClickListener((View v) -> {
+            if (currentPosition > 0) {
+                if (acAndTvAndMusicBean != null) {
+                    int temperature = acAndTvAndMusicBean.getAc_S().get(currentPosition - 1).getTemperature();
+                    if (temperature > 16) {
+                        temperature -= 1;
+                    }
+                    acAndTvAndMusicBean.getAc_S().get(currentPosition - 1).setTemperature(temperature);
+                    ValueUtil.sendAcCmd(acAndTvAndMusicBean.getAc_S(), control4);
+                }
+            } else if (currentPosition == 0) {
+                if (curtainAndAcBean != null) {
+                    int temperature = curtainAndAcBean.getAc_S().getTemperature();
+                    if (temperature > 16) {
+                        temperature -= 1;
+                    }
+                    ValueUtil.sendSingleAc(
+                            curtainAndAcBean.getAc_S().getAcPower(),
+                            curtainAndAcBean.getAc_S().getMode(),
+                            curtainAndAcBean.getAc_S().getWindSpeed(),
+                            temperature,
+                            control2);
+                }
+            }
+        });
     }
 
     @Override
@@ -179,7 +336,7 @@ public class AirConditioningActivity extends BaseActivity {
                             L.e("msg----" + msg);
                             JSONObject jsonObject = new JSONObject(msg);
                             if (jsonObject.has("ac_S")) {
-                                CurtainAndAcBean curtainAndAcBean = new Gson().fromJson(msg, CurtainAndAcBean.class);
+                                curtainAndAcBean = new Gson().fromJson(msg, CurtainAndAcBean.class);
                                 if (currentPosition == 0) {
                                     CurtainAndAcBean.AcSBean ac_s = curtainAndAcBean.getAc_S();
                                     currentBean.setAcPower(ac_s.getAcPower());
@@ -215,7 +372,7 @@ public class AirConditioningActivity extends BaseActivity {
                         if (!TextUtils.isEmpty(msg)) {
                             JSONObject jsonObject = new JSONObject(msg);
                             if (jsonObject.has("ac_S")) {
-                                AcAndTvAndMusicBean acAndTvAndMusicBean = new Gson().fromJson(msg, AcAndTvAndMusicBean.class);
+                                acAndTvAndMusicBean = new Gson().fromJson(msg, AcAndTvAndMusicBean.class);
                                 if (currentPosition > 0) {
                                     currentBean = acAndTvAndMusicBean.getAc_S().get(currentPosition - 1);
                                     refreshUi();

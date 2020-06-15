@@ -1,5 +1,7 @@
 package com.realmax.smarthomeversion2.util;
 
+import android.nfc.cardemulation.HostNfcFService;
+
 import com.realmax.smarthomeversion2.activity.bean.AcAndTvAndMusicBean;
 import com.realmax.smarthomeversion2.activity.bean.CurtainAndAcBean;
 import com.realmax.smarthomeversion2.activity.bean.LightBean;
@@ -11,6 +13,8 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
+import javax.crypto.interfaces.PBEKey;
 
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
@@ -238,6 +242,66 @@ public class ValueUtil {
                 JSONObject jsonObject = new JSONObject(parent);
                 String s = jsonObject.toString();
                 L.e("需要发送的消息-----------" + s);
+                handlerContext.writeAndFlush(Unpooled.copiedBuffer(EncodeAndDecode.getStrUnicode(s).getBytes()));
+            }
+        }
+    }
+
+    /**
+     * 控制空调
+     *
+     * @param ac_s 空调集合
+     * @param tag  标签
+     */
+    public static void sendAcCmd(List<AcAndTvAndMusicBean.AcSBean> ac_s, String tag) {
+        CustomerHandlerBase customerHandlerBase = getHandlerHashMap().get(tag);
+        if (customerHandlerBase != null) {
+            ChannelHandlerContext handlerContext = customerHandlerBase.getHandlerContext();
+            if (handlerContext != null) {
+                HashMap<String, Object> parent = new HashMap<>();
+                ArrayList<HashMap<String, Object>> value = new ArrayList<>();
+                for (AcAndTvAndMusicBean.AcSBean ac_ : ac_s) {
+                    HashMap<String, Object> e = new HashMap<>();
+                    e.put("acPower", ac_.getAcPower());
+                    e.put("mode", ac_.getMode());
+                    e.put("windSpeed", ac_.getWindSpeed());
+                    e.put("temperature", ac_.getTemperature());
+                    value.add(e);
+                }
+                parent.put("ac_C", value);
+                JSONObject jsonObject = new JSONObject(parent);
+                String s = jsonObject.toString();
+                L.e("发送的数据------------" + s);
+                handlerContext.writeAndFlush(Unpooled.copiedBuffer(EncodeAndDecode.getStrUnicode(s).getBytes()));
+            }
+        }
+    }
+
+    /**
+     * 控制单个空调
+     *
+     * @param acPower     空调开关
+     * @param mode        模式
+     * @param windSpeed   风速
+     * @param temperature 温度
+     * @param tag         标签
+     */
+    public static void sendSingleAc(int acPower, int mode, int windSpeed, int temperature, String tag) {
+        CustomerHandlerBase customerHandlerBase = getHandlerHashMap().get(tag);
+        if (customerHandlerBase != null) {
+            ChannelHandlerContext handlerContext = customerHandlerBase.getHandlerContext();
+            if (handlerContext != null) {
+                HashMap<String, Object> ac_C_Value = new HashMap<>();
+                ac_C_Value.put("acPower", acPower);
+                ac_C_Value.put("mode", mode);
+                ac_C_Value.put("windSpeed", windSpeed);
+                ac_C_Value.put("temperature", temperature);
+
+                HashMap<String, Object> ac_C = new HashMap<>();
+                ac_C.put("ac_C", ac_C_Value);
+                JSONObject jsonObject = new JSONObject(ac_C);
+                String s = jsonObject.toString();
+                L.e("发送的数据----------" + s);
                 handlerContext.writeAndFlush(Unpooled.copiedBuffer(EncodeAndDecode.getStrUnicode(s).getBytes()));
             }
         }
