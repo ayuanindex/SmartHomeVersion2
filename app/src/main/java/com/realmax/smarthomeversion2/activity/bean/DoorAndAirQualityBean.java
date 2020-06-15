@@ -5,11 +5,7 @@ import java.util.List;
 public class DoorAndAirQualityBean {
 
     private List<DoorsSBean> doors_S;
-    private List<AirQualityBean> airQuality;
-
-    public DoorAndAirQualityBean() {
-
-    }
+    private List<AirQualitySBean> airQuality_S;
 
     public List<DoorsSBean> getDoors_S() {
         return doors_S;
@@ -19,36 +15,26 @@ public class DoorAndAirQualityBean {
         this.doors_S = doors_S;
     }
 
-    public List<AirQualityBean> getAirQuality() {
-        return airQuality;
+    public List<AirQualitySBean> getAirQuality_S() {
+        return airQuality_S;
     }
 
-    public void setAirQuality(List<AirQualityBean> airQuality) {
-        this.airQuality = airQuality;
+    public void setAirQuality_S(List<AirQualitySBean> airQuality_S) {
+        this.airQuality_S = airQuality_S;
     }
 
     public static class DoorsSBean {
         /**
-         * doorName : 客厅门
          * doorLock : 0
          * doorSwitch : 0
          * setPassword : 1234
          * outsideDetection : 0
          */
 
-        /*private String doorName;*/
-        private int doorLock = -1;
-        private int doorSwitch = -1;
-        private int setPassword = -1;
+        private int doorLock;
+        private int doorSwitch;
+        private int setPassword;
         private int outsideDetection;
-
-        /*public String getDoorName() {
-            return doorName;
-        }
-
-        public void setDoorName(String doorName) {
-            this.doorName = doorName;
-        }*/
 
         public int getDoorLock() {
             return doorLock;
@@ -85,7 +71,7 @@ public class DoorAndAirQualityBean {
         @Override
         public String toString() {
             return "DoorsSBean{" +
-                    ", doorLock=" + doorLock +
+                    "doorLock=" + doorLock +
                     ", doorSwitch=" + doorSwitch +
                     ", setPassword=" + setPassword +
                     ", outsideDetection=" + outsideDetection +
@@ -93,7 +79,7 @@ public class DoorAndAirQualityBean {
         }
     }
 
-    public static class AirQualityBean {
+    public static class AirQualitySBean {
         /**
          * smoke : 0
          * humidity : 100
@@ -120,7 +106,7 @@ public class DoorAndAirQualityBean {
 
         @Override
         public String toString() {
-            return "AirQualityBean{" +
+            return "AirQualitySBean{" +
                     "smoke=" + smoke +
                     ", humidity=" + humidity +
                     '}';
@@ -131,7 +117,7 @@ public class DoorAndAirQualityBean {
     public String toString() {
         return "DoorAndAirQualityBean{" +
                 "doors_S=" + doors_S +
-                ", airQuality=" + airQuality +
+                ", airQuality_S=" + airQuality_S +
                 '}';
     }
 }
