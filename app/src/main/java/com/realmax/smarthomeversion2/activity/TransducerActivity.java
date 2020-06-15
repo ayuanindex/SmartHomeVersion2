@@ -1,18 +1,15 @@
 package com.realmax.smarthomeversion2.activity;
 
 import android.annotation.SuppressLint;
-import android.os.Bundle;
-import android.os.PersistableBundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import androidx.annotation.Nullable;
-
 import com.google.gson.Gson;
 import com.realmax.smarthomeversion2.R;
-import com.realmax.smarthomeversion2.bean.WeatherBean;
+import com.realmax.smarthomeversion2.activity.bean.WeatherBean;
 import com.realmax.smarthomeversion2.tcp.CustomerCallback;
 import com.realmax.smarthomeversion2.tcp.CustomerHandlerBase;
 import com.realmax.smarthomeversion2.util.L;
@@ -35,13 +32,8 @@ public class TransducerActivity extends BaseActivity {
     private ImageView iv_switchLeft;
     private ImageView iv_switchRight;
     private TextView tv_currentRoom;
-    private String tag;
+    private String tag = "virtual";
     private int currentPosition = 0;
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState, @Nullable PersistableBundle persistentState) {
-        super.onCreate(savedInstanceState, persistentState);
-    }
 
     @Override
     protected int getLayout() {
@@ -97,8 +89,9 @@ public class TransducerActivity extends BaseActivity {
 
     @Override
     protected void initData() {
-        tag = getIntent().getStringExtra("tag");
-        ValueUtil.sendWeatherCmd();
+
+
+        ValueUtil.sendWeatherCmd(tag);
         CustomerHandlerBase customerHandler = getCustomerHandler(tag);
         if (customerHandler != null) {
 
@@ -111,11 +104,13 @@ public class TransducerActivity extends BaseActivity {
                 @Override
                 public void getResultData(String msg) {
                     try {
-                        JSONObject jsonObject = new JSONObject(msg);
-                        if ("ans".equals(jsonObject.optString("cmd"))) {
-                            WeatherBean weatherBean = new Gson().fromJson(msg, WeatherBean.class);
-                            L.e("weather：" + weatherBean.toString());
-                            refreshUI(weatherBean);
+                        if (!TextUtils.isEmpty(msg)) {
+                            JSONObject jsonObject = new JSONObject(msg);
+                            if ("ans".equals(jsonObject.optString("cmd"))) {
+                                WeatherBean weatherBean = new Gson().fromJson(msg, WeatherBean.class);
+                                L.e("weather：" + weatherBean.toString());
+                                refreshUI(weatherBean);
+                            }
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();

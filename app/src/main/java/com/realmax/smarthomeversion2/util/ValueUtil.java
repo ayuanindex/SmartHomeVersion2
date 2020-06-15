@@ -12,8 +12,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import javax.net.ssl.SSLEngineResult;
-
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 
@@ -185,9 +183,11 @@ public class ValueUtil {
 
     /**
      * 发送获取天气信息的指令
+     *
+     * @param tag 标签
      */
-    public static void sendWeatherCmd() {
-        CustomerHandlerBase customerHandler = getHandlerHashMap().get("camera");
+    public static void sendWeatherCmd(String tag) {
+        CustomerHandlerBase customerHandler = getHandlerHashMap().get(tag);
         if (customerHandler == null) {
             return;
         }

@@ -108,7 +108,6 @@ public class MainActivity extends BaseActivity {
                 break;
             case 4:// 传感器
                 intent = new Intent(MainActivity.this, TransducerActivity.class);
-                intent.putExtra("tag", "camera");
                 break;
             case 5:// 监控
                 intent = new Intent(MainActivity.this, CameraActivity.class);
