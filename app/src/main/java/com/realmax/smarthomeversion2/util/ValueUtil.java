@@ -1,5 +1,6 @@
 package com.realmax.smarthomeversion2.util;
 
+import com.realmax.smarthomeversion2.activity.bean.AcAndTvAndMusicBean;
 import com.realmax.smarthomeversion2.activity.bean.CurtainAndAcBean;
 import com.realmax.smarthomeversion2.activity.bean.LightBean;
 import com.realmax.smarthomeversion2.mqtt.MqttControl;
@@ -10,6 +11,8 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
+import javax.net.ssl.SSLEngineResult;
 
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
@@ -196,6 +199,48 @@ public class ValueUtil {
         }
         String command = "{\"cmd\": \"pull\"}";
         handlerContext.writeAndFlush(Unpooled.copiedBuffer(option(EncodeAndDecode.getStrUnicode(command), (byte) 0x83)));
+    }
+
+    /**
+     * 发送控制电视的指令
+     *
+     * @param acAndTvAndMusicBean 数据
+     * @param tag                 标签
+     */
+    public static void sendTvCmd(AcAndTvAndMusicBean acAndTvAndMusicBean, String tag) {
+        sendTvCmd(
+                acAndTvAndMusicBean.getTv_S().getTvPower(),
+                acAndTvAndMusicBean.getTv_S().getTvShow(),
+                acAndTvAndMusicBean.getTv_S().getVolume(),
+                tag
+        );
+    }
+
+    /**
+     * 发送控制电视的指令
+     *
+     * @param tvPower 电源
+     * @param tvShow  电视节目
+     * @param volume  音量
+     * @param tag     标签
+     */
+    public static void sendTvCmd(int tvPower, int tvShow, int volume, String tag) {
+        CustomerHandlerBase customerHandlerBase = getHandlerHashMap().get(tag);
+        if (customerHandlerBase != null) {
+            ChannelHandlerContext handlerContext = customerHandlerBase.getHandlerContext();
+            if (handlerContext != null) {
+                HashMap<String, Object> parent = new HashMap<>();
+                HashMap<String, Object> value = new HashMap<>();
+                value.put("tvPower", tvPower);
+                value.put("tvShow", tvShow);
+                value.put("volume", volume);
+                parent.put("tv_C", value);
+                JSONObject jsonObject = new JSONObject(parent);
+                String s = jsonObject.toString();
+                L.e("需要发送的消息-----------" + s);
+                handlerContext.writeAndFlush(Unpooled.copiedBuffer(EncodeAndDecode.getStrUnicode(s).getBytes()));
+            }
+        }
     }
 
     /**

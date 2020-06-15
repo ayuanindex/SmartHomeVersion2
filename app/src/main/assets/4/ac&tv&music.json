@@ -1,5 +1,5 @@
 {
-  "ac": [
+  "ac_S": [
     {
       "acPower": 0,
       "mode": 0,
@@ -15,12 +15,12 @@
       "currentTemperature": 20
     }
   ],
-  "tv": {
+  "tv_S": {
     "tvPower": 0,
     "tvShow": 9,
     "volume": 14
   },
-  "music": {
+  "music_S": {
     "musicPower": 0,
     "musicSelect": 9,
     "volume": 14

@@ -105,7 +105,6 @@ public class MainActivity extends BaseActivity {
                 break;
             case 3:// 电器
                 intent = new Intent(MainActivity.this, ElectricalActivity.class);
-                intent.putExtra("tag", "electrical");
                 break;
             case 4:// 传感器
                 intent = new Intent(MainActivity.this, TransducerActivity.class);

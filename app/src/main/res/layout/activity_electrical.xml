@@ -55,6 +55,7 @@
                 android:background="@drawable/xml_check_select_power_toggle"
                 android:button="@null"
                 android:checked="false"
+                android:focusable="false"
                 android:foreground="?attr/actionBarItemBackground" />
         </LinearLayout>
 
@@ -82,6 +83,7 @@
                 android:background="@drawable/xml_check_select_mute"
                 android:button="@null"
                 android:checked="false"
+                android:focusable="false"
                 android:foreground="?attr/actionBarItemBackground" />
         </LinearLayout>
     </LinearLayout>

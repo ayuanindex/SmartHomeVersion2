@@ -28,9 +28,7 @@ import com.realmax.smarthomeversion2.util.ValueUtil;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.concurrent.locks.Lock;
 
 /**
  * @author ayuan
