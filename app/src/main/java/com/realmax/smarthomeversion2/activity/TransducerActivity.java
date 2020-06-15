@@ -21,7 +21,6 @@ import com.realmax.smarthomeversion2.util.ValueUtil;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.security.AccessControlException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,7 +43,6 @@ public class TransducerActivity extends BaseActivity {
     private String control5 = "control_05";
     private int currentPosition = 0;
     private ArrayList<RoomBean> roomBeans;
-    private ArrayList<Integer> currentHumenSensor;
 
     @Override
     protected int getLayout() {
@@ -101,7 +99,6 @@ public class TransducerActivity extends BaseActivity {
         roomBeans.add(new RoomBean("更衣间", new int[]{19}));
         roomBeans.add(new RoomBean("书房", new int[]{20, 21, 22}));
 
-        currentHumenSensor = new ArrayList<>(31);
 
         setWeatherListener();
         setSensorListener();
@@ -171,9 +168,7 @@ public class TransducerActivity extends BaseActivity {
                                     sum += integer;
                                 }
                                 int finalSum = sum;
-                                uiHandler.post(() -> {
-                                    tv_character.setText("人体传感器:" + (finalSum > 0 ? roomBeans.get(currentPosition).getRoomName() + "有人" : "无人"));
-                                });
+                                uiHandler.post(() -> tv_character.setText("人体传感器:" + (finalSum > 0 ? roomBeans.get(currentPosition).getRoomName() + "有人" : "无人")));
                             }
                         }
                     } catch (JSONException e) {
@@ -203,9 +198,6 @@ public class TransducerActivity extends BaseActivity {
                                 DoorAndAirQualityBean doorAndAirQualityBean = new Gson().fromJson(msg, DoorAndAirQualityBean.class);
                                 uiHandler.post(() -> {
                                     List<DoorAndAirQualityBean.AirQualitySBean> airQuality = doorAndAirQualityBean.getAirQuality_S();
-                                    for (DoorAndAirQualityBean.AirQualitySBean airQualityBean : airQuality) {
-                                        L.e(airQuality.toString());
-                                    }
                                     int smok = 0;
                                     int humidity = 0;
                                     switch (currentPosition) {
@@ -299,19 +291,15 @@ public class TransducerActivity extends BaseActivity {
         int numberPicThree = getNumberPic(weatherBean.getTime().charAt(3));
         int numberPicFour = getNumberPic(weatherBean.getTime().charAt(4));
         int weatherPic = getWeatherPic(weatherBean.getWeather());
-        runOnUiThread(new Runnable() {
-            @SuppressLint("SetTextI18n")
-            @Override
-            public void run() {
-                iv_one.setImageResource(numberPicOne);
-                iv_two.setImageResource(numberPicTwo);
-                iv_three.setImageResource(numberPicThree);
-                iv_four.setImageResource(numberPicFour);
+        runOnUiThread(() -> {
+            iv_one.setImageResource(numberPicOne);
+            iv_two.setImageResource(numberPicTwo);
+            iv_three.setImageResource(numberPicThree);
+            iv_four.setImageResource(numberPicFour);
 
-                iv_weather.setImageResource(weatherPic);
+            iv_weather.setImageResource(weatherPic);
 
-                tv_temperature.setText("温度:" + weatherBean.getTemp() + "℃");
-            }
+            tv_temperature.setText("温度:" + weatherBean.getTemp() + "℃");
         });
     }
 
