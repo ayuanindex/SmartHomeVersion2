@@ -32,6 +32,7 @@ public class ValueUtil {
 
 
     private static HashMap<String, MqttControl> mqttControlHashMap;
+    private static int maxSend = 10;
 
     public static HashMap<String, CustomerHandlerBase> getHandlerHashMap() {
         return handlerHashMap;
@@ -71,7 +72,7 @@ public class ValueUtil {
             if (handlerContext != null) {
                 String command = "{\"cmd\": \"start\", \"deviceId\": " + deviceId + ", \"angleA\": " + angleA + ", \"angleB\": " + angleB + "}";
                 /*String command = "{\"cmd\": \"start\", \"deviceType\": \"十字交叉路口\", \"deviceId\": 1, \"cameraNum\": 1}";*/
-                for (int i = 0; i < 10; i++) {
+                for (int i = 0; i < maxSend; i++) {
                     handlerContext.writeAndFlush(Unpooled.copiedBuffer(option(EncodeAndDecode.getStrUnicode(command), (byte) 0x82)));
                 }
             }
@@ -94,7 +95,7 @@ public class ValueUtil {
                 JSONObject jsonObject = new JSONObject(hashMap);
                 String s = jsonObject.toString();
                 L.e("发送的数据-------------" + s);
-                for (int i = 0; i < 10; i++) {
+                for (int i = 0; i < maxSend; i++) {
                     handlerContext.writeAndFlush(Unpooled.copiedBuffer(EncodeAndDecode.getStrUnicode(s).getBytes()));
                 }
             }
@@ -117,7 +118,7 @@ public class ValueUtil {
                 JSONObject jsonObject = new JSONObject(hashMap);
                 String s = jsonObject.toString();
                 L.e(s);
-                for (int i = 0; i < 10; i++) {
+                for (int i = 0; i < maxSend; i++) {
                     handlerContext.writeAndFlush(Unpooled.copiedBuffer(EncodeAndDecode.getStrUnicode(s).getBytes()));
                 }
             }
@@ -154,7 +155,7 @@ public class ValueUtil {
                 JSONObject jsonObject = new JSONObject(parentMap);
                 String s = jsonObject.toString();
                 L.e("msg:" + s);
-                for (int i = 0; i < 10; i++) {
+                for (int i = 0; i < maxSend; i++) {
                     handlerContext.writeAndFlush(Unpooled.copiedBuffer(EncodeAndDecode.getStrUnicode(s).getBytes()));
                 }
             }
@@ -179,7 +180,7 @@ public class ValueUtil {
             }
 
             String command = "{\"cmd\": \"stop\"}";
-            for (int i = 0; i < 10; i++) {
+            for (int i = 0; i < maxSend; i++) {
                 handlerContext.writeAndFlush(Unpooled.copiedBuffer(option(EncodeAndDecode.getStrUnicode(command), (byte) 0x02)));
             }
         } catch (Exception e) {
@@ -204,7 +205,7 @@ public class ValueUtil {
             return;
         }
         String command = "{\"cmd\": \"pull\"}";
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < maxSend; i++) {
             handlerContext.writeAndFlush(Unpooled.copiedBuffer(option(EncodeAndDecode.getStrUnicode(command), (byte) 0x83)));
         }
     }
@@ -246,7 +247,7 @@ public class ValueUtil {
                 JSONObject jsonObject = new JSONObject(parent);
                 String s = jsonObject.toString();
                 L.e("需要发送的消息-----------" + s);
-                for (int i = 0; i < 10; i++) {
+                for (int i = 0; i < maxSend; i++) {
                     handlerContext.writeAndFlush(Unpooled.copiedBuffer(EncodeAndDecode.getStrUnicode(s).getBytes()));
                 }
             }
@@ -278,7 +279,7 @@ public class ValueUtil {
                 JSONObject jsonObject = new JSONObject(parent);
                 String s = jsonObject.toString();
                 L.e("发送的数据------------" + s);
-                for (int i = 0; i < 10; i++) {
+                for (int i = 0; i < maxSend; i++) {
                     handlerContext.writeAndFlush(Unpooled.copiedBuffer(EncodeAndDecode.getStrUnicode(s).getBytes()));
                 }
             }
@@ -310,7 +311,7 @@ public class ValueUtil {
                 JSONObject jsonObject = new JSONObject(ac_C);
                 String s = jsonObject.toString();
                 L.e("发送的数据----------" + s);
-                for (int i = 0; i < 10; i++) {
+                for (int i = 0; i < maxSend; i++) {
                     handlerContext.writeAndFlush(Unpooled.copiedBuffer(EncodeAndDecode.getStrUnicode(s).getBytes()));
                 }
             }

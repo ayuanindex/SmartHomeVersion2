@@ -88,7 +88,7 @@ public class LightActivity extends BaseActivity {
         roomBeans.add(new RoomBean("卧室C洗手间", new int[]{12}));
         roomBeans.add(new RoomBean("卧室C", new int[]{13}));
         roomBeans.add(new RoomBean("更衣间", new int[]{14}));
-        roomBeans.add(new RoomBean("书房", new int[]{17}));
+        roomBeans.add(new RoomBean("书房", new int[]{17, 18}));
         roomBeans.add(new RoomBean("庭院", new int[]{15}));
         roomBeans.add(new RoomBean("院墙", new int[]{16}));
 
@@ -228,14 +228,7 @@ public class LightActivity extends BaseActivity {
             initView(view);
             int[] model = roomBeans.get(currentPosition).getModel();
             tvLabel.setText(roomBeans.get(currentPosition).getRoomName() + model[position] + "号灯");
-
-            // 设置当前电灯的状态
-            cbCheck.setChecked(getItem(position) == 1);
-
-            swToggle.setOnTouchListener(null);
-
-            swToggle.setChecked(getItem(position) == 1);
-
+            swToggle.setOnClickListener(null);
             swToggle.setOnClickListener((View v) -> {
                 try {
                     swToggle.toggle();
@@ -255,10 +248,22 @@ public class LightActivity extends BaseActivity {
                     lightC.set(model[position] - 1, getItem(position) == OPEN ? CLOSE : OPEN);
                     LightBean lightBean = new LightBean(lightC);
                     ValueUtil.sendLightOpenOrCloseCmd(lightBean, tag);
+                    notifyDataSetChanged();
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
             });
+
+            // 设置当前电灯的状态
+            if (getItem(position) == 1) {
+                cbCheck.setChecked(true);
+                swToggle.setChecked(true);
+            } else {
+                cbCheck.setChecked(false);
+                swToggle.setChecked(false);
+            }
+
+            L.e(currentLightStatus.toString());
             return view;
         }
 
