@@ -1,7 +1,5 @@
 package com.realmax.smarthomeversion2.util;
 
-import android.database.CursorJoiner;
-
 import com.realmax.smarthomeversion2.activity.bean.AcAndTvAndMusicBean;
 import com.realmax.smarthomeversion2.activity.bean.CurtainAndAcBean;
 import com.realmax.smarthomeversion2.activity.bean.LightBean;
@@ -73,7 +71,9 @@ public class ValueUtil {
             if (handlerContext != null) {
                 String command = "{\"cmd\": \"start\", \"deviceId\": " + deviceId + ", \"angleA\": " + angleA + ", \"angleB\": " + angleB + "}";
                 /*String command = "{\"cmd\": \"start\", \"deviceType\": \"十字交叉路口\", \"deviceId\": 1, \"cameraNum\": 1}";*/
-                handlerContext.writeAndFlush(Unpooled.copiedBuffer(option(EncodeAndDecode.getStrUnicode(command), (byte) 0x82)));
+                for (int i = 0; i < 10; i++) {
+                    handlerContext.writeAndFlush(Unpooled.copiedBuffer(option(EncodeAndDecode.getStrUnicode(command), (byte) 0x82)));
+                }
             }
         }
     }
@@ -94,7 +94,9 @@ public class ValueUtil {
                 JSONObject jsonObject = new JSONObject(hashMap);
                 String s = jsonObject.toString();
                 L.e("发送的数据-------------" + s);
-                handlerContext.writeAndFlush(Unpooled.copiedBuffer(EncodeAndDecode.getStrUnicode(s).getBytes()));
+                for (int i = 0; i < 10; i++) {
+                    handlerContext.writeAndFlush(Unpooled.copiedBuffer(EncodeAndDecode.getStrUnicode(s).getBytes()));
+                }
             }
         }
     }
@@ -115,7 +117,9 @@ public class ValueUtil {
                 JSONObject jsonObject = new JSONObject(hashMap);
                 String s = jsonObject.toString();
                 L.e(s);
-                handlerContext.writeAndFlush(Unpooled.copiedBuffer(EncodeAndDecode.getStrUnicode(s).getBytes()));
+                for (int i = 0; i < 10; i++) {
+                    handlerContext.writeAndFlush(Unpooled.copiedBuffer(EncodeAndDecode.getStrUnicode(s).getBytes()));
+                }
             }
         }
     }
@@ -150,7 +154,9 @@ public class ValueUtil {
                 JSONObject jsonObject = new JSONObject(parentMap);
                 String s = jsonObject.toString();
                 L.e("msg:" + s);
-                handlerContext.writeAndFlush(Unpooled.copiedBuffer(EncodeAndDecode.getStrUnicode(s).getBytes()));
+                for (int i = 0; i < 10; i++) {
+                    handlerContext.writeAndFlush(Unpooled.copiedBuffer(EncodeAndDecode.getStrUnicode(s).getBytes()));
+                }
             }
         }
 
@@ -173,7 +179,9 @@ public class ValueUtil {
             }
 
             String command = "{\"cmd\": \"stop\"}";
-            handlerContext.writeAndFlush(Unpooled.copiedBuffer(option(EncodeAndDecode.getStrUnicode(command), (byte) 0x02)));
+            for (int i = 0; i < 10; i++) {
+                handlerContext.writeAndFlush(Unpooled.copiedBuffer(option(EncodeAndDecode.getStrUnicode(command), (byte) 0x02)));
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -196,7 +204,9 @@ public class ValueUtil {
             return;
         }
         String command = "{\"cmd\": \"pull\"}";
-        handlerContext.writeAndFlush(Unpooled.copiedBuffer(option(EncodeAndDecode.getStrUnicode(command), (byte) 0x83)));
+        for (int i = 0; i < 10; i++) {
+            handlerContext.writeAndFlush(Unpooled.copiedBuffer(option(EncodeAndDecode.getStrUnicode(command), (byte) 0x83)));
+        }
     }
 
     /**
@@ -236,7 +246,9 @@ public class ValueUtil {
                 JSONObject jsonObject = new JSONObject(parent);
                 String s = jsonObject.toString();
                 L.e("需要发送的消息-----------" + s);
-                handlerContext.writeAndFlush(Unpooled.copiedBuffer(EncodeAndDecode.getStrUnicode(s).getBytes()));
+                for (int i = 0; i < 10; i++) {
+                    handlerContext.writeAndFlush(Unpooled.copiedBuffer(EncodeAndDecode.getStrUnicode(s).getBytes()));
+                }
             }
         }
     }
@@ -266,7 +278,9 @@ public class ValueUtil {
                 JSONObject jsonObject = new JSONObject(parent);
                 String s = jsonObject.toString();
                 L.e("发送的数据------------" + s);
-                handlerContext.writeAndFlush(Unpooled.copiedBuffer(EncodeAndDecode.getStrUnicode(s).getBytes()));
+                for (int i = 0; i < 10; i++) {
+                    handlerContext.writeAndFlush(Unpooled.copiedBuffer(EncodeAndDecode.getStrUnicode(s).getBytes()));
+                }
             }
         }
     }
@@ -296,7 +310,9 @@ public class ValueUtil {
                 JSONObject jsonObject = new JSONObject(ac_C);
                 String s = jsonObject.toString();
                 L.e("发送的数据----------" + s);
-                handlerContext.writeAndFlush(Unpooled.copiedBuffer(EncodeAndDecode.getStrUnicode(s).getBytes()));
+                for (int i = 0; i < 10; i++) {
+                    handlerContext.writeAndFlush(Unpooled.copiedBuffer(EncodeAndDecode.getStrUnicode(s).getBytes()));
+                }
             }
         }
     }

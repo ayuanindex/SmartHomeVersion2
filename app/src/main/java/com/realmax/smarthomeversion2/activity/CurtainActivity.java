@@ -2,7 +2,6 @@ package com.realmax.smarthomeversion2.activity;
 
 import android.annotation.SuppressLint;
 import android.text.TextUtils;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -234,29 +233,27 @@ public class CurtainActivity extends BaseActivity {
 
             swToggle.setChecked(getItem(position) == 1);
 
-            swToggle.setOnTouchListener((View v, MotionEvent event) -> {
+            swToggle.setOnClickListener((View v) -> {
                 try {
-                    if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
-                        // 将设置指令同步至云端
-                        MqttControl curtain = ValueUtil.getMqttControlHashMap().get("Curtain");
-                        if (curtain != null) {
-                            CurtainControl curtainControl = (CurtainControl) curtain;
-                            JSONObject property = new JSONObject();
-                            for (int value : curtailId) {
-                                property.put("curtain" + value, getItem(position) == OPEN ? CLOSE : OPEN);
-                            }
-                            curtainControl.publish(property);
+                    swToggle.toggle();
+                    // 将设置指令同步至云端
+                    MqttControl curtain = ValueUtil.getMqttControlHashMap().get("Curtain");
+                    if (curtain != null) {
+                        CurtainControl curtainControl = (CurtainControl) curtain;
+                        JSONObject property = new JSONObject();
+                        for (int value : curtailId) {
+                            property.put("curtain" + value, getItem(position) == OPEN ? CLOSE : OPEN);
                         }
-
-                        ArrayList<Integer> curtainC = new ArrayList<>(curtainAndAcBean.getCurtain_S());
-                        curtainC.set(curtailId[position] - 1, getItem(position) == OPEN ? CLOSE : OPEN);
-                        CurtainAndAcBean curtainAndAcBean = new CurtainAndAcBean(curtainC);
-                        ValueUtil.sendCurtainOpenOrCloseCmd(curtainAndAcBean, tag);
+                        curtainControl.publish(property);
                     }
+
+                    ArrayList<Integer> curtainC = new ArrayList<>(curtainAndAcBean.getCurtain_S());
+                    curtainC.set(curtailId[position] - 1, getItem(position) == OPEN ? CLOSE : OPEN);
+                    CurtainAndAcBean curtainAndAcBean = new CurtainAndAcBean(curtainC);
+                    ValueUtil.sendCurtainOpenOrCloseCmd(curtainAndAcBean, tag);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                return true;
             });
             return view;
         }

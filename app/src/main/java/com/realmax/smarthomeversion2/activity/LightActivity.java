@@ -2,12 +2,10 @@ package com.realmax.smarthomeversion2.activity;
 
 import android.annotation.SuppressLint;
 import android.text.TextUtils;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -234,34 +232,33 @@ public class LightActivity extends BaseActivity {
             // 设置当前电灯的状态
             cbCheck.setChecked(getItem(position) == 1);
 
-            swToggle.setOnTouchListener((View v, MotionEvent event) -> {
+            swToggle.setOnTouchListener(null);
+
+            swToggle.setChecked(getItem(position) == 1);
+
+            swToggle.setOnClickListener((View v) -> {
                 try {
-                    if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
-                        L.e("onTouch:" + position);
-
-                        // 将设置指令同步至云端
-                        MqttControl light = ValueUtil.getMqttControlHashMap().get("light");
-                        if (light != null) {
-                            LightControl lightControl = (LightControl) light;
-                            JSONObject property = new JSONObject();
-                            for (int value : model) {
-                                property.put("light" + value, getItem(position) == OPEN ? CLOSE : OPEN);
-                            }
-                            lightControl.publish(property);
+                    swToggle.toggle();
+                    // 将设置指令同步至云端
+                    MqttControl light = ValueUtil.getMqttControlHashMap().get("light");
+                    if (light != null) {
+                        LightControl lightControl = (LightControl) light;
+                        JSONObject property = new JSONObject();
+                        for (int value : model) {
+                            property.put("light" + value, getItem(position) == OPEN ? CLOSE : OPEN);
                         }
-
-                        // 向控制起发送控制灯的指令
-                        ArrayList<Integer> lightC = new ArrayList<>(lightBean.getLightList_S());
-                        lightC.set(model[position] - 1, getItem(position) == OPEN ? CLOSE : OPEN);
-                        LightBean lightBean = new LightBean(lightC);
-                        ValueUtil.sendLightOpenOrCloseCmd(lightBean, tag);
+                        lightControl.publish(property);
                     }
+
+                    // 向控制起发送控制灯的指令
+                    ArrayList<Integer> lightC = new ArrayList<>(lightBean.getLightList_S());
+                    lightC.set(model[position] - 1, getItem(position) == OPEN ? CLOSE : OPEN);
+                    LightBean lightBean = new LightBean(lightC);
+                    ValueUtil.sendLightOpenOrCloseCmd(lightBean, tag);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                return true;
             });
-            swToggle.setChecked(getItem(position) == 1);
             return view;
         }
 
