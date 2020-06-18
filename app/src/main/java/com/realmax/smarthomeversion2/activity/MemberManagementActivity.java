@@ -68,7 +68,7 @@ public class MemberManagementActivity extends BaseActivity {
 
         gvPeoples.setOnItemClickListener((AdapterView<?> adapterView, View view, int i, long l) -> {
             // TODO: 2020/6/18
-            Snackbar snackbar = Snackbar.make(view, "是否删除当前人员", BaseTransientBottomBar.LENGTH_LONG);
+            Snackbar snackbar = Snackbar.make(view, "是否删除人员\"" + customerAdapter.getItem(i).getPersonName() + "\"", BaseTransientBottomBar.LENGTH_LONG);
             snackbar.setAction("删除", (View delete) -> {
                 FaceManager.deletePeople(customerAdapter.getItem(i).getPersonId(), new HttpUtil.Result<PersonBaseInfoBean>() {
                     @Override
