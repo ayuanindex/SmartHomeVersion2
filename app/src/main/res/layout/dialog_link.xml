@@ -67,7 +67,7 @@
                     android:id="@+id/et_port"
                     android:layout_width="300dp"
                     android:layout_height="wrap_content"
-                    android:digits="123456789"
+                    android:digits="1234567890"
                     android:inputType="number"
                     android:text="8527" />
             </LinearLayout>

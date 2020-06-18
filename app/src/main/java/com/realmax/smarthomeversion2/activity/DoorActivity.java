@@ -20,6 +20,7 @@ import com.google.gson.JsonSyntaxException;
 import com.realmax.smarthomeversion2.App;
 import com.realmax.smarthomeversion2.R;
 import com.realmax.smarthomeversion2.activity.bean.DoorAndAirQualityBean;
+import com.realmax.smarthomeversion2.activity.bean.RoomBean;
 import com.realmax.smarthomeversion2.tcp.CustomerCallback;
 import com.realmax.smarthomeversion2.tcp.CustomerHandlerBase;
 import com.realmax.smarthomeversion2.util.L;
@@ -51,8 +52,16 @@ public class DoorActivity extends BaseActivity {
     private String tag = "control_03";
     private DoorAndAirQualityBean doorAndAirQualityBean;
     private DoorAndAirQualityBean.DoorsSBean doorsSBean;
+    public static ArrayList<RoomBean> roomBeans;
 
     static {
+        roomBeans = new ArrayList<>();
+        roomBeans.add(new RoomBean("客厅门", new int[]{1}));
+        roomBeans.add(new RoomBean("后门", new int[]{2}));
+        roomBeans.add(new RoomBean("小门", new int[]{3}));
+        roomBeans.add(new RoomBean("大门", new int[]{4}));
+        roomBeans.add(new RoomBean("车库门", new int[]{5}));
+
         doorNameList = new ArrayList<>();
         doorNameList.add("客厅门");
         doorNameList.add("后门");

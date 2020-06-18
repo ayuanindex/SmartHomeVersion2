@@ -8,12 +8,14 @@ import androidx.annotation.LayoutRes;
 import com.google.gson.Gson;
 import com.realmax.smarthomeversion2.R;
 import com.realmax.smarthomeversion2.activity.BaseActivity;
+import com.realmax.smarthomeversion2.activity.CurtainActivity;
+import com.realmax.smarthomeversion2.activity.DoorActivity;
+import com.realmax.smarthomeversion2.activity.LightActivity;
 import com.realmax.smarthomeversion2.activity.bean.CurtainAndAcBean;
 import com.realmax.smarthomeversion2.activity.bean.DoorAndAirQualityBean;
 import com.realmax.smarthomeversion2.activity.bean.LightBean;
-import com.realmax.smarthomeversion2.bean.DoorBean;
+import com.realmax.smarthomeversion2.activity.bean.RoomBean;
 import com.realmax.smarthomeversion2.bean.MessageBean;
-import com.realmax.smarthomeversion2.bean.RoomBean;
 import com.realmax.smarthomeversion2.tcp.CustomerHandlerBase;
 import com.realmax.smarthomeversion2.util.CustomerThread;
 import com.realmax.smarthomeversion2.util.L;
@@ -25,13 +27,13 @@ import java.util.List;
 public abstract class AudioControl {
     private static final String TAG = "AudioControl";
     private static final String CLOSE_REGEX = ".*退下.*";
-    private static final String LIGTH = "灯";
+    private static final String LIGHT = "灯";
     private static final String DOOR = "门";
     private static final String CURTAIN = "窗帘";
     private final BaseActivity mActivity;
 
     private final ArrayList<MessageBean> messageBeans;
-    private final ArrayList<RoomBean> roomBeans;
+    private List<RoomBean> roomBeans;
 
     private static final String OPEN_LIGHT = ".*[开|灯].*[开|灯].*";
     private static final String CLOSE_LIGHT = ".*[关|灯].*[关|灯].*";
@@ -66,7 +68,7 @@ public abstract class AudioControl {
     AudioControl(BaseActivity mActivity, ArrayList<MessageBean> messageBeans, CommendActivity.CustomerAdapter customerAdapter) {
         this.mActivity = mActivity;
         this.messageBeans = messageBeans;
-        roomBeans = mActivity.roomBeans;
+        /*roomBeans = mActivity.roomBeans;*/
     }
 
     /**
@@ -149,13 +151,16 @@ public abstract class AudioControl {
         if (str.matches(CLOSE_REGEX)) {
             // 开始执行关闭语音界面指令
             finish();
-        } else if (selectRoom(str)) {
+        } else if (!selectRoom(str)) {
+            // 没有检测到有关房间的指令
+            feedBack("嗯...啊远大人，你要我干什么呢？", R.layout.item_left_message);
+        } else/* if (selectRoom(str)) */ {
             // 根据识别结果判断是否提到了某个房间,在根据关键词选择分别执行灯、门、窗帘灯操作
             // 根据识别到的指令根据场景来进行操作
             getControlModel(str);
             // 开始执行相应的操作操作指令
             switch (currentModel) {
-                case LIGTH:
+                case LIGHT:
                     if (str.matches(OPEN_LIGHT)) {
                         lightInstruction(true);
                     } else if (str.matches(CLOSE_LIGHT)) {
@@ -178,14 +183,7 @@ public abstract class AudioControl {
                     break;
                 default:
             }
-        } else if (!selectRoom(str)) {
-            // 没有检测到有关房间的指令
-            feedBack("嗯...啊远大人，你要我干什么呢？", R.layout.item_left_message);
-            /*feedBack("Um ... Ah Master, what do you want me to do?", R.layout.item_left_message);*/
-        }/* else {
-            // 没有匹配到任何指令
-            feedBack("抱歉，我不知道你在说什么", R.layout.item_left_message);
-        }*/
+        }
     }
 
     /**
@@ -216,10 +214,13 @@ public abstract class AudioControl {
     private void getControlModel(String str) {
         // 根据指令切换当前模式
         if (str.matches(OPEN_LIGHT) || str.matches(CLOSE_LIGHT)) {
-            currentModel = LIGTH;
+            currentModel = LIGHT;
+            this.roomBeans = LightActivity.roomBeans;
         } else if (str.matches(OPEN_CURTAIN) || str.matches(CLOSE_CURTAIN)) {
             currentModel = CURTAIN;
+            this.roomBeans = CurtainActivity.roomBeans;
         } else if (str.matches(OPEN_DOOR) || str.matches(CLOSE_DOOR)) {
+            this.roomBeans = DoorActivity.roomBeans;
             currentModel = DOOR;
         }
         L.e(currentModel);
@@ -252,7 +253,7 @@ public abstract class AudioControl {
             LightBean lightBean = new Gson().fromJson(currentCommand, LightBean.class);
             List<Integer> lightS = lightBean.getLightList_S();
             changeState((RoomBean roomBean) -> {
-                int[] lightId = roomBean.getLightId();
+                int[] lightId = roomBean.getModel();
                 if (lightId.length > 0) {
                     for (int i : lightId) {
                         // 将需要修改的房间等的状态修改
@@ -293,7 +294,7 @@ public abstract class AudioControl {
             CurtainAndAcBean curtainAndAcBean = new Gson().fromJson(currentCommand, CurtainAndAcBean.class);
             List<Integer> curtainS = curtainAndAcBean.getCurtain_S();
             changeState((RoomBean roomBean) -> {
-                int[] curtailId = roomBean.getCurtailId();
+                int[] curtailId = roomBean.getModel();
                 if (curtailId.length > 0) {
                     for (int i : curtailId) {
                         // 将需要修改房间窗帘的状态修改
@@ -327,7 +328,7 @@ public abstract class AudioControl {
 
             // 验证提到的房间有没有门
             changeState((RoomBean roomBean) -> {
-                int[] doorId = roomBean.getDoorId();
+                int[] doorId = roomBean.getModel();
                 if (doorId.length == 0) {
                     feedBack(roomBean.getRoomName() + "的门不可以远程控制哦", R.layout.item_left_message);
                 } else {
