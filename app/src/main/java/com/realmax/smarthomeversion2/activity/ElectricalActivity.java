@@ -3,15 +3,12 @@ package com.realmax.smarthomeversion2.activity;
 import android.annotation.SuppressLint;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.renderscript.Sampler;
 import android.text.TextUtils;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -24,14 +21,16 @@ import com.realmax.smarthomeversion2.tcp.CustomerCallback;
 import com.realmax.smarthomeversion2.tcp.CustomerHandlerBase;
 import com.realmax.smarthomeversion2.util.L;
 import com.realmax.smarthomeversion2.util.ValueUtil;
-import com.tencentcloudapi.cms.v20190321.models.CustomResult;
-import com.tencentcloudapi.common.exception.TencentCloudSDKException;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+/**
+ * @author ayuan
+ * 电器
+ */
 public class ElectricalActivity extends BaseActivity {
     private CheckBox cb_powerSupply;
     private CheckBox cb_mute;

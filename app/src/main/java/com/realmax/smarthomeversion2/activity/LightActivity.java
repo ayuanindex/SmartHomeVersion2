@@ -32,6 +32,7 @@ import java.util.ArrayList;
 
 /**
  * @author ayuan
+ * 灯
  */
 public class LightActivity extends BaseActivity {
     private RelativeLayout rlBack;
@@ -44,7 +45,27 @@ public class LightActivity extends BaseActivity {
     private ArrayList<Integer> currentLightStatus;
     private int currentPosition;
     private LightBean lightBean;
-    private ArrayList<RoomBean> roomBeans;
+    public static ArrayList<RoomBean> roomBeans;
+
+    static {
+        roomBeans = new ArrayList<>();
+        roomBeans.add(new RoomBean("客厅", new int[]{1}));
+        roomBeans.add(new RoomBean("洗手间", new int[]{2}));
+        roomBeans.add(new RoomBean("仓储间", new int[]{3}));
+        roomBeans.add(new RoomBean("餐厅", new int[]{4}));
+        roomBeans.add(new RoomBean("门厅", new int[]{5}));
+        roomBeans.add(new RoomBean("车库", new int[]{6}));
+        roomBeans.add(new RoomBean("走廊", new int[]{7}));
+        roomBeans.add(new RoomBean("卧室A", new int[]{8}));
+        roomBeans.add(new RoomBean("洗浴间", new int[]{9, 10}));
+        roomBeans.add(new RoomBean("卧室B", new int[]{11}));
+        roomBeans.add(new RoomBean("卧室C洗手间", new int[]{12}));
+        roomBeans.add(new RoomBean("卧室C", new int[]{13}));
+        roomBeans.add(new RoomBean("更衣间", new int[]{14}));
+        roomBeans.add(new RoomBean("书房", new int[]{17, 18}));
+        roomBeans.add(new RoomBean("庭院", new int[]{15}));
+        roomBeans.add(new RoomBean("院墙", new int[]{16}));
+    }
 
     @Override
     protected int getLayout() {
@@ -73,24 +94,6 @@ public class LightActivity extends BaseActivity {
     @Override
     protected void initData() {
         currentPosition = 0;
-
-        roomBeans = new ArrayList<>();
-        roomBeans.add(new RoomBean("客厅", new int[]{1}));
-        roomBeans.add(new RoomBean("洗手间", new int[]{2}));
-        roomBeans.add(new RoomBean("仓储间", new int[]{3}));
-        roomBeans.add(new RoomBean("餐厅", new int[]{4}));
-        roomBeans.add(new RoomBean("门厅", new int[]{5}));
-        roomBeans.add(new RoomBean("车库", new int[]{6}));
-        roomBeans.add(new RoomBean("走廊", new int[]{7}));
-        roomBeans.add(new RoomBean("卧室A", new int[]{8}));
-        roomBeans.add(new RoomBean("洗浴间", new int[]{9, 10}));
-        roomBeans.add(new RoomBean("卧室B", new int[]{11}));
-        roomBeans.add(new RoomBean("卧室C洗手间", new int[]{12}));
-        roomBeans.add(new RoomBean("卧室C", new int[]{13}));
-        roomBeans.add(new RoomBean("更衣间", new int[]{14}));
-        roomBeans.add(new RoomBean("书房", new int[]{17, 18}));
-        roomBeans.add(new RoomBean("庭院", new int[]{15}));
-        roomBeans.add(new RoomBean("院墙", new int[]{16}));
 
         lightBean = new LightBean(new ArrayList<>());
 

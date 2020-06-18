@@ -24,6 +24,10 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * @author ayuan
+ * 传感器
+ */
 public class TransducerActivity extends BaseActivity {
     private RelativeLayout rl_back;
     private ImageView iv_one;
@@ -42,7 +46,25 @@ public class TransducerActivity extends BaseActivity {
     private String control3 = "control_03";
     private String control5 = "control_05";
     private int currentPosition = 0;
-    private ArrayList<RoomBean> roomBeans;
+    public static ArrayList<RoomBean> roomBeans;
+
+    static {
+        roomBeans = new ArrayList<>();
+        roomBeans.add(new RoomBean("客厅", new int[]{1, 2, 4}));
+        roomBeans.add(new RoomBean("洗手间", new int[]{6, 7}));
+        roomBeans.add(new RoomBean("仓储间", new int[]{23}));
+        roomBeans.add(new RoomBean("餐厅", new int[]{3, 8, 24}));
+        roomBeans.add(new RoomBean("门厅", new int[]{5, 25, 26, 27, 10, 9}));
+        roomBeans.add(new RoomBean("车库", new int[]{11, 12}));
+        roomBeans.add(new RoomBean("走廊", new int[]{13, 28, 14, 29}));
+        roomBeans.add(new RoomBean("卧室A", new int[]{15}));
+        roomBeans.add(new RoomBean("洗浴间", new int[]{30, 31}));
+        roomBeans.add(new RoomBean("卧室B", new int[]{16}));
+        roomBeans.add(new RoomBean("卧室C洗浴间", new int[]{17}));
+        roomBeans.add(new RoomBean("卧室C", new int[]{18}));
+        roomBeans.add(new RoomBean("更衣间", new int[]{19}));
+        roomBeans.add(new RoomBean("书房", new int[]{20, 21, 22}));
+    }
 
     @Override
     protected int getLayout() {
@@ -83,23 +105,6 @@ public class TransducerActivity extends BaseActivity {
 
     @Override
     protected void initData() {
-        roomBeans = new ArrayList<>();
-        roomBeans.add(new RoomBean("客厅", new int[]{1, 2, 4}));
-        roomBeans.add(new RoomBean("洗手间", new int[]{6, 7}));
-        roomBeans.add(new RoomBean("仓储间", new int[]{23}));
-        roomBeans.add(new RoomBean("餐厅", new int[]{3, 8, 24}));
-        roomBeans.add(new RoomBean("门厅", new int[]{5, 25, 26, 27, 10, 9}));
-        roomBeans.add(new RoomBean("车库", new int[]{11, 12}));
-        roomBeans.add(new RoomBean("走廊", new int[]{13, 28, 14, 29}));
-        roomBeans.add(new RoomBean("卧室A", new int[]{15}));
-        roomBeans.add(new RoomBean("洗浴间", new int[]{30, 31}));
-        roomBeans.add(new RoomBean("卧室B", new int[]{16}));
-        roomBeans.add(new RoomBean("卧室C洗浴间", new int[]{17}));
-        roomBeans.add(new RoomBean("卧室C", new int[]{18}));
-        roomBeans.add(new RoomBean("更衣间", new int[]{19}));
-        roomBeans.add(new RoomBean("书房", new int[]{20, 21, 22}));
-
-
         setWeatherListener();
         setSensorListener();
     }

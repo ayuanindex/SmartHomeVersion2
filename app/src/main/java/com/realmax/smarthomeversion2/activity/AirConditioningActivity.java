@@ -26,6 +26,7 @@ import java.util.ArrayList;
 
 /**
  * @author ayuan
+ * 空调
  */
 public class AirConditioningActivity extends BaseActivity {
     private RelativeLayout rlBack;
@@ -51,11 +52,21 @@ public class AirConditioningActivity extends BaseActivity {
     private String tag = "virtual";
     private String control2 = "control_02";
     private String control4 = "control_04";
-    private ArrayList<RoomBean> roomBeans;
+    public static ArrayList<RoomBean> roomBeans;
     private int currentPosition = 0;
     private AcAndTvAndMusicBean.AcSBean currentBean;
     private AcAndTvAndMusicBean acAndTvAndMusicBean;
     private CurtainAndAcBean curtainAndAcBean;
+
+    static {
+        roomBeans = new ArrayList<>();
+        roomBeans.add(new RoomBean("客厅", new int[]{1}));
+        roomBeans.add(new RoomBean("餐厅", new int[]{2}));
+        roomBeans.add(new RoomBean("卧室A", new int[]{3}));
+        roomBeans.add(new RoomBean("卧室B", new int[]{4}));
+        roomBeans.add(new RoomBean("卧室C", new int[]{5}));
+        roomBeans.add(new RoomBean("书房", new int[]{6}));
+    }
 
     @Override
     protected int getLayout() {
@@ -265,15 +276,6 @@ public class AirConditioningActivity extends BaseActivity {
     @Override
     protected void initData() {
         currentPosition = 0;
-
-        roomBeans = new ArrayList<>();
-        roomBeans.add(new RoomBean("客厅", new int[]{1}));
-        roomBeans.add(new RoomBean("餐厅", new int[]{2}));
-        roomBeans.add(new RoomBean("卧室A", new int[]{3}));
-        roomBeans.add(new RoomBean("卧室B", new int[]{4}));
-        roomBeans.add(new RoomBean("卧室C", new int[]{5}));
-        roomBeans.add(new RoomBean("书房", new int[]{6}));
-
         currentBean = new AcAndTvAndMusicBean.AcSBean();
 
         setWeatherListener();

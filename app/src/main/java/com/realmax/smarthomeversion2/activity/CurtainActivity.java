@@ -32,6 +32,7 @@ import java.util.ArrayList;
 
 /**
  * @author ayuan
+ * 窗帘
  */
 public class CurtainActivity extends BaseActivity {
     private RelativeLayout rlBack;
@@ -46,8 +47,21 @@ public class CurtainActivity extends BaseActivity {
      * 当前位置
      */
     private int currentPosition;
-    private ArrayList<RoomBean> roomBeans;
+    public static ArrayList<RoomBean> roomBeans;
     private CurtainAndAcBean curtainAndAcBean;
+
+    static {
+        roomBeans = new ArrayList<>();
+        roomBeans.add(new RoomBean("客厅", new int[]{1, 2}));
+        roomBeans.add(new RoomBean("餐厅", new int[]{3}));
+        roomBeans.add(new RoomBean("门厅", new int[]{4}));
+        roomBeans.add(new RoomBean("走廊", new int[]{5}));
+        roomBeans.add(new RoomBean("卧室A", new int[]{6}));
+        roomBeans.add(new RoomBean("卧室B", new int[]{7}));
+        roomBeans.add(new RoomBean("卧室C", new int[]{8}));
+        roomBeans.add(new RoomBean("车库", new int[]{9}));
+        roomBeans.add(new RoomBean("书房", new int[]{10}));
+    }
 
     @Override
     protected int getLayout() {
@@ -76,18 +90,6 @@ public class CurtainActivity extends BaseActivity {
     @Override
     protected void initData() {
         currentPosition = 0;
-
-        roomBeans = new ArrayList<>();
-        roomBeans.add(new RoomBean("客厅", new int[]{1, 2}));
-        roomBeans.add(new RoomBean("餐厅", new int[]{3}));
-        roomBeans.add(new RoomBean("门厅", new int[]{4}));
-        roomBeans.add(new RoomBean("走廊", new int[]{5}));
-        roomBeans.add(new RoomBean("卧室A", new int[]{6}));
-        roomBeans.add(new RoomBean("卧室B", new int[]{7}));
-        roomBeans.add(new RoomBean("卧室C", new int[]{8}));
-        roomBeans.add(new RoomBean("车库", new int[]{9}));
-        roomBeans.add(new RoomBean("书房", new int[]{10}));
-
 
         curtainAndAcBean = new CurtainAndAcBean(new ArrayList<>());
 

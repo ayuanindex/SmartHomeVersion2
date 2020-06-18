@@ -13,7 +13,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import com.realmax.smarthomeversion2.audio.AudioControl;
 import com.realmax.smarthomeversion2.bean.RoomBean;
 import com.realmax.smarthomeversion2.tcp.CustomerHandlerBase;
 import com.realmax.smarthomeversion2.util.ValueUtil;
@@ -48,6 +47,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         addPermission(permissions, Manifest.permission.RECORD_AUDIO);
         addPermission(permissions, Manifest.permission.INTERNET);
         addPermission(permissions, Manifest.permission.READ_PHONE_STATE);
+        addPermission(permissions, Manifest.permission.CAMERA);
 
         if (!permissions.isEmpty()) {
             // 请求还未请求的权限

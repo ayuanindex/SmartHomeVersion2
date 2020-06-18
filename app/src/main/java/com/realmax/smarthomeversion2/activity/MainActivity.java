@@ -69,6 +69,7 @@ public class MainActivity extends BaseActivity {
         integerHashMap.put(4, R.drawable.pic_sensor_open);
         integerHashMap.put(5, R.drawable.pic_monitor_open);
         integerHashMap.put(6, R.drawable.pic_airconditioning_open);
+        integerHashMap.put(7, R.drawable.pic_face);
 
         labels = new String[]{
                 "灯光",
@@ -78,6 +79,7 @@ public class MainActivity extends BaseActivity {
                 "传感",
                 "监控",
                 "空调",
+                "家庭成员管理"
         };
 
         // 初始化MQTT控制类
@@ -115,10 +117,15 @@ public class MainActivity extends BaseActivity {
             case 6:// 空调
                 intent = new Intent(MainActivity.this, AirConditioningActivity.class);
                 break;
+            case 7:// 空调
+                intent = new Intent(MainActivity.this, MemberManagementActivity.class);
+                break;
             default:
                 break;
         }
-        startActivity(intent);
+        if (intent != null) {
+            startActivity(intent);
+        }
     }
 
     /**

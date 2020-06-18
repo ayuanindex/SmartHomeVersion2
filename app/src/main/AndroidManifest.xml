@@ -4,6 +4,7 @@
     package="com.realmax.smarthomeversion2">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.BROADCAST_STICKY" />
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
@@ -59,7 +60,7 @@
             android:name=".activity.CurtainActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
-            tools:ignore="LockedOrientationActivity" /> <!--窗帘门窗-->
+            tools:ignore="LockedOrientationActivity" />
         <!--门-->
         <activity
             android:name=".activity.DoorActivity"
@@ -71,7 +72,7 @@
             android:name=".activity.ElectricalActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
-            tools:ignore="LockedOrientationActivity" /> <!--家用电器-->
+            tools:ignore="LockedOrientationActivity" />
         <!--传感器-->
         <activity
             android:name=".activity.TransducerActivity"
@@ -86,6 +87,12 @@
         <!--空调-->
         <activity
             android:name=".activity.AirConditioningActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity" />
+        <!--家庭成员管理-->
+        <activity
+            android:name=".activity.MemberManagementActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity" />

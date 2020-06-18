@@ -32,6 +32,7 @@ import java.util.ArrayList;
 
 /**
  * @author ayuan
+ * 门
  */
 public class DoorActivity extends BaseActivity {
     private RelativeLayout rlBack;
@@ -44,12 +45,21 @@ public class DoorActivity extends BaseActivity {
     private LinearLayout llDoor;
     private LinearLayout llKey;
     private LinearLayout llPassword;
-    private ArrayList<String> doorNameList;
+    public static ArrayList<String> doorNameList;
     private int currentPosition = 0;
     private String currentDoor;
     private String tag = "control_03";
     private DoorAndAirQualityBean doorAndAirQualityBean;
     private DoorAndAirQualityBean.DoorsSBean doorsSBean;
+
+    static {
+        doorNameList = new ArrayList<>();
+        doorNameList.add("客厅门");
+        doorNameList.add("后门");
+        doorNameList.add("小门");
+        doorNameList.add("大门");
+        doorNameList.add("车库门");
+    }
 
     @Override
     protected int getLayout() {
@@ -123,13 +133,6 @@ public class DoorActivity extends BaseActivity {
 
     @Override
     protected void initData() {
-
-        doorNameList = new ArrayList<>();
-        doorNameList.add("客厅门");
-        doorNameList.add("后门");
-        doorNameList.add("小门");
-        doorNameList.add("大门");
-        doorNameList.add("车库门");
 
         doorAndAirQualityBean = new DoorAndAirQualityBean();
         doorAndAirQualityBean.setDoors_S(new ArrayList<>());

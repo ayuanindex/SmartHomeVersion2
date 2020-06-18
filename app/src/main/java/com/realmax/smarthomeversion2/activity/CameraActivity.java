@@ -33,6 +33,7 @@ import java.util.ArrayList;
 
 /**
  * @author ayuan
+ * 摄像头
  */
 public class CameraActivity extends BaseActivity {
     private TextView tvAngleA;
@@ -61,8 +62,25 @@ public class CameraActivity extends BaseActivity {
      * 手指放在照片上时的X坐标
      */
     private float initX;
-    private ArrayList<RoomBean> roomBeans;
+    public static ArrayList<RoomBean> roomBeans;
 
+    static {
+        roomBeans = new ArrayList<>();
+        roomBeans.add(new RoomBean("客厅", new int[]{5}));
+        roomBeans.add(new RoomBean("餐厅", new int[]{6}));
+        roomBeans.add(new RoomBean("门厅", new int[]{7}));
+        roomBeans.add(new RoomBean("车库", new int[]{8}));
+        roomBeans.add(new RoomBean("走廊", new int[]{9}));
+        roomBeans.add(new RoomBean("卧室A", new int[]{10}));
+        roomBeans.add(new RoomBean("卧室B", new int[]{11}));
+        roomBeans.add(new RoomBean("卧室C", new int[]{12}));
+        roomBeans.add(new RoomBean("书房", new int[]{13}));
+        roomBeans.add(new RoomBean("庭院西", new int[]{4}));
+        roomBeans.add(new RoomBean("院墙", new int[]{2}));
+        roomBeans.add(new RoomBean("院墙", new int[]{1}));
+        roomBeans.add(new RoomBean("院墙", new int[]{3}));
+        roomBeans.add(new RoomBean("机器人", new int[]{14}));
+    }
 
     @Override
     protected int getLayout() {
@@ -122,22 +140,6 @@ public class CameraActivity extends BaseActivity {
 
     @Override
     protected void initData() {
-
-        roomBeans = new ArrayList<>();
-        roomBeans.add(new RoomBean("客厅", new int[]{5}));
-        roomBeans.add(new RoomBean("餐厅", new int[]{6}));
-        roomBeans.add(new RoomBean("门厅", new int[]{7}));
-        roomBeans.add(new RoomBean("车库", new int[]{8}));
-        roomBeans.add(new RoomBean("走廊", new int[]{9}));
-        roomBeans.add(new RoomBean("卧室A", new int[]{10}));
-        roomBeans.add(new RoomBean("卧室B", new int[]{11}));
-        roomBeans.add(new RoomBean("卧室C", new int[]{12}));
-        roomBeans.add(new RoomBean("书房", new int[]{13}));
-        roomBeans.add(new RoomBean("庭院西", new int[]{4}));
-        roomBeans.add(new RoomBean("院墙", new int[]{2}));
-        roomBeans.add(new RoomBean("院墙", new int[]{1}));
-        roomBeans.add(new RoomBean("院墙", new int[]{3}));
-        roomBeans.add(new RoomBean("机器人", new int[]{14}));
 
         if (roomBeans.get(currentPosition).getModel().length > 0) {
             currentCamera = roomBeans.get(currentPosition).getModel()[0];
