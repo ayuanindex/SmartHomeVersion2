@@ -96,6 +96,12 @@
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity" />
+        <!--添加家庭成员-->
+        <activity
+            android:name=".activity.AddFamilyPersonActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity" />
         <!--语音服务-->
         <service android:name=".audio.AudioService" />
     </application>
