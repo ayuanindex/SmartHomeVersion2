@@ -3,11 +3,11 @@ package com.realmax.smarthomeversion2.tencentCloud;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
 
-
 import com.realmax.smarthomeversion2.network.HttpUtil;
 import com.realmax.smarthomeversion2.tencentCloud.bean.CreatePersonResultBean;
 import com.realmax.smarthomeversion2.tencentCloud.bean.DeleteGroupResultBean;
 import com.realmax.smarthomeversion2.tencentCloud.bean.GetPeopleLibraryBean;
+import com.realmax.smarthomeversion2.tencentCloud.bean.GroupListBean;
 import com.realmax.smarthomeversion2.tencentCloud.bean.PersonBaseInfoBean;
 import com.realmax.smarthomeversion2.tencentCloud.bean.PersonListBean;
 import com.realmax.smarthomeversion2.tencentCloud.bean.SearchPersonResultBean;
@@ -30,6 +30,30 @@ public class FaceManager {
         Matrix matrix = new Matrix();
         matrix.setScale(0.5f, 0.5f);
         return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+    }
+
+    /**
+     * 获取人员库列表
+     *
+     * @param result 请求回调
+     */
+    public static void getGroupList(HttpUtil.Result<GroupListBean> result) {
+        CustomerThread.poolExecutor.execute(() -> {
+            try {
+                TreeMap<String, Object> params = new TreeMap<>();
+                // 公共参数
+                params.put("Action", "GetGroupList");
+                // 公共参数
+                params.put("Region", "ap-shanghai");
+                // 公共参数
+                params.put("Version", "2020-03-03");
+
+                TreeMap<String, Object> init = TencentCloudAPIInitUtil.init(params);
+                HttpUtil.doPost(init, GroupListBean.class, result);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
     }
 
     /**
@@ -218,6 +242,33 @@ public class FaceManager {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+    }
+
+    /**
+     * 删除人员
+     *
+     * @param personId 人员ID
+     * @param result   请求回调
+     */
+    public static void deletePeople(String personId, HttpUtil.Result<PersonBaseInfoBean> result) {
+        CustomerThread.poolExecutor.execute(() -> {
+            try {
+                TreeMap<String, Object> params = new TreeMap<>();
+                // 公共参数
+                params.put("Action", "DeletePerson");
+                // 公共参数
+                params.put("Region", "ap-shanghai");
+                // 公共参数
+                params.put("Version", "2020-03-03");
+                params.put("PersonId", personId);
+
+                TreeMap<String, Object> init = TencentCloudAPIInitUtil.init(params);
+                HttpUtil.doPost(init, PersonBaseInfoBean.class, result);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
 
     }
 }
