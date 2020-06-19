@@ -1,12 +1,12 @@
 package com.realmax.smarthomeversion2.audio;
 
 import android.annotation.SuppressLint;
-import android.opengl.ETC1;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -30,6 +30,8 @@ public class CommendActivity extends BaseActivity {
     private ArrayList<MessageBean> messageBeans;
     private TextView tvMessage;
     private AudioControl audioControl;
+    private ImageView ivVoice;
+    private boolean isStart = true;
 
     @Override
     protected int getLayout() {
@@ -41,6 +43,7 @@ public class CommendActivity extends BaseActivity {
         cardVoice = findViewById(R.id.card_voice);
         rcList = findViewById(R.id.rc_list);
         tvMessage = findViewById(R.id.tv_message);
+        ivVoice = (ImageView) findViewById(R.id.iv_voice);
     }
 
     @Override

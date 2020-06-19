@@ -58,8 +58,8 @@ public class CurtainAndAcBean {
         private int acPower;
         private int mode;
         private int windSpeed;
-        private int temperature;
-        private int currentTemperature;
+        private float temperature;
+        private float currentTemperature;
 
         public int getAcPower() {
             return acPower;
@@ -85,7 +85,7 @@ public class CurtainAndAcBean {
             this.windSpeed = windSpeed;
         }
 
-        public int getTemperature() {
+        public float getTemperature() {
             return temperature;
         }
 
@@ -93,7 +93,7 @@ public class CurtainAndAcBean {
             this.temperature = temperature;
         }
 
-        public int getCurrentTemperature() {
+        public float getCurrentTemperature() {
             return currentTemperature;
         }
 

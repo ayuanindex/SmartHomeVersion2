@@ -228,13 +228,7 @@ public class CurtainActivity extends BaseActivity {
             int[] curtailId = roomBeans.get(currentPosition).getModel();
             tvLabel.setText(roomBeans.get(currentPosition).getRoomName() + curtailId[position] + "号窗帘");
 
-            // 设置当前电灯的状态
-            cbCheck.setChecked(getItem(position) == 1);
-
             swToggle.setOnTouchListener(null);
-
-            swToggle.setChecked(getItem(position) == 1);
-
             swToggle.setOnClickListener((View v) -> {
                 try {
                     swToggle.toggle();
@@ -253,10 +247,21 @@ public class CurtainActivity extends BaseActivity {
                     curtainC.set(curtailId[position] - 1, getItem(position) == OPEN ? CLOSE : OPEN);
                     CurtainAndAcBean curtainAndAcBean = new CurtainAndAcBean(curtainC);
                     ValueUtil.sendCurtainOpenOrCloseCmd(curtainAndAcBean, tag);
+                    notifyDataSetChanged();
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
             });
+
+            if (getItem(position) == 1) {
+                cbCheck.setChecked(true);
+                swToggle.setChecked(true);
+            } else {
+                cbCheck.setChecked(false);
+                swToggle.setChecked(false);
+            }
+
+            L.e(currentCurtainStatus.toString());
             return view;
         }
 

@@ -231,6 +231,7 @@ public class LightActivity extends BaseActivity {
             initView(view);
             int[] model = roomBeans.get(currentPosition).getModel();
             tvLabel.setText(roomBeans.get(currentPosition).getRoomName() + model[position] + "号灯");
+
             swToggle.setOnClickListener(null);
             swToggle.setOnClickListener((View v) -> {
                 try {

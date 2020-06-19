@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.realmax.smarthomeversion2.R;
 import com.realmax.smarthomeversion2.audio.AudioService;
+import com.realmax.smarthomeversion2.audio.CommendActivity;
 import com.realmax.smarthomeversion2.mqtt.CurtainControl;
 import com.realmax.smarthomeversion2.mqtt.LightControl;
 import com.realmax.smarthomeversion2.mqtt.MqttControl;
@@ -45,6 +46,7 @@ public class MainActivity extends BaseActivity {
     protected void initEvent() {
         ivHome.setOnClickListener((View v) -> {
             // TODO: 2020/4/2
+            jump(CommendActivity.class);
         });
 
         ivLinkSetting.setOnClickListener((View v) -> jump(SettingActivity.class));

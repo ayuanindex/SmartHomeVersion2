@@ -126,7 +126,7 @@ public class AirConditioningActivity extends BaseActivity {
                             curtainAndAcBean.getAc_S().getAcPower() == 1 ? 0 : 1,
                             curtainAndAcBean.getAc_S().getMode(),
                             curtainAndAcBean.getAc_S().getWindSpeed(),
-                            curtainAndAcBean.getAc_S().getTemperature(),
+                            (int) curtainAndAcBean.getAc_S().getTemperature(),
                             control2);
                 }
             }
@@ -144,7 +144,7 @@ public class AirConditioningActivity extends BaseActivity {
                             curtainAndAcBean.getAc_S().getAcPower(),
                             0,
                             curtainAndAcBean.getAc_S().getWindSpeed(),
-                            curtainAndAcBean.getAc_S().getTemperature(),
+                            (int) curtainAndAcBean.getAc_S().getTemperature(),
                             control2);
                 }
             }
@@ -162,7 +162,7 @@ public class AirConditioningActivity extends BaseActivity {
                             curtainAndAcBean.getAc_S().getAcPower(),
                             1,
                             curtainAndAcBean.getAc_S().getWindSpeed(),
-                            curtainAndAcBean.getAc_S().getTemperature(),
+                            (int) curtainAndAcBean.getAc_S().getTemperature(),
                             control2);
                 }
             }
@@ -188,7 +188,7 @@ public class AirConditioningActivity extends BaseActivity {
                             curtainAndAcBean.getAc_S().getAcPower(),
                             curtainAndAcBean.getAc_S().getMode(),
                             windSpeed,
-                            curtainAndAcBean.getAc_S().getTemperature(),
+                            (int) curtainAndAcBean.getAc_S().getTemperature(),
                             control2);
                 }
             }
@@ -214,7 +214,7 @@ public class AirConditioningActivity extends BaseActivity {
                             curtainAndAcBean.getAc_S().getAcPower(),
                             curtainAndAcBean.getAc_S().getMode(),
                             windSpeed,
-                            curtainAndAcBean.getAc_S().getTemperature(),
+                            (int) curtainAndAcBean.getAc_S().getTemperature(),
                             control2);
                 }
             }
@@ -232,7 +232,7 @@ public class AirConditioningActivity extends BaseActivity {
                 }
             } else if (currentPosition == 0) {
                 if (curtainAndAcBean != null) {
-                    int temperature = curtainAndAcBean.getAc_S().getTemperature();
+                    int temperature = (int) curtainAndAcBean.getAc_S().getTemperature();
                     if (temperature < 28) {
                         temperature += 1;
                     }
@@ -258,7 +258,7 @@ public class AirConditioningActivity extends BaseActivity {
                 }
             } else if (currentPosition == 0) {
                 if (curtainAndAcBean != null) {
-                    int temperature = curtainAndAcBean.getAc_S().getTemperature();
+                    int temperature = (int) curtainAndAcBean.getAc_S().getTemperature();
                     if (temperature > 16) {
                         temperature -= 1;
                     }
@@ -342,9 +342,9 @@ public class AirConditioningActivity extends BaseActivity {
                                 if (currentPosition == 0) {
                                     CurtainAndAcBean.AcSBean ac_s = curtainAndAcBean.getAc_S();
                                     currentBean.setAcPower(ac_s.getAcPower());
-                                    currentBean.setCurrentTemperature(ac_s.getCurrentTemperature());
+                                    currentBean.setCurrentTemperature((int) ac_s.getCurrentTemperature());
                                     currentBean.setMode(ac_s.getMode());
-                                    currentBean.setTemperature(ac_s.getTemperature());
+                                    currentBean.setTemperature((int) ac_s.getTemperature());
                                     currentBean.setWindSpeed(ac_s.getWindSpeed());
                                     // 刷新界面UI
                                     refreshUi();

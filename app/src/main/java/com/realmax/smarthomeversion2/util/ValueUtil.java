@@ -1,5 +1,7 @@
 package com.realmax.smarthomeversion2.util;
 
+import android.os.Build;
+
 import com.realmax.smarthomeversion2.activity.bean.AcAndTvAndMusicBean;
 import com.realmax.smarthomeversion2.activity.bean.CurtainAndAcBean;
 import com.realmax.smarthomeversion2.activity.bean.LightBean;
@@ -52,9 +54,18 @@ public class ValueUtil {
     }
 
     public static void mqttConnected() {
-        mqttControlHashMap.forEach((String s, MqttControl mqttControl) -> {
-            mqttControl.connected();
-        });
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            mqttControlHashMap.forEach((String s, MqttControl mqttControl) -> {
+                mqttControl.connected();
+            });
+        } else {
+            for (String s : mqttControlHashMap.keySet()) {
+                MqttControl mqttControl = mqttControlHashMap.get(s);
+                if (mqttControl != null) {
+                    mqttControl.connected();
+                }
+            }
+        }
     }
 
     /**
@@ -118,7 +129,7 @@ public class ValueUtil {
                 JSONObject jsonObject = new JSONObject(hashMap);
                 String s = jsonObject.toString();
                 L.e(s);
-                for (int i = 0; i < maxSend; i++) {
+                for (int i = 0; i < maxSend + 10; i++) {
                     handlerContext.writeAndFlush(Unpooled.copiedBuffer(EncodeAndDecode.getStrUnicode(s).getBytes()));
                 }
             }
