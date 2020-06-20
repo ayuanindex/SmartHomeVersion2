@@ -33,6 +33,7 @@
             android:layout_alignParentEnd="true"
             android:layout_centerInParent="true"
             android:background="@drawable/xml_cycle_white"
+            android:foreground="?attr/actionBarItemBackground"
             android:padding="10dp"
             android:src="@drawable/pic_link" />
     </RelativeLayout>

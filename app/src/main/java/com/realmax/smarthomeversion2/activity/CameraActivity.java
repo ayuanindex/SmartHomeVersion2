@@ -66,19 +66,19 @@ public class CameraActivity extends BaseActivity {
 
     static {
         roomBeans = new ArrayList<>();
-        roomBeans.add(new RoomBean("客厅", new int[]{5}));
-        roomBeans.add(new RoomBean("餐厅", new int[]{6}));
-        roomBeans.add(new RoomBean("门厅", new int[]{7}));
-        roomBeans.add(new RoomBean("车库", new int[]{8}));
-        roomBeans.add(new RoomBean("走廊", new int[]{9}));
-        roomBeans.add(new RoomBean("卧室A", new int[]{10}));
-        roomBeans.add(new RoomBean("卧室B", new int[]{11}));
-        roomBeans.add(new RoomBean("卧室C", new int[]{12}));
-        roomBeans.add(new RoomBean("书房", new int[]{13}));
-        roomBeans.add(new RoomBean("庭院西", new int[]{4}));
-        roomBeans.add(new RoomBean("院墙", new int[]{2}));
-        roomBeans.add(new RoomBean("院墙", new int[]{1}));
-        roomBeans.add(new RoomBean("院墙", new int[]{3}));
+        roomBeans.add(new RoomBean("客厅", new int[]{1}));
+        roomBeans.add(new RoomBean("餐厅", new int[]{2}));
+        roomBeans.add(new RoomBean("门厅", new int[]{3}));
+        roomBeans.add(new RoomBean("车库", new int[]{4}));
+        roomBeans.add(new RoomBean("走廊", new int[]{5}));
+        roomBeans.add(new RoomBean("卧室A", new int[]{6}));
+        roomBeans.add(new RoomBean("卧室B", new int[]{7}));
+        roomBeans.add(new RoomBean("卧室C", new int[]{8}));
+        roomBeans.add(new RoomBean("书房", new int[]{9}));
+        roomBeans.add(new RoomBean("庭院西", new int[]{10}));
+        roomBeans.add(new RoomBean("院墙", new int[]{11}));
+        roomBeans.add(new RoomBean("院墙", new int[]{12}));
+        roomBeans.add(new RoomBean("大门", new int[]{13}));
         roomBeans.add(new RoomBean("机器人", new int[]{14}));
     }
 
