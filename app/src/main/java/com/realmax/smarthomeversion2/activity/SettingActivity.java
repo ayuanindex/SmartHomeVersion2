@@ -64,17 +64,17 @@ public class SettingActivity extends BaseActivity {
     @Override
     protected void initData() {
         linkBeans = new ArrayList<>();
-        linkBeans.add(new LinkBean("虚拟场景", "virtual"));
+        linkBeans.add(new LinkBean("虚拟场景", "直接获取虚拟场景中的数据", "virtual"));
         // 控制所有灯光
-        linkBeans.add(new LinkBean("控制器1", "control_01"));
+        linkBeans.add(new LinkBean("控制器1", "可控制所有灯光", "control_01"));
         // 控制所有窗帘和1号空调
-        linkBeans.add(new LinkBean("控制器2", "control_02"));
+        linkBeans.add(new LinkBean("控制器2", "可控制所有窗帘和客厅的号空调", "control_02"));
         // 控制所有门和空气质量传感器
-        linkBeans.add(new LinkBean("控制器3", "control_03"));
+        linkBeans.add(new LinkBean("控制器3", "可控制所有门和空气质量传感器", "control_03"));
         // 控制剩下的空调以及电视和音乐
-        linkBeans.add(new LinkBean("控制器4", "control_04"));
+        linkBeans.add(new LinkBean("控制器4", "可控制剩下的空调以及电视和音乐", "control_04"));
         // 所有人体传感器 + 扫地机器人 + 报警器
-        linkBeans.add(new LinkBean("控制器5", "control_05"));
+        linkBeans.add(new LinkBean("控制器5", "可控制所有人体传感器&扫地机器人&报警器", "control_05"));
 
         customerAdapter = new CustomerAdapter();
         lvList.setAdapter(customerAdapter);
@@ -193,6 +193,7 @@ public class SettingActivity extends BaseActivity {
      */
     private class CustomerAdapter extends BaseAdapter {
         private TextView tvLabel;
+        private TextView tvDes;
         private TextView tvStatus;
 
         @Override
@@ -221,6 +222,7 @@ public class SettingActivity extends BaseActivity {
             initView(view);
 
             tvLabel.setText(getItem(position).getLabel());
+            tvDes.setText(getItem(position).getDes());
             boolean connected = getItem(position).isConnected();
             L.e(connected + "");
             if (connected) {
@@ -233,6 +235,7 @@ public class SettingActivity extends BaseActivity {
 
         private void initView(View view) {
             tvLabel = view.findViewById(R.id.tv_label);
+            tvDes = view.findViewById(R.id.tv_des);
             tvStatus = view.findViewById(R.id.tv_status);
         }
     }

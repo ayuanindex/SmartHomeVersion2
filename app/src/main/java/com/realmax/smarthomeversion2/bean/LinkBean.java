@@ -12,13 +12,15 @@ import com.realmax.smarthomeversion2.util.ValueUtil;
  */
 public class LinkBean {
     private String label;
+    private String des;
     private String tag;
     private String mHOST;
     private int PORT;
     private boolean connected;
 
-    public LinkBean(String label, String tag) {
+    public LinkBean(String label, String des, String tag) {
         this.label = label;
+        this.des = des;
         this.tag = tag;
     }
 
@@ -28,6 +30,14 @@ public class LinkBean {
 
     public void setLabel(String label) {
         this.label = label;
+    }
+
+    public String getDes() {
+        return des;
+    }
+
+    public void setDes(String des) {
+        this.des = des;
     }
 
     public String getTag() {
