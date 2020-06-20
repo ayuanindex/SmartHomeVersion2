@@ -97,7 +97,8 @@
         android:layout_weight="5"
         android:horizontalSpacing="0dp"
         android:numColumns="3"
-        android:verticalSpacing="10dp" />
+        android:verticalSpacing="10dp"
+        tools:listitem="@layout/item_number" />
 
     <!--音量和频道-->
     <RelativeLayout
