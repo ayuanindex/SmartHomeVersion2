@@ -1,13 +1,13 @@
 {
   "version": "1.0",
   "profile": {
-    "ProductId": "06V3HX2FPV",
+    "ProductId": "ZJIJA6UHXP",
     "CategoryId": "1"
   },
   "properties": [
     {
       "id": "light1",
-      "name": "客厅",
+      "name": "客厅灯",
       "desc": "",
       "mode": "rw",
       "define": {
@@ -119,7 +119,7 @@
     },
     {
       "id": "light9",
-      "name": "洗浴间",
+      "name": "洗浴间1",
       "desc": "",
       "mode": "rw",
       "define": {
@@ -133,7 +133,7 @@
     },
     {
       "id": "light10",
-      "name": "洗浴间",
+      "name": "洗浴间2",
       "desc": "",
       "mode": "rw",
       "define": {
@@ -148,6 +148,20 @@
     {
       "id": "light11",
       "name": "卧室B",
+      "desc": "",
+      "mode": "rw",
+      "define": {
+        "type": "bool",
+        "mapping": {
+          "0": "关",
+          "1": "开"
+        }
+      },
+      "required": false
+    },
+    {
+      "id": "light12",
+      "name": "卧室C",
       "desc": "",
       "mode": "rw",
       "define": {
@@ -189,7 +203,7 @@
     },
     {
       "id": "light17",
-      "name": "书房",
+      "name": "书房1号灯",
       "desc": "",
       "mode": "rw",
       "define": {
@@ -203,7 +217,7 @@
     },
     {
       "id": "light18",
-      "name": "书房",
+      "name": "书房2号灯",
       "desc": "",
       "mode": "rw",
       "define": {

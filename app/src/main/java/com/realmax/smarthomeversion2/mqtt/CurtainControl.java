@@ -9,7 +9,6 @@ import com.qcloud.iot_explorer.common.Status;
 import com.qcloud.iot_explorer.data_template.TXDataTemplateDownStreamCallBack;
 import com.qcloud.iot_explorer.mqtt.TXMqttActionCallBack;
 import com.realmax.smarthomeversion2.activity.bean.CurtainAndAcBean;
-import com.realmax.smarthomeversion2.bean.LightOrCurtainBean;
 import com.realmax.smarthomeversion2.tcp.CustomerHandlerBase;
 import com.realmax.smarthomeversion2.util.CustomerThread;
 import com.realmax.smarthomeversion2.util.ValueUtil;
@@ -99,7 +98,7 @@ public class CurtainControl extends MqttControl {
      */
     private void executeInstruction(JSONObject data) {
         CustomerThread.poolExecutor.execute(() -> {
-            CustomerHandlerBase light = ValueUtil.getHandlerHashMap().get("light");
+            CustomerHandlerBase light = ValueUtil.getHandlerHashMap().get(tag);
             if (light != null) {
                 String currentCommand = light.getCurrentCommand();
                 if (!TextUtils.isEmpty(currentCommand)) {

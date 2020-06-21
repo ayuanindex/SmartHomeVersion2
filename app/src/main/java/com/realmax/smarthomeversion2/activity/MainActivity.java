@@ -86,7 +86,7 @@ public class MainActivity extends BaseActivity {
 
         // 初始化MQTT控制类
         HashMap<String, MqttControl> mqttControllerHashMap = new HashMap<>(1);
-        mqttControllerHashMap.put("light", new LightControl(this, "Light.json", "06V3HX2FPV", "light01", "3hbuP84EWDVYRGf0AzyQJA=="));
+        mqttControllerHashMap.put("light", new LightControl(this, "Light.json", "ZJIJA6UHXP", "light", "L6yOvzW0qCbHG8pr0iKGYA=="));
         mqttControllerHashMap.put("Curtain", new CurtainControl(this, "Curtain.json", "8BIE588RHI", "curtain01", "NWn3s6pj+qlCGBTBXhIMSw=="));
         ValueUtil.setMqttControlHashMap(mqttControllerHashMap);
 

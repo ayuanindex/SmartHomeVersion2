@@ -98,23 +98,24 @@ public class LightControl extends MqttControl {
      */
     private void executeInstruction(JSONObject data) {
         CustomerThread.poolExecutor.execute(() -> {
-            CustomerHandlerBase light = ValueUtil.getHandlerHashMap().get("light");
+            CustomerHandlerBase light = ValueUtil.getHandlerHashMap().get(tag);
             if (light != null) {
+                // 获取最近一次灯的状态
                 String currentCommand = light.getCurrentCommand();
                 if (!TextUtils.isEmpty(currentCommand)) {
                     LightBean lightBean = new Gson().fromJson(currentCommand, LightBean.class);
 
                     JSONObject control = data.optJSONObject("control");
                     if (control != null) {
+                        // 获取每一个key
                         Iterator<String> keys = control.keys();
                         while (keys.hasNext()) {
                             String next = keys.next();
+                            // 判断获取到的key是否包含light
                             if (next.matches("light.*")) {
                                 int lightKey = Integer.parseInt(next.replace("light", ""));
-                                if (lightKey - 1 < lightBean.getLightList_S().size()) {
-                                    lightBean.getLightList_S().set(lightKey - 1, control.optInt(next));
-                                    Log.d(TAG, "在获取状态回复回电上：" + lightBean.getLightList_S().get(lightKey - 1));
-                                }
+                                lightBean.getLightList_S().set(lightKey - 1, control.optInt(next));
+                                Log.d(TAG, "在获取状态回复回电上：" + lightBean.getLightList_S().get(lightKey - 1));
                             }
                         }
                         ValueUtil.sendLightOpenOrCloseCmd(lightBean, tag);

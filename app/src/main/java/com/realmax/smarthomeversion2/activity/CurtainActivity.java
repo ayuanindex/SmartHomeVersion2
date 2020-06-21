@@ -260,8 +260,6 @@ public class CurtainActivity extends BaseActivity {
                 cbCheck.setChecked(false);
                 swToggle.setChecked(false);
             }
-
-            L.e(currentCurtainStatus.toString());
             return view;
         }
 

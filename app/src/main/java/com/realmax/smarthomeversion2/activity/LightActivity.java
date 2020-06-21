@@ -266,8 +266,6 @@ public class LightActivity extends BaseActivity {
                 cbCheck.setChecked(false);
                 swToggle.setChecked(false);
             }
-
-            L.e(currentLightStatus.toString());
             return view;
         }
 
