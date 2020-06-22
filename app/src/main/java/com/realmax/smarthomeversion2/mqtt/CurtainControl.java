@@ -100,21 +100,22 @@ public class CurtainControl extends MqttControl {
         CustomerThread.poolExecutor.execute(() -> {
             CustomerHandlerBase light = ValueUtil.getHandlerHashMap().get(tag);
             if (light != null) {
+                // 获取最近一次窗帘的状态
                 String currentCommand = light.getCurrentCommand();
                 if (!TextUtils.isEmpty(currentCommand)) {
                     CurtainAndAcBean curtainAndAcBean = new Gson().fromJson(currentCommand, CurtainAndAcBean.class);
 
                     JSONObject control = data.optJSONObject("control");
                     if (control != null) {
+                        // 获取每一个key
                         Iterator<String> keys = control.keys();
                         while (keys.hasNext()) {
                             String next = keys.next();
+                            // 判断获取到的key是否包含curtain
                             if (next.matches("curtain.*")) {
                                 int curtainKey = Integer.parseInt(next.replace("curtain", ""));
-                                if (curtainKey - 1 < curtainAndAcBean.getCurtain_S().size()) {
-                                    curtainAndAcBean.getCurtain_S().set(curtainKey - 1, control.optInt(next));
-                                    Log.d(TAG, "在获取状态回复回电上：" + curtainAndAcBean.getCurtain_S().get(curtainKey - 1));
-                                }
+                                curtainAndAcBean.getCurtain_S().set(curtainKey - 1, control.optInt(next));
+                                Log.d(TAG, "在获取状态回复回电上：" + curtainAndAcBean.getCurtain_S().get(curtainKey - 1));
                             }
                         }
                         ValueUtil.sendCurtainOpenOrCloseCmd(curtainAndAcBean, tag);

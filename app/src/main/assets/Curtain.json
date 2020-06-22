@@ -1,7 +1,7 @@
 {
   "version": "1.0",
   "profile": {
-    "ProductId": "8BIE588RHI",
+    "ProductId": "DZZGPQFDO9",
     "CategoryId": "1"
   },
   "properties": [
@@ -21,20 +21,6 @@
     },
     {
       "id": "curtain2",
-      "name": "客厅",
-      "desc": "",
-      "mode": "rw",
-      "define": {
-        "type": "bool",
-        "mapping": {
-          "0": "关",
-          "1": "开"
-        }
-      },
-      "required": false
-    },
-    {
-      "id": "curtain3",
       "name": "餐厅",
       "desc": "",
       "mode": "rw",
@@ -48,8 +34,92 @@
       "required": false
     },
     {
-      "id": "curtain4",
+      "id": "curtain3",
       "name": "门厅",
+      "desc": "",
+      "mode": "rw",
+      "define": {
+        "type": "bool",
+        "mapping": {
+          "0": "关",
+          "1": "开"
+        }
+      },
+      "required": false
+    },
+    {
+      "id": "curtain4",
+      "name": "走廊",
+      "desc": "",
+      "mode": "rw",
+      "define": {
+        "type": "bool",
+        "mapping": {
+          "0": "关",
+          "1": "开"
+        }
+      },
+      "required": false
+    },
+    {
+      "id": "curtain5",
+      "name": "卧室A",
+      "desc": "",
+      "mode": "rw",
+      "define": {
+        "type": "bool",
+        "mapping": {
+          "0": "关",
+          "1": "开"
+        }
+      },
+      "required": false
+    },
+    {
+      "id": "curtain6",
+      "name": "卧室B",
+      "desc": "",
+      "mode": "rw",
+      "define": {
+        "type": "bool",
+        "mapping": {
+          "0": "关",
+          "1": "开"
+        }
+      },
+      "required": false
+    },
+    {
+      "id": "curtain7",
+      "name": "卧室C",
+      "desc": "",
+      "mode": "rw",
+      "define": {
+        "type": "bool",
+        "mapping": {
+          "0": "关",
+          "1": "开"
+        }
+      },
+      "required": false
+    },
+    {
+      "id": "curtain8",
+      "name": "车库",
+      "desc": "",
+      "mode": "rw",
+      "define": {
+        "type": "bool",
+        "mapping": {
+          "0": "关",
+          "1": "开"
+        }
+      },
+      "required": false
+    },
+    {
+      "id": "curtain9",
+      "name": "书房",
       "desc": "",
       "mode": "rw",
       "define": {
