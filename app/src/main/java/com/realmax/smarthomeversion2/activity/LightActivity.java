@@ -241,9 +241,7 @@ public class LightActivity extends BaseActivity {
                     if (light != null) {
                         LightControl lightControl = (LightControl) light;
                         JSONObject property = new JSONObject();
-                        for (int value : model) {
-                            property.put("light" + value, getItem(position) == OPEN ? CLOSE : OPEN);
-                        }
+                        property.put("light" + model[position], getItem(position) == OPEN ? CLOSE : OPEN);
                         lightControl.publish(property);
                     }
 

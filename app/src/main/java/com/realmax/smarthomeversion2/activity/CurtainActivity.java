@@ -225,8 +225,8 @@ public class CurtainActivity extends BaseActivity {
                 view = convertView;
             }
             initView(view);
-            int[] curtailId = roomBeans.get(currentPosition).getModel();
-            tvLabel.setText(roomBeans.get(currentPosition).getRoomName() + curtailId[position] + "号窗帘");
+            int[] model = roomBeans.get(currentPosition).getModel();
+            tvLabel.setText(roomBeans.get(currentPosition).getRoomName() + model[position] + "号窗帘");
 
             swToggle.setOnTouchListener(null);
             swToggle.setOnClickListener((View v) -> {
@@ -237,14 +237,12 @@ public class CurtainActivity extends BaseActivity {
                     if (curtain != null) {
                         CurtainControl curtainControl = (CurtainControl) curtain;
                         JSONObject property = new JSONObject();
-                        for (int value : curtailId) {
-                            property.put("curtain" + value, getItem(position) == OPEN ? CLOSE : OPEN);
-                        }
+                        property.put("curtain" + model[position], getItem(position) == OPEN ? CLOSE : OPEN);
                         curtainControl.publish(property);
                     }
 
                     ArrayList<Integer> curtainC = new ArrayList<>(curtainAndAcBean.getCurtain_S());
-                    curtainC.set(curtailId[position] - 1, getItem(position) == OPEN ? CLOSE : OPEN);
+                    curtainC.set(model[position] - 1, getItem(position) == OPEN ? CLOSE : OPEN);
                     CurtainAndAcBean curtainAndAcBean = new CurtainAndAcBean(curtainC);
                     ValueUtil.sendCurtainOpenOrCloseCmd(curtainAndAcBean, tag);
                     notifyDataSetChanged();
