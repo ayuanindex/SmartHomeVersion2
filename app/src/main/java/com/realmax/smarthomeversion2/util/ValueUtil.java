@@ -1,6 +1,7 @@
 package com.realmax.smarthomeversion2.util;
 
 import android.os.Build;
+import android.os.SystemClock;
 
 import com.realmax.smarthomeversion2.activity.bean.AcAndTvAndMusicBean;
 import com.realmax.smarthomeversion2.activity.bean.CurtainAndAcBean;
@@ -106,9 +107,12 @@ public class ValueUtil {
                 JSONObject jsonObject = new JSONObject(hashMap);
                 String s = jsonObject.toString();
                 L.e("发送的数据-------------" + s);
-                for (int i = 0; i < maxSend; i++) {
+                sendCmdInFor(() -> {
                     handlerContext.writeAndFlush(Unpooled.copiedBuffer(EncodeAndDecode.getStrUnicode(s).getBytes()));
-                }
+                });
+                /*for (int i = 0; i < maxSend; i++) {
+                    handlerContext.writeAndFlush(Unpooled.copiedBuffer(EncodeAndDecode.getStrUnicode(s).getBytes()));
+                }*/
             }
         }
     }
@@ -129,11 +133,27 @@ public class ValueUtil {
                 JSONObject jsonObject = new JSONObject(hashMap);
                 String s = jsonObject.toString();
                 L.e(s);
-                for (int i = 0; i < maxSend + 10; i++) {
+                sendCmdInFor(() -> {
                     handlerContext.writeAndFlush(Unpooled.copiedBuffer(EncodeAndDecode.getStrUnicode(s).getBytes()));
-                }
+                });
+                /*for (int i = 0; i < maxSend + 10; i++) {
+                    handlerContext.writeAndFlush(Unpooled.copiedBuffer(EncodeAndDecode.getStrUnicode(s).getBytes()));
+                }*/
             }
         }
+    }
+
+    private static void sendCmdInFor(Loop loop) {
+        CustomerThread.poolExecutor.execute(() -> {
+            for (int i = 0; i < maxSend; i++) {
+                SystemClock.sleep(100);
+                loop.loopCmd();
+            }
+        });
+    }
+
+    interface Loop {
+        void loopCmd();
     }
 
     /**
