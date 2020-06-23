@@ -119,8 +119,8 @@ public class LightActivity extends BaseActivity {
                 @Override
                 public void getResultData(String msg) {
                     try {
-                        /*L.e("msg:" + msg);*/
                         if (!TextUtils.isEmpty(msg)) {
+                            L.e(tag + "-----------接收");
                             JSONObject jsonObject = new JSONObject(msg);
                             // 验证是否是当前电灯的json数据
                             String lightS = "lightList_S";

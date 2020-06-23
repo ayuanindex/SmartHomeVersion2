@@ -115,6 +115,7 @@ public class CurtainActivity extends BaseActivity {
                 public void getResultData(String msg) {
                     try {
                         if (!TextUtils.isEmpty(msg)) {
+                            L.e(tag + "-----------接收");
                             JSONObject jsonObject = new JSONObject(msg);
                             String curtainS = "curtain_S";
                             if (jsonObject.has(curtainS)) {
