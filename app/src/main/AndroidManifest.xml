@@ -29,7 +29,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
-        tools:targetApi="m">
+        tools:targetApi="q">
         <activity
             android:name=".activity.MainActivity"
             android:launchMode="singleTask"
@@ -104,8 +104,6 @@
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity" />
-        <!--语音服务-->
-        <service android:name=".audio.AudioService" />
     </application>
 
 </manifest>

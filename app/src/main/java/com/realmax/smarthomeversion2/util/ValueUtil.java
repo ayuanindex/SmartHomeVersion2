@@ -145,9 +145,11 @@ public class ValueUtil {
 
     private static void sendCmdInFor(Loop loop) {
         CustomerThread.poolExecutor.execute(() -> {
-            for (int i = 0; i < maxSend; i++) {
-                SystemClock.sleep(100);
+            int i = 0;
+            while (i < 10) {
                 loop.loopCmd();
+                SystemClock.sleep(100);
+                i++;
             }
         });
     }

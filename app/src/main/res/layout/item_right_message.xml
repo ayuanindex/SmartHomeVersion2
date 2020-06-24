@@ -14,17 +14,17 @@
         <androidx.cardview.widget.CardView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"
             android:layout_centerInParent="true"
             android:layout_gravity="end"
-            android:layout_marginStart="10dp"
+            android:layout_marginStart="50dp"
             android:layout_marginTop="10dp"
-            android:layout_marginEnd="50dp"
+            android:layout_marginEnd="10dp"
             android:layout_marginBottom="10dp"
             app:cardCornerRadius="20dp">
 
             <TextView
-                android:id="@+id/tv_messageright"
+                android:id="@+id/et_message"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"

@@ -117,10 +117,6 @@ public class VoiceToMessage {
         setAudioRecognizeStateListener(audioRecognizeStateListener);
 
         setAudioRecognizeTimeoutListener(audioRecognizeTimeoutListener);
-
-        if (realTimeMonitoring) {
-            startVoice();
-        }
     }
 
     /**
@@ -194,30 +190,27 @@ public class VoiceToMessage {
             }
         }
 
-        threadPoolExecutor.execute(new Runnable() {
-            @Override
-            public void run() {
-                if (audioRecognizeResultlistener == null) {
-                    Log.d(TAG, "startVoice: 请设置audioRecognizeResultListener监听");
-                    return;
-                }
+        threadPoolExecutor.execute(() -> {
+            if (audioRecognizeResultlistener == null) {
+                Log.d(TAG, "startVoice: 请设置audioRecognizeResultListener监听");
+                return;
+            }
 
-                if (audioRecognizeStateListener == null) {
-                    Log.d(TAG, "startVoice: 请设置audioRecognizeStateListener监听");
-                }
+            if (audioRecognizeStateListener == null) {
+                Log.d(TAG, "startVoice: 请设置audioRecognizeStateListener监听");
+            }
 
-                if (audioRecognizeTimeoutListener == null) {
-                    Log.d(TAG, "startVoice: 请设置audioRecognizeTimeoutListener监听");
-                }
+            if (audioRecognizeTimeoutListener == null) {
+                Log.d(TAG, "startVoice: 请设置audioRecognizeTimeoutListener监听");
+            }
 
-                if (audioRecognizeStateListener != null && audioRecognizeTimeoutListener != null) {
-                    aaiClient.startAudioRecognize(
-                            audioRecognizeRequest,
-                            audioRecognizeResultlistener,
-                            audioRecognizeStateListener,
-                            audioRecognizeTimeoutListener,
-                            audioRecognizeConfiguration);
-                }
+            if (audioRecognizeStateListener != null && audioRecognizeTimeoutListener != null) {
+                aaiClient.startAudioRecognize(
+                        audioRecognizeRequest,
+                        audioRecognizeResultlistener,
+                        audioRecognizeStateListener,
+                        audioRecognizeTimeoutListener,
+                        audioRecognizeConfiguration);
             }
         });
     }
@@ -230,6 +223,7 @@ public class VoiceToMessage {
         threadPoolExecutor.execute(() -> {
             boolean taskExist = false;
             if (aaiClient != null) {
+                currentRequestId = audioRecognizeRequest.getRequestId();
                 taskExist = aaiClient.stopAudioRecognize(currentRequestId);
             }
 
@@ -246,6 +240,7 @@ public class VoiceToMessage {
         threadPoolExecutor.execute(() -> {
             boolean taskExist = false;
             if (aaiClient != null) {
+                currentRequestId = audioRecognizeRequest.getRequestId();
                 taskExist = aaiClient.cancelAudioRecognize(currentRequestId);
             }
 
@@ -266,12 +261,7 @@ public class VoiceToMessage {
 
     public void close() {
         if (aaiClient != null) {
-            threadPoolExecutor.execute(new Runnable() {
-                @Override
-                public void run() {
-                    aaiClient.release();
-                }
-            });
+            threadPoolExecutor.execute(() -> aaiClient.release());
         }
     }
 

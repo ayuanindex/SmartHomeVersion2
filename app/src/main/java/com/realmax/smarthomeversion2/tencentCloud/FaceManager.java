@@ -48,6 +48,7 @@ public class FaceManager {
                 // 公共参数
                 params.put("Version", "2020-03-03");
 
+                TencentCloudAPIInitUtil.setIP("iai.tencentcloudapi.com");
                 TreeMap<String, Object> init = TencentCloudAPIInitUtil.init(params);
                 HttpUtil.doPost(init, GroupListBean.class, result);
             } catch (Exception e) {
@@ -85,7 +86,7 @@ public class FaceManager {
                 params.put("QualityControl", "1");
                 params.put("NeedRotateDetection", "1");
                 params.put("Image", EncodeAndDecode.bitmapToBase64(compressMatrix(compressMatrix(compressMatrix(bitmap)))));
-
+                TencentCloudAPIInitUtil.setIP("iai.tencentcloudapi.com");
                 TreeMap<String, Object> init = TencentCloudAPIInitUtil.init(params);
 
                 HttpUtil.doPost(init, CreatePersonResultBean.class, result);
@@ -109,7 +110,7 @@ public class FaceManager {
             params.put("Region", "ap-shanghai");
             // 公共参数
             params.put("Version", "2018-03-01");
-
+            TencentCloudAPIInitUtil.setIP("iai.tencentcloudapi.com");
             TreeMap<String, Object> init = TencentCloudAPIInitUtil.init(params);
             HttpUtil.doPost(init, GetPeopleLibraryBean.class, result);
         } catch (Exception e) {
@@ -135,7 +136,7 @@ public class FaceManager {
             params.put("Version", "2018-03-01");
             params.put("GroupName", name);
             params.put("GroupId", id);
-
+            TencentCloudAPIInitUtil.setIP("iai.tencentcloudapi.com");
             TreeMap<String, Object> init = TencentCloudAPIInitUtil.init(params);
             HttpUtil.doPost(init, CreatePersonResultBean.class, result);
         } catch (Exception e) {
@@ -159,7 +160,7 @@ public class FaceManager {
             // 公共参数
             params.put("Version", "2018-03-01");
             params.put("GroupId", groupId);
-
+            TencentCloudAPIInitUtil.setIP("iai.tencentcloudapi.com");
             TreeMap<String, Object> init = TencentCloudAPIInitUtil.init(params);
             HttpUtil.doPost(init, PersonListBean.class, result);
         } catch (Exception e) {
@@ -183,7 +184,7 @@ public class FaceManager {
             // 公共参数
             params.put("Version", "2018-03-01");
             params.put("GroupId", groupId);
-
+            TencentCloudAPIInitUtil.setIP("iai.tencentcloudapi.com");
             TreeMap<String, Object> init = TencentCloudAPIInitUtil.init(params);
             HttpUtil.doPost(init, DeleteGroupResultBean.class, result);
         } catch (Exception e) {
@@ -212,7 +213,7 @@ public class FaceManager {
             }
             params.put("Image", EncodeAndDecode.bitmapToBase64(compressMatrix(compressMatrix(compressMatrix(bmp)))));
             params.put("NeedRotateDetection", 1);
-
+            TencentCloudAPIInitUtil.setIP("iai.tencentcloudapi.com");
             TreeMap<String, Object> init = TencentCloudAPIInitUtil.init(params);
             HttpUtil.doPost(init, SearchPersonResultBean.class, result);
         } catch (Exception e) {
@@ -236,7 +237,7 @@ public class FaceManager {
             // 公共参数
             params.put("Version", "2020-03-03");
             params.put("PersonId", personId);
-
+            TencentCloudAPIInitUtil.setIP("iai.tencentcloudapi.com");
             TreeMap<String, Object> init = TencentCloudAPIInitUtil.init(params);
             HttpUtil.doPost(init, PersonBaseInfoBean.class, result);
         } catch (Exception e) {
@@ -262,7 +263,7 @@ public class FaceManager {
                 // 公共参数
                 params.put("Version", "2020-03-03");
                 params.put("PersonId", personId);
-
+                TencentCloudAPIInitUtil.setIP("iai.tencentcloudapi.com");
                 TreeMap<String, Object> init = TencentCloudAPIInitUtil.init(params);
                 HttpUtil.doPost(init, PersonBaseInfoBean.class, result);
             } catch (Exception e) {

@@ -17,12 +17,14 @@ import com.realmax.smarthomeversion2.activity.bean.LightBean;
 import com.realmax.smarthomeversion2.activity.bean.RoomBean;
 import com.realmax.smarthomeversion2.bean.MessageBean;
 import com.realmax.smarthomeversion2.tcp.CustomerHandlerBase;
+import com.realmax.smarthomeversion2.tencentCloud.bean.InterlocutionBean;
 import com.realmax.smarthomeversion2.util.CustomerThread;
 import com.realmax.smarthomeversion2.util.L;
 import com.realmax.smarthomeversion2.util.ValueUtil;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public abstract class AudioControl {
     private static final String TAG = "AudioControl";
@@ -33,6 +35,7 @@ public abstract class AudioControl {
     private final BaseActivity mActivity;
 
     private final ArrayList<MessageBean> messageBeans;
+    private final InterlocutionBean interlocutionBean;
     private List<RoomBean> roomBeans;
 
     private static final String OPEN_LIGHT = ".*[开|灯].*[开|灯].*";
@@ -60,14 +63,16 @@ public abstract class AudioControl {
     private String field;
     private int lock;
     private int pass;
+    private String tag = "";
     private String tag1 = "control_01";
     private String tag2 = "control_02";
     private String tag3 = "control_03";
     private DoorAndAirQualityBean.DoorsSBean doorsSBean;
 
-    AudioControl(BaseActivity mActivity, ArrayList<MessageBean> messageBeans, CommendActivity.CustomerAdapter customerAdapter) {
+    AudioControl(BaseActivity mActivity, ArrayList<MessageBean> messageBeans, InterlocutionBean interlocutionBean) {
         this.mActivity = mActivity;
         this.messageBeans = messageBeans;
+        this.interlocutionBean = interlocutionBean;
         /*roomBeans = mActivity.roomBeans;*/
     }
 
@@ -109,6 +114,68 @@ public abstract class AudioControl {
             // 进入场景模式
             scenes();
         }
+    }
+
+    /**
+     * 执行命令
+     */
+    public void excutingAnOrder() {
+        //
+        if ("lightControl".equals(interlocutionBean.getResponse().getIntentName())) {
+            List<InterlocutionBean.ResponseBean.SlotInfoListBean> slotInfoList = interlocutionBean.getResponse().getSlotInfoList();
+            if (slotInfoList.size() > 2) {
+                // 获取设备
+                String device = Objects.requireNonNull(getSlotBean(slotInfoList, "device")).getSlotValue();
+                // 获取控制信息
+                String control = Objects.requireNonNull(getSlotBean(slotInfoList, "control")).getSlotValue();
+                // 获取房间
+                String room = Objects.requireNonNull(getSlotBean(slotInfoList, "room")).getSlotValue();
+
+                roomToBeOperatedList.clear();
+                roomToBeOperatedList.add(room);
+                switch (device) {
+                    case "灯":
+                        tag = "control_01";
+                        roomBeans = LightActivity.roomBeans;
+                        // 查看设备的开关控制
+                        if (control.matches(".*开.*")) {
+                            lightInstruction(true);
+                        } else if (control.matches(".*关.*")) {
+                            lightInstruction(false);
+                        }
+                        break;
+                    case "窗帘":
+                        tag = "control_02";
+                        roomBeans = CurtainActivity.roomBeans;
+                        // 查看设备的开关控制
+                        if (control.matches(".*开.*")) {
+                            curtainInstruction(true);
+                        } else if (control.matches(".*关.*")) {
+                            curtainInstruction(false);
+                        }
+                        break;
+                    default:
+                        L.e("没有匹配到任何设备");
+                        break;
+                }
+            }
+        }
+    }
+
+    /**
+     * 获取集合中制定的JavaBean
+     *
+     * @param slotInfoList 目标集合
+     * @param slotName     字段值
+     * @return 返回JavaBean
+     */
+    private InterlocutionBean.ResponseBean.SlotInfoListBean getSlotBean(List<InterlocutionBean.ResponseBean.SlotInfoListBean> slotInfoList, String slotName) {
+        for (InterlocutionBean.ResponseBean.SlotInfoListBean slotInfoListBean : slotInfoList) {
+            if (slotInfoListBean.getSlotName().equals(slotName)) {
+                return slotInfoListBean;
+            }
+        }
+        return null;
     }
 
     /**
@@ -233,7 +300,7 @@ public abstract class AudioControl {
      */
     private void lightInstruction(boolean isOpen) {
         // 获取当前提到的房间的灯的状态
-        CustomerHandlerBase lightHandler = ValueUtil.getHandlerHashMap().get("light");
+        CustomerHandlerBase lightHandler = ValueUtil.getHandlerHashMap().get(tag);
         if (lightHandler == null) {
             mActivity.runOnUiThread(() -> {
                 feedBack("灯的连接尚未开启，请开启后再试吧……", R.layout.item_left_message);
@@ -241,9 +308,9 @@ public abstract class AudioControl {
             return;
         }
 
-        mActivity.runOnUiThread(() -> {
+        /*mActivity.runOnUiThread(() -> {
             feedBack("正在" + (isOpen ? "开" : "关") + "灯", R.layout.item_left_message);
-        });
+        });*/
 
         // 获取最近收到的等的状态json数据
         String currentCommand = lightHandler.getCurrentCommand();
@@ -275,7 +342,7 @@ public abstract class AudioControl {
      */
     private void curtainInstruction(boolean isOpen) {
         // 获取当前提到的房间的窗帘的状态
-        CustomerHandlerBase lightHandler = ValueUtil.getHandlerHashMap().get("light");
+        CustomerHandlerBase lightHandler = ValueUtil.getHandlerHashMap().get(tag);
         if (lightHandler == null) {
             mActivity.runOnUiThread(() -> {
                 feedBack("窗帘的连接尚未开启，请开启后再试吧", R.layout.item_left_message);
@@ -283,9 +350,9 @@ public abstract class AudioControl {
             return;
         }
 
-        mActivity.runOnUiThread(() -> {
+        /*mActivity.runOnUiThread(() -> {
             feedBack("正在" + (isOpen ? "打开" : "关闭") + "窗帘", R.layout.item_left_message);
-        });
+        });*/
 
         String currentCommand = lightHandler.getCurrentCommand();
         L.e("窗帘的当前状态" + currentCommand);

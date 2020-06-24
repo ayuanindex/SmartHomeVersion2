@@ -19,6 +19,7 @@ public class TencentCloudAPIInitUtil {
     // 请替换自己的腾讯云
     private static String SecretKey = "mIXEfKjz0sVstdQ2VjhPqAMSIwgCTSAc";
     private static String SecretId = "AKIDYqrzrcNJHyjEagH3M4WbRWLsCJNBB3D8";
+    private static String IP = "iai.tencentcloudapi.com";
 
     public static TreeMap<String, Object> init(TreeMap<String, Object> params) throws Exception {
         params.put("SecretId", SecretId);
@@ -132,7 +133,7 @@ public class TencentCloudAPIInitUtil {
      * @return 返回拼接好的字符串
      */
     private static String getStringToSign(TreeMap<String, Object> params) {
-        StringBuilder s2s = new StringBuilder("POSTiai.tencentcloudapi.com/?");
+        StringBuilder s2s = new StringBuilder("POST" + IP + "/?");
         // 签名时要求对参数进行字典排序，此处用TreeMap保证顺序
         for (String k : params.keySet()) {
             s2s.append(k).append("=").append(params.get(k).toString()).append("&");
@@ -140,5 +141,9 @@ public class TencentCloudAPIInitUtil {
         String substring = s2s.toString().substring(0, s2s.length() - 1);
         Log.d(TAG, substring);
         return substring;
+    }
+
+    public static void setIP(String IP) {
+        TencentCloudAPIInitUtil.IP = IP;
     }
 }
