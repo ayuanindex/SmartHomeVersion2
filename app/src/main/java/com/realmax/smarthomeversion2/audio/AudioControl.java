@@ -350,7 +350,9 @@ public abstract class AudioControl {
             return;
         }
 
-        /*mActivity.runOnUiThread(() -> {
+        /*mActivity.runOnUiThread(() -> {\
+
+        
             feedBack("正在" + (isOpen ? "打开" : "关闭") + "窗帘", R.layout.item_left_message);
         });*/
 

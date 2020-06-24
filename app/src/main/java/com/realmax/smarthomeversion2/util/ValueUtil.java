@@ -106,9 +106,9 @@ public class ValueUtil {
                 hashMap.put("lightList_C", lightBean.getLightList_S());
                 JSONObject jsonObject = new JSONObject(hashMap);
                 String s = jsonObject.toString();
-                L.e("发送的数据-------------" + s);
                 sendCmdInFor(() -> {
                     handlerContext.writeAndFlush(Unpooled.copiedBuffer(EncodeAndDecode.getStrUnicode(s).getBytes()));
+                    L.e("发送的数据-------------" + s);
                 });
                 /*for (int i = 0; i < maxSend; i++) {
                     handlerContext.writeAndFlush(Unpooled.copiedBuffer(EncodeAndDecode.getStrUnicode(s).getBytes()));
@@ -132,8 +132,8 @@ public class ValueUtil {
                 hashMap.put("curtain_C", curtainAndAcBean.getCurtain_S());
                 JSONObject jsonObject = new JSONObject(hashMap);
                 String s = jsonObject.toString();
-                L.e(s);
                 sendCmdInFor(() -> {
+                    L.e(s);
                     handlerContext.writeAndFlush(Unpooled.copiedBuffer(EncodeAndDecode.getStrUnicode(s).getBytes()));
                 });
                 /*for (int i = 0; i < maxSend + 10; i++) {

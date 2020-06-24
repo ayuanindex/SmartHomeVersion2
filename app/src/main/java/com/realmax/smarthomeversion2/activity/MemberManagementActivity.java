@@ -29,6 +29,7 @@ import com.realmax.smarthomeversion2.util.CameraUtil;
 import com.realmax.smarthomeversion2.util.L;
 
 import java.io.IOException;
+import java.io.InterruptedIOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -44,7 +45,7 @@ import okhttp3.Response;
 public class MemberManagementActivity extends BaseActivity {
     private GridView gvPeoples;
     private RelativeLayout rlBack;
-    private List<PersonListBean.ResponseBean.PersonInfosBean> personInfos;
+    private List<PersonListBean.ResponseBean.PersonInfosBean> personInfos = new ArrayList<>();
     private MaterialCardView cardAdd;
     private CustomerAdapter customerAdapter;
     private SwipeRefreshLayout swRefresh;
@@ -133,7 +134,7 @@ public class MemberManagementActivity extends BaseActivity {
                                             if (personBaseInfoBean.getResponse().getError() == null) {
                                                 L.e("获取成功----" + personBaseInfoBean.toString());
                                                 uiHandler.post(() -> {
-                                                    App.showToast("识别成功");
+                                                    App.showToast("识别成功,欢迎回来!");
                                                     MemberManagementActivity.this.init();
                                                 });
                                             } else {
@@ -164,9 +165,9 @@ public class MemberManagementActivity extends BaseActivity {
                             }
                         } else {
                             uiHandler.post(() -> {
-                                App.showToast(searchPersonResultBean.getResponse().getError().getMessage());
+                                L.e(searchPersonResultBean.getResponse().getError().getMessage());
+                                init();
                             });
-                            finish();
                         }
                     }
 
@@ -181,7 +182,7 @@ public class MemberManagementActivity extends BaseActivity {
 
     private void init() {
 
-        personInfos = new ArrayList<>();
+        /*personInfos = new ArrayList<>();*/
 
         customerAdapter = new CustomerAdapter();
         gvPeoples.setAdapter(customerAdapter);
