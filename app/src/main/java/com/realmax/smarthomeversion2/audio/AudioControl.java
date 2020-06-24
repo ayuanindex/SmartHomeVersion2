@@ -331,7 +331,7 @@ public abstract class AudioControl {
 
             L.e(lightBean.toString());
             // 开始执行控制指令
-            ValueUtil.sendLightOpenOrCloseCmd(lightBean, tag1);
+            ValueUtil.sendLightOpenOrCloseCmd(lightBean, tag);
         }
     }
 
@@ -372,7 +372,7 @@ public abstract class AudioControl {
 
             L.e(curtainAndAcBean.toString());
             // 开始执行控制指令
-            ValueUtil.sendCurtainOpenOrCloseCmd(curtainAndAcBean, tag2);
+            ValueUtil.sendCurtainOpenOrCloseCmd(curtainAndAcBean, tag);
         }
     }
 
