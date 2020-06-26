@@ -219,18 +219,22 @@ public class VoiceToMessage {
      * 停止录音
      */
     public void stopVoice() {
-        AAILogger.info(logger, "stop button is clicked..");
-        threadPoolExecutor.execute(() -> {
-            boolean taskExist = false;
-            if (aaiClient != null) {
-                currentRequestId = audioRecognizeRequest.getRequestId();
-                taskExist = aaiClient.stopAudioRecognize(currentRequestId);
-            }
+        try {
+            AAILogger.info(logger, "stop button is clicked..");
+            threadPoolExecutor.execute(() -> {
+                boolean taskExist = false;
+                if (aaiClient != null) {
+                    currentRequestId = audioRecognizeRequest.getRequestId();
+                    taskExist = aaiClient.stopAudioRecognize(currentRequestId);
+                }
 
-            if (!taskExist) {
-                Log.d(TAG, "run: 识别状态：不存在该任务，无法停止");
-            }
-        });
+                if (!taskExist) {
+                    Log.d(TAG, "run: 识别状态：不存在该任务，无法停止");
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**

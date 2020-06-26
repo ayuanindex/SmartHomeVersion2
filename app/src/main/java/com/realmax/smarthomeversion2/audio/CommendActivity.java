@@ -81,8 +81,8 @@ public class CommendActivity extends BaseActivity {
                         break;
                     case MotionEvent.ACTION_UP:
                         etMessage.setText("");
-                        voiceToMessage.cancelVoice();
-                        /*voiceToMessage.stopVoice();*/
+                        /*voiceToMessage.cancelVoice();*/
+                        voiceToMessage.stopVoice();
                         etMessage.setHint("长按说话");
                         L.e("手指抬起");
                         break;
@@ -204,33 +204,6 @@ public class CommendActivity extends BaseActivity {
                 L.e("onNextVoiceFlowTimeout: 一个语音流超时");
             }
         });
-
-
-        /*audioControl = new AudioControl(this, messageBeans, customerAdapter) {
-            @Override
-            public void onSliceSuccess(String msg) {
-                runOnUiThread(() -> {
-                    tvMessage.setVisibility(View.VISIBLE);
-                    tvMessage.setText(msg);
-                });
-            }
-
-            @Override
-            public void onSuccessString(String msg) {
-                runOnUiThread(() -> {
-
-                    Log.d(TAG, "onSuccessString: 隐藏文字");
-                    tvMessage.setVisibility(View.GONE);
-                });
-            }
-
-            @Override
-            public void updateItem() {
-                customerAdapter.notifyDataSetChanged();
-                rcList.scrollToPosition(messageBeans.size() - 1);
-            }
-        };
-        App.setAudioControl(audioControl);*/
     }
 
     private void updateList() {
@@ -478,6 +451,11 @@ public class CommendActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        if (voiceToMessage != null) {
+            voiceToMessage.cancelVoice();
+            voiceToMessage.stopVoice();
+            voiceToMessage.close();
+        }
     }
 
     @Override

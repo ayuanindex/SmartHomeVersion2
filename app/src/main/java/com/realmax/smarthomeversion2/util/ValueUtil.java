@@ -17,6 +17,7 @@ import java.util.List;
 
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.EventLoopGroup;
 
 /**
  * @author ayuan
@@ -33,6 +34,7 @@ public class ValueUtil {
      */
     private static HashMap<String, Boolean> isConnected = new HashMap<>();
 
+    private static HashMap<String, EventLoopGroup> eventLoopGroupHashMap = new HashMap<>();
 
     private static HashMap<String, MqttControl> mqttControlHashMap;
     private static int maxSend = 10;
@@ -67,6 +69,10 @@ public class ValueUtil {
                 }
             }
         }
+    }
+
+    public static HashMap<String, EventLoopGroup> getEventLoopGroupHashMap() {
+        return eventLoopGroupHashMap;
     }
 
     /**

@@ -1,6 +1,7 @@
 package com.realmax.smarthomeversion2.activity;
 
 import android.annotation.SuppressLint;
+import android.content.DialogInterface;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,8 @@ import android.widget.TextView;
 import androidx.appcompat.app.AlertDialog;
 import androidx.cardview.widget.CardView;
 
+import com.google.android.material.snackbar.BaseTransientBottomBar;
+import com.google.android.material.snackbar.Snackbar;
 import com.realmax.smarthomeversion2.App;
 import com.realmax.smarthomeversion2.R;
 import com.realmax.smarthomeversion2.bean.LinkBean;
@@ -36,6 +39,7 @@ public class SettingActivity extends BaseActivity {
     private ListView lvList;
     private ArrayList<LinkBean> linkBeans;
     private CustomerAdapter customerAdapter;
+    private boolean isHaveDialog = false;
 
     @Override
     protected int getLayout() {
@@ -56,7 +60,31 @@ public class SettingActivity extends BaseActivity {
             if (!linkBeans.get(position).isConnected()) {
                 showDialog(linkBeans.get(position));
             } else {
+                L.e("哈哈哈哈");
                 App.showToast("已连接");
+                Snackbar snackbar = Snackbar.make(view, "是否要断开连接", BaseTransientBottomBar.LENGTH_LONG);
+                snackbar.setAction("断开连接", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        CustomerThread.poolExecutor.execute(() -> {
+                            try {
+                                String tag = customerAdapter.getItem(position).getTag();
+                                EventLoopGroup eventLoopGroup = ValueUtil.getEventLoopGroupHashMap().get(tag);
+                                if (eventLoopGroup != null) {
+                                    eventLoopGroup.shutdownGracefully().sync();
+                                    ValueUtil.getIsConnected().put(tag, false);
+                                    ValueUtil.getHandlerHashMap().put(tag, null);
+                                    uiHandler.post(() -> {
+                                        customerAdapter.notifyDataSetChanged();
+                                    });
+                                }
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                        });
+                    }
+                });
+                snackbar.show();
             }
         });
     }
@@ -109,65 +137,76 @@ public class SettingActivity extends BaseActivity {
      */
     @SuppressLint("SetTextI18n")
     private void showDialog(LinkBean linkBean) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(SettingActivity.this);
-        AlertDialog alertDialog = builder.create();
-        View inflate = View.inflate(SettingActivity.this, R.layout.dialog_link, null);
-        alertDialog.setView(inflate);
-        ViewHolder viewHolder = new ViewHolder(inflate);
+        if (!isHaveDialog) {
+            isHaveDialog = true;
+            AlertDialog.Builder builder = new AlertDialog.Builder(SettingActivity.this);
+            AlertDialog alertDialog = builder.create();
+            View inflate = View.inflate(SettingActivity.this, R.layout.dialog_link, null);
+            alertDialog.setView(inflate);
+            ViewHolder viewHolder = new ViewHolder(inflate);
 
-        // 回显IP地址和端口号
-        viewHolder.etIp.setText(linkBean.getmHOST());
-        viewHolder.etPort.setText("" + linkBean.getPORT());
+            // 回显IP地址和端口号
+            viewHolder.etIp.setText(linkBean.getmHOST());
+            viewHolder.etPort.setText("" + linkBean.getPORT());
 
-        viewHolder.cardOk.setOnClickListener((View v) -> {
-            // 验证IP是否为空看那个
-            String ip = viewHolder.etIp.getText().toString().trim();
-            if (TextUtils.isEmpty(ip)) {
-                viewHolder.etIp.setText("ip地址不能为空");
-                return;
-            }
+            viewHolder.cardOk.setOnClickListener((View v) -> {
+                // 验证IP是否为空看那个
+                String ip = viewHolder.etIp.getText().toString().trim();
+                if (TextUtils.isEmpty(ip)) {
+                    viewHolder.etIp.setText("ip地址不能为空");
+                    return;
+                }
 
-            // 验证port是否为空
-            String port = viewHolder.etPort.getText().toString().trim();
-            if (TextUtils.isEmpty(port)) {
-                viewHolder.etIp.setText("端口号不能为空");
-                return;
-            }
+                // 验证port是否为空
+                String port = viewHolder.etPort.getText().toString().trim();
+                if (TextUtils.isEmpty(port)) {
+                    viewHolder.etIp.setText("端口号不能为空");
+                    return;
+                }
 
-            CustomerThread.poolExecutor.execute(() -> {
-                CustomerHandlerBase customerHandler = new CustomerHandlerBase();
-                linkBean.connected(ip, port, customerHandler, new NettyLinkUtil.Callback() {
-                    @Override
-                    public void success(EventLoopGroup eventLoopGroup) {
-                        runOnUiThread(() -> {
-                            linkBean.setConnected(true);
-                            runOnUiThread(() -> customerAdapter.notifyDataSetChanged());
-                        });
-                    }
-
-                    @Override
-                    public void error() {
-                        linkBean.setConnected(false);
-                        CustomerCallback customerCallback = customerHandler.getCustomerCallback();
-                        if (customerCallback != null) {
-                            customerCallback.disConnected();
+                CustomerThread.poolExecutor.execute(() -> {
+                    CustomerHandlerBase customerHandler = new CustomerHandlerBase();
+                    linkBean.connected(ip, port, customerHandler, new NettyLinkUtil.Callback() {
+                        @Override
+                        public void success(EventLoopGroup eventLoopGroup) {
+                            runOnUiThread(() -> {
+                                linkBean.setConnected(true);
+                                ValueUtil.getEventLoopGroupHashMap().put(linkBean.getTag(), eventLoopGroup);
+                                runOnUiThread(() -> customerAdapter.notifyDataSetChanged());
+                            });
                         }
 
-                        runOnUiThread(() -> {
-                            customerAdapter.notifyDataSetChanged();
-                            App.showToast("请检查服务端是否打开、网络是否在通畅");
-                        });
-                    }
-                });
-            });
-            alertDialog.dismiss();
-        });
+                        @Override
+                        public void error() {
+                            linkBean.setConnected(false);
+                            CustomerCallback customerCallback = customerHandler.getCustomerCallback();
+                            if (customerCallback != null) {
+                                customerCallback.disConnected();
+                            }
 
-        viewHolder.cardCancel.setOnClickListener((View v) -> alertDialog.dismiss());
-        if (alertDialog.getWindow() != null) {
-            alertDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+                            runOnUiThread(() -> {
+                                customerAdapter.notifyDataSetChanged();
+                                App.showToast("请检查服务端是否打开、网络是否在通畅");
+                            });
+                        }
+                    });
+                });
+                alertDialog.dismiss();
+            });
+
+            viewHolder.cardCancel.setOnClickListener((View v) -> alertDialog.dismiss());
+            if (alertDialog.getWindow() != null) {
+                alertDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+            }
+
+            alertDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                @Override
+                public void onDismiss(DialogInterface dialogInterface) {
+                    isHaveDialog = false;
+                }
+            });
+            alertDialog.show();
         }
-        alertDialog.show();
     }
 
     static class ViewHolder {
