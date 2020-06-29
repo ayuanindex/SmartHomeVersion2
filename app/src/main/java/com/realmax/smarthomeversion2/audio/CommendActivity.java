@@ -293,11 +293,15 @@ public class CommendActivity extends BaseActivity {
      */
     private void feedBack(String msg) {
         uiHandler.post(() -> {
-            SpeechMessage.getInstance()
-                    .initLongTextTtsController(1301676932, "AKIDYqrzrcNJHyjEagH3M4WbRWLsCJNBB3D8", "mIXEfKjz0sVstdQ2VjhPqAMSIwgCTSAc")
-                    .start(msg, (s, i) -> {
-                        Log.d(TAG, "run: :::::::::" + s);
-                    });
+            try {
+                SpeechMessage.getInstance()
+                        .initLongTextTtsController(1301676932, "AKIDYqrzrcNJHyjEagH3M4WbRWLsCJNBB3D8", "mIXEfKjz0sVstdQ2VjhPqAMSIwgCTSAc")
+                        .start(msg, (s, i) -> {
+                            Log.d(TAG, "run: :::::::::" + s);
+                        });
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         });
     }
 

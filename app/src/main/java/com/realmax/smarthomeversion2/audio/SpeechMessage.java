@@ -48,9 +48,10 @@ public class SpeechMessage {
      * @return 返回已经初始化的LongTextTtsController
      */
     public SpeechMessage initLongTextTtsController(long appId, String secretId, String secretKey) {
-        if (longTextTtsController == null) {
-            longTextTtsController = new LongTextTtsController();
+        if (longTextTtsController != null) {
+            longTextTtsController.pause();
         }
+        longTextTtsController = new LongTextTtsController();
         longTextTtsController.init(appId, secretId, secretKey);
         // 设置语速
         longTextTtsController.setVoiceSpeed(voiceSpeed);
@@ -84,12 +85,16 @@ public class SpeechMessage {
     public void start(String str, ResultData resultData) {
         try {
             if (longTextTtsController != null) {
-                longTextTtsController.startTts(str, (TtsException e) -> Log.e(TAG, "start: 问题---------", e), new QCloudPlayerCallback() {
+                longTextTtsController.pause();
+                longTextTtsController.startTts(str, (TtsException e) -> {
+                    e.printStackTrace();
+                    Log.e(TAG, "start: 问题---------" + e.getMessage());
+                }, new QCloudPlayerCallback() {
                     @Override
                     public void onTTSPlayStart() {
                         Log.e(TAG, "在TTS Play开始");
                         // TODO: 2020/5/16
-                        VoiceToMessage.getInstance().setMic(true);
+                        /*VoiceToMessage.getInstance().setMic(true);*/
                     }
 
                     @Override
@@ -116,8 +121,7 @@ public class SpeechMessage {
                     public void onTTSPlayEnd() {
                         Log.e(TAG, "在TTS播放结束");
                         // TODO: 2020/5/16
-                        VoiceToMessage.getInstance().setMic(false);
-
+                        /*VoiceToMessage.getInstance().setMic(false);*/
                     }
 
                     @Override

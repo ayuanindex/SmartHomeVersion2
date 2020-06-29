@@ -152,9 +152,9 @@ public class ValueUtil {
     private static void sendCmdInFor(Loop loop) {
         CustomerThread.poolExecutor.execute(() -> {
             int i = 0;
-            while (i < 10) {
+            while (i < 3) {
                 loop.loopCmd();
-                SystemClock.sleep(100);
+                SystemClock.sleep(200);
                 i++;
             }
         });

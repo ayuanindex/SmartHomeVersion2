@@ -186,12 +186,16 @@ public abstract class AudioControl {
      */
     private void feedBack(String msg, @LayoutRes int layout) {
         mActivity.runOnUiThread(() -> {
-            SpeechMessage.getInstance()
-                    .initLongTextTtsController(1301676932, "AKIDYqrzrcNJHyjEagH3M4WbRWLsCJNBB3D8", "mIXEfKjz0sVstdQ2VjhPqAMSIwgCTSAc")
-                    .start(msg, (s, i) -> {
-                        Log.d(TAG, "run: :::::::::" + s);
-                    });
-            addSimpleList(msg, layout);
+            try {
+                SpeechMessage.getInstance()
+                        .initLongTextTtsController(1301676932, "AKIDYqrzrcNJHyjEagH3M4WbRWLsCJNBB3D8", "mIXEfKjz0sVstdQ2VjhPqAMSIwgCTSAc")
+                        .start(msg, (s, i) -> {
+                            Log.d(TAG, "run: :::::::::" + s);
+                        });
+                addSimpleList(msg, layout);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         });
     }
 
