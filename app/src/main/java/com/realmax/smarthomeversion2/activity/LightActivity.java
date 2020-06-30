@@ -292,9 +292,11 @@ public class LightActivity extends BaseActivity {
                 }
             });
 
-            // 设置当前电灯的状态
+            // 通过接收到的状态设置当前界面中灯的开关状态
             if (getItem(position) == 1) {
+                // 灯图标的状态
                 cbCheck.setChecked(true);
+                // 灯开关的状态
                 swToggle.setChecked(true);
             } else {
                 cbCheck.setChecked(false);
@@ -303,6 +305,11 @@ public class LightActivity extends BaseActivity {
             return view;
         }
 
+        /**
+         * 初始化列表中灯的状态
+         *
+         * @param view 控件所依赖的布局View
+         */
         private void initView(View view) {
             tvLabel = view.findViewById(R.id.tv_label);
             swToggle = view.findViewById(R.id.sw_toggle);
