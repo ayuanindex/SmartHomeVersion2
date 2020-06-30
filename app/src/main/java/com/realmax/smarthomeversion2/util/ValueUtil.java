@@ -117,6 +117,7 @@ public class ValueUtil {
      * @param tag       标签
      */
     public static void sendLightOpenOrCloseCmd(LightBean lightBean, String tag) {
+        // 拿到消息发送所需要的handlerContext
         CustomerHandlerBase customerHandler = getHandlerHashMap().get(tag);
         if (customerHandler != null) {
             ChannelHandlerContext handlerContext = customerHandler.getHandlerContext();

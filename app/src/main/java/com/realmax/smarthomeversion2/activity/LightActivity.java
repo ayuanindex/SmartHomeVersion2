@@ -114,9 +114,10 @@ public class LightActivity extends BaseActivity {
         // 设置当前所处房间的编号
         currentPosition = 0;
 
+        // 所有灯的状态
         lightBean = new LightBean(new ArrayList<>());
 
-        // 制定房间内灯的状态
+        // 当前房间内灯的状态
         currentLightStatus = new ArrayList<>();
 
         // 初始化列表
@@ -152,6 +153,7 @@ public class LightActivity extends BaseActivity {
                             // 验证是否是当前电灯的json数据
                             String lightS = "lightList_S";
                             if (jsonObject.has(lightS)) {
+                                // 将灯的状态填充到JavaBean中
                                 lightBean = new Gson().fromJson(msg, LightBean.class);
                                 // 获取到数据刷新列表
                                 uiHandler.post(() -> {
@@ -278,9 +280,12 @@ public class LightActivity extends BaseActivity {
 
                     // 向控制起发送控制灯的指令
                     ArrayList<Integer> lightC = new ArrayList<>(lightBean.getLightList_S());
+                    // 根据当前房间中灯的状态，根据灯的ID找到在所有灯状态中的位置，再进行状态修改
                     lightC.set(model[position] - 1, getItem(position) == OPEN ? CLOSE : OPEN);
                     LightBean lightBean = new LightBean(lightC);
+                    // 用修改后的状态发送命令到控制器来控制虚拟场景中的设备
                     ValueUtil.sendLightOpenOrCloseCmd(lightBean, tag);
+                    // 刷新集合
                     notifyDataSetChanged();
                 } catch (JSONException e) {
                     e.printStackTrace();
