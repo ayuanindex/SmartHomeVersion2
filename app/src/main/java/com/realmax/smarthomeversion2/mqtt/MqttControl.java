@@ -38,8 +38,14 @@ public abstract class MqttControl {
         this.mDevPsk = mDevPsk;
     }
 
+    /**
+     * 开始进行连接
+     */
     public void connected() {
+        // 子类在创建时回调用super来调用当前类的构造来实现参数的设置，所以这里可以直接进行连接
+        // 创建一个mqtt连接类来进行连接
         customerMqttConnect = new CustomerMqttConnect(context, mBrokerUrl, mProductId, mDevName, mDevPsk);
+        // 连接时需要传入两个回调还有一个json数据模版，因为当前类是抽象类，所有一个用抽象方法从子类获取回调的实现类
         customerMqttConnect.connected(mJsonFileName, getActionCallback(), getStreamCallback());
     }
 
@@ -47,6 +53,9 @@ public abstract class MqttControl {
 
     protected abstract TXMqttActionCallBack getActionCallback();
 
+    /**
+     * 断开连接
+     */
     public void disConnected() {
         customerMqttConnect.disConnected();
     }

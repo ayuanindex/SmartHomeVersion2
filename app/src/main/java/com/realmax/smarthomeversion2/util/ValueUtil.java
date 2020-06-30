@@ -51,20 +51,33 @@ public class ValueUtil {
         return mqttControlHashMap;
     }
 
+    /**
+     * 设置静态的mqtt控制了集合
+     *
+     * @param mqttControlHashMap mqtt控制类集合
+     */
     public static void setMqttControlHashMap(HashMap<String, MqttControl> mqttControlHashMap) {
         ValueUtil.mqttControlHashMap = mqttControlHashMap;
+        // 开启MQTT连接
         mqttConnected();
     }
 
+    /**
+     * 打开MQTT连接
+     */
     public static void mqttConnected() {
+        // 根据版本选择循环方式
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             mqttControlHashMap.forEach((String s, MqttControl mqttControl) -> {
                 mqttControl.connected();
             });
         } else {
+            // 遍历map集合中所有的key
             for (String s : mqttControlHashMap.keySet()) {
+                // forEach循环获取到每个mqtt控制类，进行连接
                 MqttControl mqttControl = mqttControlHashMap.get(s);
                 if (mqttControl != null) {
+                    // 因为所有的控制类都是MqttControl的子类，所有在其中添加了连接的方法供统一连接
                     mqttControl.connected();
                 }
             }
@@ -108,11 +121,14 @@ public class ValueUtil {
         if (customerHandler != null) {
             ChannelHandlerContext handlerContext = customerHandler.getHandlerContext();
             if (handlerContext != null) {
+                // 包装一个json数据
                 HashMap<String, List<Integer>> hashMap = new HashMap<>(1);
                 hashMap.put("lightList_C", lightBean.getLightList_S());
                 JSONObject jsonObject = new JSONObject(hashMap);
                 String s = jsonObject.toString();
+                // 定时发送指令
                 sendCmdInFor(() -> {
+                    // 通过Nett框架进行发送
                     handlerContext.writeAndFlush(Unpooled.copiedBuffer(EncodeAndDecode.getStrUnicode(s).getBytes()));
                     L.e("发送的数据-------------" + s);
                 });
@@ -149,6 +165,11 @@ public class ValueUtil {
         }
     }
 
+    /**
+     * 循环发送指令
+     *
+     * @param loop 每次循环所需执行的循环体
+     */
     private static void sendCmdInFor(Loop loop) {
         CustomerThread.poolExecutor.execute(() -> {
             int i = 0;
@@ -160,6 +181,9 @@ public class ValueUtil {
         });
     }
 
+    /**
+     * 循环体接口
+     */
     interface Loop {
         void loopCmd();
     }

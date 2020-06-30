@@ -32,16 +32,26 @@ public class LightControl extends MqttControl {
         customerMqttConnect.update();
     }
 
+    /**
+     * 向设备发送信息
+     *
+     * @param property 参数
+     */
     public void publish(JSONObject property) {
         customerMqttConnect.publish(property);
     }
 
+    /**
+     * 父类的抽象方法的实现
+     *
+     * @return 连接回调的实现类
+     */
     @Override
     protected TXMqttActionCallBack getActionCallback() {
         return new TXMqttActionCallBack() {
             @Override
             public void onConnectCompleted(Status status, boolean reconnect, Object userContext, String msg) {
-                Log.d(TAG, "在Connect上完成：" + msg);
+                Log.d(TAG, "连接成功：" + msg);
                 // 连接完成时订阅主题
                 customerMqttConnect.subscribe();
                 // 同步云端状态
@@ -51,16 +61,21 @@ public class LightControl extends MqttControl {
             @Override
             public void onConnectionLost(Throwable cause) {
                 cause.printStackTrace();
-                Log.d(TAG, "关于连接丢失：" + cause.getMessage());
+                Log.d(TAG, "连接丢失：" + cause.getMessage());
             }
 
             @Override
             public void onDisconnectCompleted(Status status, Object userContext, String msg) {
-                Log.d(TAG, "断开连接完成时：" + msg);
+                Log.d(TAG, "连接断开：" + msg);
             }
         };
     }
 
+    /**
+     * 父类抽象方法的实现
+     *
+     * @return 返回mqtt连接时实现类
+     */
     @Override
     protected TXDataTemplateDownStreamCallBack getStreamCallback() {
         return new TXDataTemplateDownStreamCallBack() {
@@ -72,6 +87,7 @@ public class LightControl extends MqttControl {
             @Override
             public void onGetStatusReplyCallBack(JSONObject data) {
                 Log.d(TAG, "在获取状态回复回电上：" + data.toString());
+                // 通过微信小程序控制时，数据会在这里实时接收，并通过这个数据对智能家居的设备进行控制
                 executeInstruction(data);
             }
 
@@ -98,13 +114,15 @@ public class LightControl extends MqttControl {
      */
     private void executeInstruction(JSONObject data) {
         CustomerThread.poolExecutor.execute(() -> {
+            // 获取到制定控制器的连接
             CustomerHandlerBase light = ValueUtil.getHandlerHashMap().get(tag);
             if (light != null) {
                 // 获取最近一次灯的状态
                 String currentCommand = light.getCurrentCommand();
                 if (!TextUtils.isEmpty(currentCommand)) {
+                    // 将获取到的json解析出来
                     LightBean lightBean = new Gson().fromJson(currentCommand, LightBean.class);
-
+                    // 获取小程序短的控制指令
                     JSONObject control = data.optJSONObject("control");
                     if (control != null) {
                         // 获取每一个key
@@ -114,10 +132,12 @@ public class LightControl extends MqttControl {
                             // 判断获取到的key是否包含light
                             if (next.matches("light.*")) {
                                 int lightKey = Integer.parseInt(next.replace("light", ""));
+                                // 根据控制指令和当前智能家居中设备的状态来设置小程序传输过来的状态
                                 lightBean.getLightList_S().set(lightKey - 1, control.optInt(next));
                                 Log.d(TAG, "在获取状态回复回电上：" + lightBean.getLightList_S().get(lightKey - 1));
                             }
                         }
+                        // 发送开灯或关灯的指令
                         ValueUtil.sendLightOpenOrCloseCmd(lightBean, tag);
                     }
                 } else {

@@ -1,6 +1,7 @@
 package com.realmax.smarthomeversion2.activity;
 
 import android.content.Intent;
+import android.provider.Settings;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -9,11 +10,13 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.realmax.smarthomeversion2.App;
 import com.realmax.smarthomeversion2.R;
 import com.realmax.smarthomeversion2.audio.CommendActivity;
 import com.realmax.smarthomeversion2.mqtt.CurtainControl;
 import com.realmax.smarthomeversion2.mqtt.LightControl;
 import com.realmax.smarthomeversion2.mqtt.MqttControl;
+import com.realmax.smarthomeversion2.util.L;
 import com.realmax.smarthomeversion2.util.ValueUtil;
 
 import java.util.HashMap;
@@ -27,12 +30,21 @@ public class MainActivity extends BaseActivity {
     private GridView gvView;
     private HashMap<Integer, Integer> integerHashMap;
     private String[] labels;
+    private boolean isFirst = true;
 
+    /**
+     * BaseActivity获取布局资源ID
+     *
+     * @return 布局资源ID
+     */
     @Override
     protected int getLayout() {
         return R.layout.activity_main;
     }
 
+    /**
+     * 初始化控件
+     */
     @Override
     protected void initView() {
         ivHome = findViewById(R.id.iv_home);
@@ -40,20 +52,24 @@ public class MainActivity extends BaseActivity {
         gvView = findViewById(R.id.gv_view);
     }
 
+    /**
+     * 初始化控件的监听（点击监听、触摸监听等等）
+     */
     @Override
     protected void initEvent() {
-        ivHome.setOnClickListener((View v) -> {
-            // TODO: 2020/4/2
-            jump(CommendActivity.class);
-        });
+        // 跳转到语音控制界面
+        ivHome.setOnClickListener((View v) -> jump(CommendActivity.class));
 
+        // 跳转到连接设置界面
         ivLinkSetting.setOnClickListener((View v) -> jump(SettingActivity.class));
 
-        gvView.setOnItemClickListener((AdapterView<?> parent, View view, int position, long id) -> {
-            jump(position);
-        });
+        // 跳转到设备控制界面
+        gvView.setOnItemClickListener((AdapterView<?> parent, View view, int position, long id) -> jumpToActivity(position));
     }
 
+    /**
+     * 初始化数据
+     */
     @Override
     protected void initData() {
         // 初始化主界面资源
@@ -78,17 +94,26 @@ public class MainActivity extends BaseActivity {
                 "家庭成员管理"
         };
 
-        // 初始化MQTT控制类
+        // 促使物联网开发平台中使用的设备连接（存储所有的MQTT连接）
         HashMap<String, MqttControl> mqttControllerHashMap = new HashMap<>(1);
+        // 将灯和窗帘等设备的MQTT控制类存放到一个静态集合中
+        // LightControl和CurtainControl都是继承于MqttControl类
         mqttControllerHashMap.put("light", new LightControl(this, "Light.json", "ZJIJA6UHXP", "light", "L6yOvzW0qCbHG8pr0iKGYA=="));
         mqttControllerHashMap.put("Curtain", new CurtainControl(this, "Curtain.json", "5KEF6G3TQW", "curtain", "0Xu8+JQPrVVljvdN29jV/Q=="));
+        // 将填充完成的map集合存入到设置到ValueUtil静态类中，并进行统一连接
         ValueUtil.setMqttControlHashMap(mqttControllerHashMap);
 
+        // 列表适配器设置
         CustomerAdapter customerAdapter = new CustomerAdapter();
         gvView.setAdapter(customerAdapter);
     }
 
-    private void jump(int position) {
+    /**
+     * 跳转到新的Activity
+     *
+     * @param position 选择的数字
+     */
+    private void jumpToActivity(int position) {
         Intent intent = null;
         // 跳转到指定界面
         switch (position) {
@@ -170,7 +195,15 @@ public class MainActivity extends BaseActivity {
     @Override
     public void onBackPressed() {
         // 注释掉返回按钮
-        /*super.onBackPressed();*/
+        if (isFirst) {
+            isFirst = false;
+            App.showToast("再次出发返回键退出");
+            Runnable r = () -> isFirst = true;
+            uiHandler.postDelayed(r, 2000);
+        } else {
+            super.onBackPressed();
+            uiHandler.postDelayed(() -> System.exit(0), 1000);
+        }
     }
 
     @Override
