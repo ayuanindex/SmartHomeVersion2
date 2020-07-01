@@ -5,6 +5,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import com.qcloud.iot_explorer.common.Status;
 import com.qcloud.iot_explorer.data_template.TXDataTemplateDownStreamCallBack;
 import com.qcloud.iot_explorer.mqtt.TXMqttActionCallBack;
@@ -13,9 +14,13 @@ import com.realmax.smarthomeversion2.tcp.CustomerHandlerBase;
 import com.realmax.smarthomeversion2.util.CustomerThread;
 import com.realmax.smarthomeversion2.util.ValueUtil;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class LightControl extends MqttControl {
     private static final String TAG = "LightControl";
@@ -23,6 +28,8 @@ public class LightControl extends MqttControl {
 
     public LightControl(Context context, String mJsonFileName, String mProductId, String mDevName, String mDevPsk) {
         super(context, mJsonFileName, mProductId, mDevName, mDevPsk);
+        // 开启一个定时器循环检测等的状态
+        startTimer();
     }
 
     /**
@@ -105,6 +112,33 @@ public class LightControl extends MqttControl {
                 return null;
             }
         };
+    }
+
+    private void startTimer() {
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                try {
+                    CustomerHandlerBase customerHandlerBase = ValueUtil.getHandlerHashMap().get(tag);
+                    if (customerHandlerBase != null) {
+                        String currentCommand = customerHandlerBase.getCurrentCommand();
+                        if (!TextUtils.isEmpty(currentCommand)) {
+                            LightBean lightBean = new Gson().fromJson(currentCommand, LightBean.class);
+                            // 包装json，发送MQTT指令
+                            HashMap<String, Object> copyFrom = new HashMap<>();
+                            for (int i = 0; i < lightBean.getLightList_S().size(); i++) {
+                                copyFrom.put("light" + (i + 1), lightBean.getLightList_S().get(i));
+                            }
+                            JSONObject property = new JSONObject(copyFrom);
+                            publish(property);
+                        }
+                    }
+                } catch (JsonSyntaxException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, 0, 3000);
     }
 
     /**

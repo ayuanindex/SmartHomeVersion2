@@ -10,13 +10,17 @@ import com.qcloud.iot_explorer.common.Status;
 import com.qcloud.iot_explorer.data_template.TXDataTemplateDownStreamCallBack;
 import com.qcloud.iot_explorer.mqtt.TXMqttActionCallBack;
 import com.realmax.smarthomeversion2.activity.bean.CurtainAndAcBean;
+import com.realmax.smarthomeversion2.activity.bean.LightBean;
 import com.realmax.smarthomeversion2.tcp.CustomerHandlerBase;
 import com.realmax.smarthomeversion2.util.CustomerThread;
 import com.realmax.smarthomeversion2.util.ValueUtil;
 
 import org.json.JSONObject;
 
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class CurtainControl extends MqttControl {
     private static final String TAG = "LightControl";
@@ -24,6 +28,7 @@ public class CurtainControl extends MqttControl {
 
     public CurtainControl(Context context, String mJsonFileName, String mProductId, String mDevName, String mDevPsk) {
         super(context, mJsonFileName, mProductId, mDevName, mDevPsk);
+        startTimer();
     }
 
     /**
@@ -90,6 +95,33 @@ public class CurtainControl extends MqttControl {
                 return null;
             }
         };
+    }
+
+    private void startTimer() {
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                try {
+                    CustomerHandlerBase customerHandlerBase = ValueUtil.getHandlerHashMap().get(tag);
+                    if (customerHandlerBase != null) {
+                        String currentCommand = customerHandlerBase.getCurrentCommand();
+                        if (!TextUtils.isEmpty(currentCommand)) {
+                            CurtainAndAcBean curtainAndAcBean = new Gson().fromJson(currentCommand, CurtainAndAcBean.class);
+                            // 包装json，发送MQTT指令
+                            HashMap<String, Object> copyFrom = new HashMap<>();
+                            for (int i = 0; i < 10; i++) {
+                                copyFrom.put("curtain" + (i + 1), curtainAndAcBean.getCurtain_S().get(i));
+                            }
+                            JSONObject property = new JSONObject(copyFrom);
+                            publish(property);
+                        }
+                    }
+                } catch (JsonSyntaxException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, 0, 3000);
     }
 
     /**
