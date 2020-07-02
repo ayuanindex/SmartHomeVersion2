@@ -140,7 +140,7 @@ public class LightControl extends MqttControl {
                     e.printStackTrace();
                 }
             }
-        }, 0, 3000);
+        }, 0, 1000);
     }
 
     /**
