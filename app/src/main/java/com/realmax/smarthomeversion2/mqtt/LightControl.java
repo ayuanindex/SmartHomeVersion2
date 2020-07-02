@@ -25,6 +25,7 @@ import java.util.TimerTask;
 public class LightControl extends MqttControl {
     private static final String TAG = "LightControl";
     private String tag = "control_01";
+    private String currentCommand;
 
     public LightControl(Context context, String mJsonFileName, String mProductId, String mDevName, String mDevPsk) {
         super(context, mJsonFileName, mProductId, mDevName, mDevPsk);
@@ -122,16 +123,17 @@ public class LightControl extends MqttControl {
                 try {
                     CustomerHandlerBase customerHandlerBase = ValueUtil.getHandlerHashMap().get(tag);
                     if (customerHandlerBase != null) {
-                        String currentCommand = customerHandlerBase.getCurrentCommand();
-                        if (!TextUtils.isEmpty(currentCommand)) {
-                            LightBean lightBean = new Gson().fromJson(currentCommand, LightBean.class);
-                            // 包装json，发送MQTT指令
-                            HashMap<String, Object> copyFrom = new HashMap<>();
-                            for (int i = 0; i < lightBean.getLightList_S().size(); i++) {
-                                copyFrom.put("light" + (i + 1), lightBean.getLightList_S().get(i));
+                        if (!customerHandlerBase.getCurrentCommand().equals(LightControl.this.currentCommand)) {
+                            if (!TextUtils.isEmpty(currentCommand)) {
+                                LightBean lightBean = new Gson().fromJson(currentCommand, LightBean.class);
+                                // 包装json，发送MQTT指令
+                                HashMap<String, Object> copyFrom = new HashMap<>();
+                                for (int i = 0; i < lightBean.getLightList_S().size(); i++) {
+                                    copyFrom.put("light" + (i + 1), lightBean.getLightList_S().get(i));
+                                }
+                                JSONObject property = new JSONObject(copyFrom);
+                                publish(property);
                             }
-                            JSONObject property = new JSONObject(copyFrom);
-                            publish(property);
                         }
                     }
                 } catch (JsonSyntaxException e) {
