@@ -29,6 +29,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * @author ayuan
@@ -264,32 +265,29 @@ public class LightActivity extends BaseActivity {
             swToggle.setOnClickListener(null);
             // 设置列表中switch开关的监听，这里用的是点击事件
             swToggle.setOnClickListener((View v) -> {
-                try {
-                    // 控制switch开关不会立即改变状态
-                    swToggle.toggle();
-                    // 在主界面中填存入集合中的灯的控制类，通过获取制定设备的mqtt连接，将设置指令同步至云端
-                    MqttControl light = ValueUtil.getMqttControlHashMap().get("light");
-                    if (light != null) {
-                        // 因为LightControl是继承MqttControl的，所以可以直接进行强转
-                        LightControl lightControl = (LightControl) light;
-                        // 包装json，发送MQTT指令
-                        JSONObject property = new JSONObject();
-                        property.put("light" + model[position], getItem(position) == OPEN ? CLOSE : OPEN);
-                        lightControl.publish(property);
-                    }
-
-                    // 向控制起发送控制灯的指令
-                    ArrayList<Integer> lightC = new ArrayList<>(lightBean.getLightList_S());
-                    // 根据当前房间中灯的状态，根据灯的ID找到在所有灯状态中的位置，再进行状态修改
-                    lightC.set(model[position] - 1, getItem(position) == OPEN ? CLOSE : OPEN);
-                    LightBean lightBean = new LightBean(lightC);
-                    // 用修改后的状态发送命令到控制器来控制虚拟场景中的设备
-                    ValueUtil.sendLightOpenOrCloseCmd(lightBean, tag);
-                    // 刷新集合
-                    notifyDataSetChanged();
-                } catch (JSONException e) {
-                    e.printStackTrace();
+                // 控制switch开关不会立即改变状态
+                swToggle.toggle();
+                // 在主界面中填存入集合中的灯的控制类，通过获取制定设备的mqtt连接，将设置指令同步至云端
+                MqttControl light = ValueUtil.getMqttControlHashMap().get("light");
+                if (light != null) {
+                    // 因为LightControl是继承MqttControl的，所以可以直接进行强转
+                    LightControl lightControl = (LightControl) light;
+                    // 包装json，发送MQTT指令
+                    HashMap<String, Object> copyFrom = new HashMap<>();
+                    copyFrom.put("light" + model[position], getItem(position) == OPEN ? CLOSE : OPEN);
+                    JSONObject property = new JSONObject(copyFrom);
+                    lightControl.publish(property);
                 }
+
+                // 向控制起发送控制灯的指令
+                ArrayList<Integer> lightC = new ArrayList<>(lightBean.getLightList_S());
+                // 根据当前房间中灯的状态，根据灯的ID找到在所有灯状态中的位置，再进行状态修改
+                lightC.set(model[position] - 1, getItem(position) == OPEN ? CLOSE : OPEN);
+                LightBean lightBean = new LightBean(lightC);
+                // 用修改后的状态发送命令到控制器来控制虚拟场景中的设备
+                ValueUtil.sendLightOpenOrCloseCmd(lightBean, tag);
+                // 刷新集合
+                notifyDataSetChanged();
             });
 
             // 通过接收到的状态设置当前界面中灯的开关状态

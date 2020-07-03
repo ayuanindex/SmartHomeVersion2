@@ -29,6 +29,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * @author ayuan
@@ -231,25 +232,23 @@ public class CurtainActivity extends BaseActivity {
 
             swToggle.setOnTouchListener(null);
             swToggle.setOnClickListener((View v) -> {
-                try {
-                    swToggle.toggle();
-                    // 将设置指令同步至云端
-                    MqttControl curtain = ValueUtil.getMqttControlHashMap().get("Curtain");
-                    if (curtain != null) {
-                        CurtainControl curtainControl = (CurtainControl) curtain;
-                        JSONObject property = new JSONObject();
-                        property.put("curtain" + model[position], getItem(position) == OPEN ? CLOSE : OPEN);
-                        curtainControl.publish(property);
-                    }
-
-                    ArrayList<Integer> curtainC = new ArrayList<>(curtainAndAcBean.getCurtain_S());
-                    curtainC.set(model[position] - 1, getItem(position) == OPEN ? CLOSE : OPEN);
-                    CurtainAndAcBean curtainAndAcBean = new CurtainAndAcBean(curtainC);
-                    ValueUtil.sendCurtainOpenOrCloseCmd(curtainAndAcBean, tag);
-                    notifyDataSetChanged();
-                } catch (JSONException e) {
-                    e.printStackTrace();
+                swToggle.toggle();
+                // 将设置指令同步至云端
+                MqttControl curtain = ValueUtil.getMqttControlHashMap().get("Curtain");
+                if (curtain != null) {
+                    CurtainControl curtainControl = (CurtainControl) curtain;
+                    // 包装json，发送MQTT指令
+                    HashMap<String, Object> copyFrom = new HashMap<>();
+                    copyFrom.put("curtain" + model[position], getItem(position) == OPEN ? CLOSE : OPEN);
+                    JSONObject property = new JSONObject(copyFrom);
+                    curtainControl.publish(property);
                 }
+
+                ArrayList<Integer> curtainC = new ArrayList<>(curtainAndAcBean.getCurtain_S());
+                curtainC.set(model[position] - 1, getItem(position) == OPEN ? CLOSE : OPEN);
+                CurtainAndAcBean curtainAndAcBean = new CurtainAndAcBean(curtainC);
+                ValueUtil.sendCurtainOpenOrCloseCmd(curtainAndAcBean, tag);
+                notifyDataSetChanged();
             });
 
             if (getItem(position) == 1) {
