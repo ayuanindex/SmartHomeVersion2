@@ -26,6 +26,13 @@
             android:gravity="center"
             android:orientation="vertical">
 
+            <!--<CheckBox
+                android:id="@+id/swToggle"
+                android:layout_width="50dp"
+                android:layout_height="30dp"
+                android:background="@drawable/xml_check_select_switch"
+                android:button="@null"
+                android:checked="false" />-->
             <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/sw_toggle"
                 android:layout_width="wrap_content"

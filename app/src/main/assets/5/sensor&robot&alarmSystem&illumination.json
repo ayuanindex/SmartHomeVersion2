@@ -1,6 +1,6 @@
 {
-  "humanBodySensor": [0,1,2,3,4,5,6],
-  "robot": {
+  "humanBodySensor_S": [0,1,2,3,4,5,6],
+  "robot_S": {
     "broom": 0,
     "chargeStatus": 0,
     "leftWheel": 10,
@@ -9,6 +9,6 @@
     "positionY": 10,
     "power": 90
   },
-  "alarmSystem": [1,2,3,4],
-  "lightSensing": [1,2,3,4,5,6,7,8,9]
+  "alarmSystem_S": [1,2,3,4],
+  "lightSensing_S": [1,2,3,4,5,6,7,8,9]
 }

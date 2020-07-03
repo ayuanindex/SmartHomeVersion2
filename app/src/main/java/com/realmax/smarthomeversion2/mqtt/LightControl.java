@@ -25,7 +25,7 @@ import java.util.TimerTask;
 public class LightControl extends MqttControl {
     private static final String TAG = "LightControl";
     private String tag = "control_01";
-    private String currentCommand;
+    private String currentCommand = "";
 
     public LightControl(Context context, String mJsonFileName, String mProductId, String mDevName, String mDevPsk) {
         super(context, mJsonFileName, mProductId, mDevName, mDevPsk);
@@ -124,6 +124,7 @@ public class LightControl extends MqttControl {
                     CustomerHandlerBase customerHandlerBase = ValueUtil.getHandlerHashMap().get(tag);
                     if (customerHandlerBase != null) {
                         if (!customerHandlerBase.getCurrentCommand().equals(LightControl.this.currentCommand)) {
+                            LightControl.this.currentCommand = customerHandlerBase.getCurrentCommand();
                             if (!TextUtils.isEmpty(currentCommand)) {
                                 LightBean lightBean = new Gson().fromJson(currentCommand, LightBean.class);
                                 // 包装json，发送MQTT指令

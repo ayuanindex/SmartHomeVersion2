@@ -1,5 +1,5 @@
 {
-  "doors": [
+  "doors_S": [
     {
       "doorLock": 0,
       "doorSwitch": 0,
@@ -22,7 +22,7 @@
       "doorSwitch": 0
     }
   ],
-  "airQuality": [
+  "airQuality_S": [
     {
       "smoke": 0,
       "humidity": 100
