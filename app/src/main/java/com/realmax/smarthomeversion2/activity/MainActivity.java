@@ -1,7 +1,6 @@
 package com.realmax.smarthomeversion2.activity;
 
 import android.content.Intent;
-import android.provider.Settings;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -16,7 +15,7 @@ import com.realmax.smarthomeversion2.audio.CommendActivity;
 import com.realmax.smarthomeversion2.mqtt.CurtainControl;
 import com.realmax.smarthomeversion2.mqtt.LightControl;
 import com.realmax.smarthomeversion2.mqtt.MqttControl;
-import com.realmax.smarthomeversion2.util.L;
+import com.realmax.smarthomeversion2.util.CustomerThread;
 import com.realmax.smarthomeversion2.util.ValueUtil;
 
 import java.util.HashMap;
@@ -94,18 +93,31 @@ public class MainActivity extends BaseActivity {
                 "家庭成员管理"
         };
 
-        // 促使物联网开发平台中使用的设备连接（存储所有的MQTT连接）
-        HashMap<String, MqttControl> mqttControllerHashMap = new HashMap<>(1);
-        // 将灯和窗帘等设备的MQTT控制类存放到一个静态集合中
-        // LightControl和CurtainControl都是继承于MqttControl类
-        mqttControllerHashMap.put("light", new LightControl(this, "Light.json", "ZJIJA6UHXP", "light", "L6yOvzW0qCbHG8pr0iKGYA=="));
-        mqttControllerHashMap.put("Curtain", new CurtainControl(this, "Curtain.json", "5KEF6G3TQW", "curtain", "0Xu8+JQPrVVljvdN29jV/Q=="));
-        // 将填充完成的map集合存入到设置到ValueUtil静态类中，并进行统一连接
-        ValueUtil.setMqttControlHashMap(mqttControllerHashMap);
+        // 初始化MQTT连接
+        initMqttConnected();
 
         // 列表适配器设置
         CustomerAdapter customerAdapter = new CustomerAdapter();
         gvView.setAdapter(customerAdapter);
+    }
+
+    /**
+     * 初始化MQTT连接
+     */
+    private void initMqttConnected() {
+        CustomerThread.poolExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
+                // 促使物联网开发平台中使用的设备连接（存储所有的MQTT连接）
+                HashMap<String, MqttControl> mqttControllerHashMap = new HashMap<>(1);
+                // 将灯和窗帘等设备的MQTT控制类存放到一个静态集合中
+                // LightControl和CurtainControl都是继承于MqttControl类
+                mqttControllerHashMap.put("light", new LightControl(MainActivity.this, "Light.json", "ZJIJA6UHXP", "light", "L6yOvzW0qCbHG8pr0iKGYA=="));
+                mqttControllerHashMap.put("Curtain", new CurtainControl(MainActivity.this, "Curtain.json", "5KEF6G3TQW", "curtain", "0Xu8+JQPrVVljvdN29jV/Q=="));
+                // 将填充完成的map集合存入到设置到ValueUtil静态类中，并进行统一连接
+                ValueUtil.setMqttControlHashMap(mqttControllerHashMap);
+            }
+        });
     }
 
     /**
