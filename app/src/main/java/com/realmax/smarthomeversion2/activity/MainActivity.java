@@ -90,7 +90,7 @@ public class MainActivity extends BaseActivity {
                 "传感",
                 "监控",
                 "空调",
-                "家庭成员管理"/**/
+                "家庭成员管理"
         };
 
         // 初始化MQTT连接
