@@ -109,7 +109,7 @@ public class MainActivity extends BaseActivity {
             @Override
             public void run() {
                 // 促使物联网开发平台中使用的设备连接（存储所有的MQTT连接）
-                HashMap<String, MqttControl> mqttControllerHashMap = new HashMap<>(1);
+                HashMap<String, MqttControl> mqttControllerHashMap = new HashMap<>();
                 // 将灯和窗帘等设备的MQTT控制类存放到一个静态集合中
                 // LightControl和CurtainControl都是继承于MqttControl类
                 mqttControllerHashMap.put("light", new LightControl(MainActivity.this, "Light.json", "ZJIJA6UHXP", "light", "L6yOvzW0qCbHG8pr0iKGYA=="));
