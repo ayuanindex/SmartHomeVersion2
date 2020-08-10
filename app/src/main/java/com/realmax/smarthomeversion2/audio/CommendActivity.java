@@ -54,6 +54,7 @@ public class CommendActivity extends BaseActivity {
     private ImageView ivVoice;
     private boolean isVoice = true;
     private VoiceToMessage voiceToMessage;
+    private boolean isStart = true;
 
     @Override
     protected int getLayout() {
@@ -71,7 +72,20 @@ public class CommendActivity extends BaseActivity {
     @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void initEvent() {
-        ivVoice.setOnTouchListener((View v, MotionEvent event) -> {
+
+        ivVoice.setOnClickListener((View v) -> {
+            if (isStart) {
+                isStart = false;
+                etMessage.setHint("正在聆听,可点击取消");
+                voiceToMessage.startVoice();
+            } else {
+                isStart = true;
+                etMessage.setHint("点击说话");
+                voiceToMessage.stopVoice();
+            }
+        });
+
+        /*ivVoice.setOnTouchListener((View v, MotionEvent event) -> {
             if (isVoice) {
                 switch (event.getActionMasked()) {
                     case MotionEvent.ACTION_DOWN:
@@ -81,7 +95,7 @@ public class CommendActivity extends BaseActivity {
                         break;
                     case MotionEvent.ACTION_UP:
                         etMessage.setText("");
-                        /*voiceToMessage.cancelVoice();*/
+                        *//*voiceToMessage.cancelVoice();*//*
                         voiceToMessage.stopVoice();
                         etMessage.setHint("长按说话");
                         L.e("手指抬起");
@@ -98,7 +112,7 @@ public class CommendActivity extends BaseActivity {
                 etMessage.setHint("长按说话");
             }
             return true;
-        });
+        });*/
 
         etMessage.setOnTouchListener((View v, MotionEvent event) -> {
             isVoice = false;
@@ -143,7 +157,9 @@ public class CommendActivity extends BaseActivity {
                         etMessage.setText(str);
                         updateList();
                         etMessage.setText("");
-                        etMessage.setHint("长按说话");
+                        etMessage.setHint("点击说话");
+                        isStart = true;
+                        voiceToMessage.stopVoice();
                     });
                     voiceToMessage.stopVoice();
                 }

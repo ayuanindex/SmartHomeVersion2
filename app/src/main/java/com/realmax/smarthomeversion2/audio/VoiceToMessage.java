@@ -22,6 +22,7 @@ import com.tencent.aai.model.type.EngineModelType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ConcurrentModificationException;
 import java.util.LinkedHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -150,69 +151,73 @@ public class VoiceToMessage {
      * 开始录音
      */
     void startVoice() {
-        AudioRecognizeRequest.Builder builder = new AudioRecognizeRequest.Builder();
+        try {
+            AudioRecognizeRequest.Builder builder = new AudioRecognizeRequest.Builder();
 
-        // 初始化识别请求
-        audioRecognizeRequest = builder
-                // 设置数据源
-                .pcmAudioDataSource(new AudioRecordDataSource())
-                // 设置模板
-                /*.templateName("customer")*/
-                // 设置自定义模板
-                .template(new AudioRecognizeTemplate(EngineModelType.EngineModelType16K, 0, 0))
-                .build();
+            // 初始化识别请求
+            audioRecognizeRequest = builder
+                    // 设置数据源
+                    .pcmAudioDataSource(new AudioRecordDataSource())
+                    // 设置模板
+                    /*.templateName("customer")*/
+                    // 设置自定义模板
+                    .template(new AudioRecognizeTemplate(EngineModelType.EngineModelType16K, 0, 0))
+                    .build();
 
-        // 自定义识别配置
-        audioRecognizeConfiguration = new AudioRecognizeConfiguration.Builder()
-                // 是否使能起点超时停止录音
-                .enableAudioStartTimeout(true)
-                // 是否使能终点超时停止录音
-                .enableAudioEndTimeout(true)
-                // 是否使能静音检测，true表示不检查静音部分
-                .enableSilentDetect(true)
-                // 语音流识别时的间隔时间
-                .minAudioFlowSilenceTime(1000)
-                // 语音终点超时时间
-                .maxAudioFlowSilenceTime(10000)
-                // 语音起点超时时间
-                .maxAudioStartSilenceTime(10000)
-                // 音量回调时间
-                .minVolumeCallbackTime(80)
-                .sensitive(3)
-                .build();
+            // 自定义识别配置
+            audioRecognizeConfiguration = new AudioRecognizeConfiguration.Builder()
+                    // 是否使能起点超时停止录音
+                    .enableAudioStartTimeout(true)
+                    // 是否使能终点超时停止录音
+                    .enableAudioEndTimeout(true)
+                    // 是否使能静音检测，true表示不检查静音部分
+                    .enableSilentDetect(true)
+                    // 语音流识别时的间隔时间
+                    .minAudioFlowSilenceTime(1000)
+                    // 语音终点超时时间
+                    .maxAudioFlowSilenceTime(10000)
+                    // 语音起点超时时间
+                    .maxAudioStartSilenceTime(10000)
+                    // 音量回调时间
+                    .minVolumeCallbackTime(80)
+                    .sensitive(3)
+                    .build();
 
-        if (aaiClient == null) {
-            try {
-                aaiClient = new AAIClient(context, appId, projectId, secretId, credentialProvider);
-            } catch (ClientException e) {
-                e.printStackTrace();
-                AAILogger.info(logger, e.toString());
+            if (aaiClient == null) {
+                try {
+                    aaiClient = new AAIClient(context, appId, projectId, secretId, credentialProvider);
+                } catch (ClientException e) {
+                    e.printStackTrace();
+                    AAILogger.info(logger, e.toString());
+                }
             }
+
+            threadPoolExecutor.execute(() -> {
+                if (audioRecognizeResultlistener == null) {
+                    Log.d(TAG, "startVoice: 请设置audioRecognizeResultListener监听");
+                    return;
+                }
+
+                if (audioRecognizeStateListener == null) {
+                    Log.d(TAG, "startVoice: 请设置audioRecognizeStateListener监听");
+                }
+
+                if (audioRecognizeTimeoutListener == null) {
+                    Log.d(TAG, "startVoice: 请设置audioRecognizeTimeoutListener监听");
+                }
+
+                if (audioRecognizeStateListener != null && audioRecognizeTimeoutListener != null) {
+                    aaiClient.startAudioRecognize(
+                            audioRecognizeRequest,
+                            audioRecognizeResultlistener,
+                            audioRecognizeStateListener,
+                            audioRecognizeTimeoutListener,
+                            audioRecognizeConfiguration);
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-
-        threadPoolExecutor.execute(() -> {
-            if (audioRecognizeResultlistener == null) {
-                Log.d(TAG, "startVoice: 请设置audioRecognizeResultListener监听");
-                return;
-            }
-
-            if (audioRecognizeStateListener == null) {
-                Log.d(TAG, "startVoice: 请设置audioRecognizeStateListener监听");
-            }
-
-            if (audioRecognizeTimeoutListener == null) {
-                Log.d(TAG, "startVoice: 请设置audioRecognizeTimeoutListener监听");
-            }
-
-            if (audioRecognizeStateListener != null && audioRecognizeTimeoutListener != null) {
-                aaiClient.startAudioRecognize(
-                        audioRecognizeRequest,
-                        audioRecognizeResultlistener,
-                        audioRecognizeStateListener,
-                        audioRecognizeTimeoutListener,
-                        audioRecognizeConfiguration);
-            }
-        });
     }
 
     /**
@@ -232,7 +237,7 @@ public class VoiceToMessage {
                     Log.d(TAG, "run: 识别状态：不存在该任务，无法停止");
                 }
             });
-        } catch (Exception e) {
+        } catch (ConcurrentModificationException e) {
             e.printStackTrace();
         }
     }
