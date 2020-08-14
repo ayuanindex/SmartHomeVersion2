@@ -312,8 +312,11 @@ public class CommendActivity extends BaseActivity {
             try {
                 SpeechMessage.getInstance()
                         .initLongTextTtsController(1301676932, "AKIDYqrzrcNJHyjEagH3M4WbRWLsCJNBB3D8", "mIXEfKjz0sVstdQ2VjhPqAMSIwgCTSAc")
-                        .start(msg, (s, i) -> {
-                            Log.d(TAG, "run: :::::::::" + s);
+                        .start(msg, new SpeechMessage.ResultData() {
+                            @Override
+                            public void progress(String s, int i) {
+                                Log.d(TAG, "run: :::::::::" + s);
+                            }
                         });
             } catch (Exception e) {
                 e.printStackTrace();
@@ -471,11 +474,11 @@ public class CommendActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (voiceToMessage != null) {
+        /*if (voiceToMessage != null) {
             voiceToMessage.cancelVoice();
             voiceToMessage.stopVoice();
             voiceToMessage.close();
-        }
+        }*/
     }
 
     @Override

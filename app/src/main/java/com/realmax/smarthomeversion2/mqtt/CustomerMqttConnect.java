@@ -110,8 +110,6 @@ public class CustomerMqttConnect {
             txDataTemplateClient.subscribe("$thing/down/event/" + mProductId + "/" + mDevName, 0, context);
             txDataTemplateClient.subscribe("$thing/up/action/" + mProductId + "/" + mDevName, 0, context);
             txDataTemplateClient.subscribe("$thing/down/action/" + mProductId + "/" + mDevName, 0, context);
-            txDataTemplateClient.subscribe("$thing/up/property/" + mProductId + "/" + mDevName, 0, context);
-            txDataTemplateClient.subscribe("$thing/up/property/" + mProductId + "/" + mDevName, 0, context);
         }
     }
 
