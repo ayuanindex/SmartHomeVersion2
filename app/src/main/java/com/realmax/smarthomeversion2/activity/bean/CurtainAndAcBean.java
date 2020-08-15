@@ -1,31 +1,36 @@
 package com.realmax.smarthomeversion2.activity.bean;
 
+import androidx.annotation.NonNull;
+
 import java.util.List;
 
 public class CurtainAndAcBean {
 
     /**
-     * curtain_S : [0,0,0,0,0,0,0,0,0,0,0]
+     * curtain_C : [0,0,0,0,0,0,0,0,0,0,0]
+     * curtain_S : [0,0,0,0,0,0,0,0,0,0,0],
      * ac_S : {"acPower":0,"mode":0,"windSpeed":5,"temperature":19,"currentTemperature":20}
      */
 
     private AcSBean ac_S;
     private List<Integer> curtain_S;
+    private List<Integer> curtain_C;
 
     public CurtainAndAcBean() {
 
     }
 
-    public CurtainAndAcBean(List<Integer> curtain_S) {
-        this.curtain_S = curtain_S;
+    public CurtainAndAcBean(List<Integer> curtain_C) {
+        this.curtain_C = curtain_C;
     }
 
     public CurtainAndAcBean(AcSBean ac_S) {
         this.ac_S = ac_S;
     }
 
-    public CurtainAndAcBean(AcSBean ac_S, List<Integer> curtain_S) {
+    public CurtainAndAcBean(AcSBean ac_S, List<Integer> curtain_S, List<Integer> curtain_C) {
         this.ac_S = ac_S;
+        this.curtain_C = curtain_C;
         this.curtain_S = curtain_S;
     }
 
@@ -36,6 +41,14 @@ public class CurtainAndAcBean {
 
     public void setAc_S(AcSBean ac_S) {
         this.ac_S = ac_S;
+    }
+
+    public List<Integer> getCurtain_C() {
+        return curtain_C;
+    }
+
+    public void setCurtain_C(List<Integer> curtain_C) {
+        this.curtain_C = curtain_C;
     }
 
     public List<Integer> getCurtain_S() {
@@ -101,6 +114,7 @@ public class CurtainAndAcBean {
             this.currentTemperature = currentTemperature;
         }
 
+        @NonNull
         @Override
         public String toString() {
             return "AcSBean{" +
@@ -113,11 +127,13 @@ public class CurtainAndAcBean {
         }
     }
 
+    @NonNull
     @Override
     public String toString() {
         return "CurtainAndAcBean{" +
                 "ac_S=" + ac_S +
                 ", curtain_S=" + curtain_S +
+                ", curtain_C=" + curtain_C +
                 '}';
     }
 }

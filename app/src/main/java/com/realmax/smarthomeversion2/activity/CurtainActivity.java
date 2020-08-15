@@ -44,10 +44,11 @@ public class CurtainActivity extends BaseActivity {
     private CustomerAdapter customerAdapter;
     private String tag = "control_02";
     private ArrayList<Integer> currentCurtainStatus;
+    private ArrayList<Integer> currentCurtainSwitchStatus;
     /**
      * 当前位置
      */
-    private int currentPosition;
+    private int currentPosition = 0;
     public static ArrayList<RoomBean> roomBeans;
     private CurtainAndAcBean curtainAndAcBean;
 
@@ -92,9 +93,10 @@ public class CurtainActivity extends BaseActivity {
     protected void initData() {
         currentPosition = 0;
 
-        curtainAndAcBean = new CurtainAndAcBean(new ArrayList<>());
+        curtainAndAcBean = new CurtainAndAcBean(new CurtainAndAcBean.AcSBean(), new ArrayList<>(), new ArrayList<>());
 
         currentCurtainStatus = new ArrayList<>();
+        currentCurtainSwitchStatus = new ArrayList<>();
 
         // 初始化列表
         customerAdapter = new CustomerAdapter();
@@ -120,21 +122,23 @@ public class CurtainActivity extends BaseActivity {
                             JSONObject jsonObject = new JSONObject(msg);
                             String curtainS = "curtain_S";
                             if (jsonObject.has(curtainS)) {
-                                curtainAndAcBean = new Gson().fromJson(msg, CurtainAndAcBean.class);
+                                CurtainAndAcBean bean = new Gson().fromJson(msg, CurtainAndAcBean.class);
+                                if (!bean.getCurtain_C().equals(curtainAndAcBean.getCurtain_C()) || !bean.getAc_S().equals(curtainAndAcBean.getAc_S())) {
+                                    curtainAndAcBean = bean;
 
-                                // 获取到数据刷新列表
-                                uiHandler.post(() -> {
-                                    currentCurtainStatus.clear();
-                                    for (int i : roomBeans.get(currentPosition).getModel()) {
-                                        currentCurtainStatus.add(curtainAndAcBean.getCurtain_S().get(i - 1));
-                                       /* if (i - 1 < curtainAndAcBean.getCurtain_S().size()) {
-                                            L.e("i:" + i);
-                                            // 现实中指定客厅的灯
-                                            currentCurtainStatus.add(curtainAndAcBean.getCurtain_S().get(i - 1));
-                                        }*/
-                                    }
-                                    customerAdapter.notifyDataSetChanged();
-                                });
+                                    L.e(curtainAndAcBean.toString());
+
+                                    // 获取到数据刷新列表
+                                    uiHandler.post(() -> {
+                                        currentCurtainStatus.clear();
+                                        currentCurtainSwitchStatus.clear();
+                                        for (int i : roomBeans.get(currentPosition).getModel()) {
+                                            currentCurtainStatus.add(CurtainActivity.this.curtainAndAcBean.getCurtain_S().get(i - 1));
+                                            currentCurtainSwitchStatus.add(CurtainActivity.this.curtainAndAcBean.getCurtain_C().get(i - 1));
+                                        }
+                                        customerAdapter.notifyDataSetChanged();
+                                    });
+                                }
                             }
                         }
                     } catch (JSONException e) {
@@ -161,12 +165,14 @@ public class CurtainActivity extends BaseActivity {
             case 0:
                 if (currentPosition > 0) {
                     currentCurtainStatus.clear();
+                    currentCurtainSwitchStatus.clear();
                     currentPosition--;
                     int[] curtailId = roomBeans.get(currentPosition).getModel();
                     for (int i : curtailId) {
                         L.e("" + i);
                         if (i - 1 < curtainAndAcBean.getCurtain_S().size()) {
                             currentCurtainStatus.add(curtainAndAcBean.getCurtain_S().get(i - 1));
+                            currentCurtainSwitchStatus.add(curtainAndAcBean.getCurtain_C().get(i - 1));
                         }
                     }
                 }
@@ -174,12 +180,14 @@ public class CurtainActivity extends BaseActivity {
             case 1:
                 if (currentPosition < roomBeans.size() - 1) {
                     currentCurtainStatus.clear();
+                    currentCurtainSwitchStatus.clear();
                     currentPosition++;
                     int[] curtailId = roomBeans.get(currentPosition).getModel();
                     for (int i : curtailId) {
                         L.e("" + i);
                         if (i - 1 < curtainAndAcBean.getCurtain_S().size()) {
                             currentCurtainStatus.add(curtainAndAcBean.getCurtain_S().get(i - 1));
+                            currentCurtainSwitchStatus.add(curtainAndAcBean.getCurtain_C().get(i - 1));
                         }
                     }
                 }
@@ -204,12 +212,12 @@ public class CurtainActivity extends BaseActivity {
 
         @Override
         public int getCount() {
-            return currentCurtainStatus.size();
+            return currentCurtainSwitchStatus.size();
         }
 
         @Override
         public Integer getItem(int position) {
-            return currentCurtainStatus.get(position);
+            return currentCurtainSwitchStatus.get(position);
         }
 
         @Override
@@ -244,7 +252,7 @@ public class CurtainActivity extends BaseActivity {
                     curtainControl.publish(property);
                 }
 
-                ArrayList<Integer> curtainC = new ArrayList<>(curtainAndAcBean.getCurtain_S());
+                ArrayList<Integer> curtainC = new ArrayList<>(curtainAndAcBean.getCurtain_C());
                 curtainC.set(model[position] - 1, getItem(position) == OPEN ? CLOSE : OPEN);
                 CurtainAndAcBean curtainAndAcBean = new CurtainAndAcBean(curtainC);
                 ValueUtil.sendCurtainOpenOrCloseCmd(curtainAndAcBean, tag);
@@ -252,12 +260,12 @@ public class CurtainActivity extends BaseActivity {
             });
 
             if (getItem(position) == 1) {
-                cbCheck.setChecked(true);
                 swToggle.setChecked(true);
             } else {
-                cbCheck.setChecked(false);
                 swToggle.setChecked(false);
             }
+
+            cbCheck.setChecked(currentCurtainStatus.get(position) == 1);
             return view;
         }
 

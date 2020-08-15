@@ -152,7 +152,7 @@ public class ValueUtil {
             ChannelHandlerContext handlerContext = customerHandler.getHandlerContext();
             if (handlerContext != null) {
                 HashMap<String, List<Integer>> hashMap = new HashMap<>(2);
-                hashMap.put("curtain_C", curtainAndAcBean.getCurtain_S());
+                hashMap.put("curtain_C", curtainAndAcBean.getCurtain_C());
                 JSONObject jsonObject = new JSONObject(hashMap);
                 String s = jsonObject.toString();
                 sendCmdInFor(() -> {
@@ -174,7 +174,7 @@ public class ValueUtil {
     private static void sendCmdInFor(Loop loop) {
         CustomerThread.poolExecutor.execute(() -> {
             int i = 0;
-            while (i < 3) {
+            while (i < 1) {
                 loop.loopCmd();
                 SystemClock.sleep(200);
                 i++;
