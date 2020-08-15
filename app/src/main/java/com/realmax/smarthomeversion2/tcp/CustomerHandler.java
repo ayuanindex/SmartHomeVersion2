@@ -5,8 +5,6 @@ import com.google.gson.JsonSyntaxException;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import io.netty.channel.ChannelHandlerContext;
-
 public class CustomerHandler extends BaseNettyHandler {
     private static final String TAG = "CustomerHandlerBase";
     private boolean flag = false;

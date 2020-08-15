@@ -18,8 +18,6 @@ import com.realmax.smarthomeversion2.activity.bean.LightBean;
 import com.realmax.smarthomeversion2.activity.bean.RoomBean;
 import com.realmax.smarthomeversion2.bean.LinkBean;
 import com.realmax.smarthomeversion2.bean.MessageBean;
-import com.realmax.smarthomeversion2.tcp.BaseNettyHandler;
-import com.realmax.smarthomeversion2.tcp.CustomerHandler;
 import com.realmax.smarthomeversion2.tencentCloud.bean.InterlocutionBean;
 import com.realmax.smarthomeversion2.util.CustomerThread;
 import com.realmax.smarthomeversion2.util.L;

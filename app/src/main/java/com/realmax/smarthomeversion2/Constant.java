@@ -1,7 +1,5 @@
 package com.realmax.smarthomeversion2;
 
-import android.os.Build;
-
 import com.realmax.smarthomeversion2.bean.LinkBean;
 
 import java.util.ArrayList;

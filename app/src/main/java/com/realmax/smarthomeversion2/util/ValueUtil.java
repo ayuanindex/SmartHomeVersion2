@@ -2,13 +2,11 @@ package com.realmax.smarthomeversion2.util;
 
 import android.os.Build;
 import android.os.SystemClock;
-import android.util.Log;
 
 import com.realmax.smarthomeversion2.Constant;
 import com.realmax.smarthomeversion2.activity.bean.AcAndTvAndMusicBean;
 import com.realmax.smarthomeversion2.activity.bean.CurtainAndAcBean;
 import com.realmax.smarthomeversion2.activity.bean.LightBean;
-import com.realmax.smarthomeversion2.bean.LinkBean;
 import com.realmax.smarthomeversion2.mqtt.MqttControl;
 import com.realmax.smarthomeversion2.tcp.BaseNettyHandler;
 
@@ -17,13 +15,9 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Objects;
-import java.util.logging.Logger;
 
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
-
-import static com.realmax.smarthomeversion2.util.L.TAG;
 
 /**
  * @author ayuan

@@ -5,8 +5,6 @@ import android.app.Application;
 import android.content.Context;
 import android.widget.Toast;
 
-import com.realmax.smarthomeversion2.audio.AudioControl;
-
 public class App extends Application {
 
     private static Context context;

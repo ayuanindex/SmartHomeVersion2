@@ -3,17 +3,12 @@ package com.realmax.smarthomeversion2.tcp;
 
 import android.util.Log;
 
-import com.tencentcloudapi.vpc.v20170312.models.CreateAndAttachNetworkInterfaceRequest;
-import com.tencentcloudapi.yunjing.v20180228.models.SetBashEventsStatusRequest;
-
 import java.nio.charset.StandardCharsets;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelPromise;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.SimpleChannelInboundHandler;
-import io.netty.channel.nio.NioEventLoop;
 
 /**
  * @author ayuan

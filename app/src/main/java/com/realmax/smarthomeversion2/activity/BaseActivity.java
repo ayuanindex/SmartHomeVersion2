@@ -14,8 +14,6 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.realmax.smarthomeversion2.bean.RoomBean;
-import com.realmax.smarthomeversion2.tcp.CustomerHandler;
-import com.realmax.smarthomeversion2.util.ValueUtil;
 
 import java.util.ArrayList;
 import java.util.LinkedList;

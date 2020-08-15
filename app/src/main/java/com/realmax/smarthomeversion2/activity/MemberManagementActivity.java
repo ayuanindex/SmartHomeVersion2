@@ -29,7 +29,6 @@ import com.realmax.smarthomeversion2.util.CameraUtil;
 import com.realmax.smarthomeversion2.util.L;
 
 import java.io.IOException;
-import java.io.InterruptedIOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
