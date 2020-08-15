@@ -9,12 +9,12 @@ import com.google.gson.JsonSyntaxException;
 import com.qcloud.iot_explorer.common.Status;
 import com.qcloud.iot_explorer.data_template.TXDataTemplateDownStreamCallBack;
 import com.qcloud.iot_explorer.mqtt.TXMqttActionCallBack;
+import com.realmax.smarthomeversion2.Constant;
 import com.realmax.smarthomeversion2.activity.bean.LightBean;
-import com.realmax.smarthomeversion2.tcp.CustomerHandlerBase;
+import com.realmax.smarthomeversion2.bean.LinkBean;
 import com.realmax.smarthomeversion2.util.CustomerThread;
 import com.realmax.smarthomeversion2.util.ValueUtil;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
@@ -121,7 +121,7 @@ public class LightControl extends MqttControl {
             @Override
             public void run() {
                 try {
-                    CustomerHandlerBase customerHandlerBase = ValueUtil.getHandlerHashMap().get(tag);
+                    LinkBean customerHandlerBase = Constant.getLinkBeanByTag(tag);
                     if (customerHandlerBase != null) {
                         if (!customerHandlerBase.getCurrentCommand().equals(LightControl.this.currentCommand)) {
                             LightControl.this.currentCommand = customerHandlerBase.getCurrentCommand();
@@ -152,7 +152,7 @@ public class LightControl extends MqttControl {
     private void executeInstruction(JSONObject data) {
         CustomerThread.poolExecutor.execute(() -> {
             // 获取到制定控制器的连接
-            CustomerHandlerBase light = ValueUtil.getHandlerHashMap().get(tag);
+            LinkBean light = Constant.getLinkBeanByTag(tag);
             if (light != null) {
                 // 获取最近一次灯的状态
                 String currentCommand = light.getCurrentCommand();

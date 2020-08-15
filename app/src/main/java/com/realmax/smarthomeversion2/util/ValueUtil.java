@@ -2,50 +2,36 @@ package com.realmax.smarthomeversion2.util;
 
 import android.os.Build;
 import android.os.SystemClock;
+import android.util.Log;
 
+import com.realmax.smarthomeversion2.Constant;
 import com.realmax.smarthomeversion2.activity.bean.AcAndTvAndMusicBean;
 import com.realmax.smarthomeversion2.activity.bean.CurtainAndAcBean;
 import com.realmax.smarthomeversion2.activity.bean.LightBean;
+import com.realmax.smarthomeversion2.bean.LinkBean;
 import com.realmax.smarthomeversion2.mqtt.MqttControl;
-import com.realmax.smarthomeversion2.tcp.CustomerHandlerBase;
+import com.realmax.smarthomeversion2.tcp.BaseNettyHandler;
 
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
+import java.util.logging.Logger;
 
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.EventLoopGroup;
+
+import static com.realmax.smarthomeversion2.util.L.TAG;
 
 /**
  * @author ayuan
  */
 public class ValueUtil {
 
-    /**
-     * Netty的回调监听集合
-     */
-    private static HashMap<String, CustomerHandlerBase> handlerHashMap = new HashMap<>();
-
-    /**
-     * 连接状态的集合
-     */
-    private static HashMap<String, Boolean> isConnected = new HashMap<>();
-
-    private static HashMap<String, EventLoopGroup> eventLoopGroupHashMap = new HashMap<>();
-
     private static HashMap<String, MqttControl> mqttControlHashMap;
-    private static int maxSend = 10;
-
-    public static HashMap<String, CustomerHandlerBase> getHandlerHashMap() {
-        return handlerHashMap;
-    }
-
-    public static HashMap<String, Boolean> getIsConnected() {
-        return isConnected;
-    }
+    private static int maxSend = 3;
 
     public static HashMap<String, MqttControl> getMqttControlHashMap() {
         return mqttControlHashMap;
@@ -84,9 +70,6 @@ public class ValueUtil {
         }
     }
 
-    public static HashMap<String, EventLoopGroup> getEventLoopGroupHashMap() {
-        return eventLoopGroupHashMap;
-    }
 
     /**
      * 发送获取摄像头摄像数据的指令
@@ -97,16 +80,14 @@ public class ValueUtil {
      * @param tag      标签
      */
     public static void sendCameraCmd(int deviceId, float angleA, float angleB, String tag) {
-        CustomerHandlerBase customerHandler = getHandlerHashMap().get(tag);
-        if (customerHandler != null) {
-            ChannelHandlerContext handlerContext = customerHandler.getHandlerContext();
-            if (handlerContext != null) {
-                String command = "{\"cmd\": \"start\", \"deviceId\": " + deviceId + ", \"angleA\": " + angleA + ", \"angleB\": " + angleB + "}";
-                /*String command = "{\"cmd\": \"start\", \"deviceType\": \"十字交叉路口\", \"deviceId\": 1, \"cameraNum\": 1}";*/
-                for (int i = 0; i < maxSend; i++) {
-                    handlerContext.writeAndFlush(Unpooled.copiedBuffer(option(EncodeAndDecode.getStrUnicode(command), (byte) 0x82)));
-                }
-            }
+        try {
+            BaseNettyHandler baseNettyHandler = Constant.getLinkBeanByTag(tag).getBaseNettyHandler();
+            ChannelHandlerContext handlerContext = baseNettyHandler.getHandlerContext();
+            String command = "{\"cmd\": \"start\", \"deviceId\": " + deviceId + ", \"angleA\": " + angleA + ", \"angleB\": " + angleB + "}";
+            handlerContext.writeAndFlush(Unpooled.copiedBuffer(option(EncodeAndDecode.getStrUnicode(command), (byte) 0x82)));
+        } catch (Exception e) {
+            e.printStackTrace();
+            L.e(tag, "连接有问题，发送数据失败");
         }
     }
 
@@ -117,26 +98,26 @@ public class ValueUtil {
      * @param tag       标签
      */
     public static void sendLightOpenOrCloseCmd(LightBean lightBean, String tag) {
-        // 拿到消息发送所需要的handlerContext
-        CustomerHandlerBase customerHandler = getHandlerHashMap().get(tag);
-        if (customerHandler != null) {
-            ChannelHandlerContext handlerContext = customerHandler.getHandlerContext();
-            if (handlerContext != null) {
-                // 包装一个json数据
-                HashMap<String, List<Integer>> hashMap = new HashMap<>(1);
-                hashMap.put("lightList_C", lightBean.getLightList_S());
-                JSONObject jsonObject = new JSONObject(hashMap);
-                String s = jsonObject.toString();
-                // 定时发送指令
-                sendCmdInFor(() -> {
-                    // 通过Nett框架进行发送
+        try {
+            // 拿到消息发送所需要的handlerContext
+            BaseNettyHandler baseNettyHandler = Constant.getLinkBeanByTag(tag).getBaseNettyHandler();
+            ChannelHandlerContext handlerContext = baseNettyHandler.getHandlerContext();
+            // 包装一个json数据
+            HashMap<String, List<Integer>> hashMap = new HashMap<>(1);
+            hashMap.put("lightList_C", lightBean.getLightList_S());
+            JSONObject jsonObject = new JSONObject(hashMap);
+            String s = jsonObject.toString();
+            // 定时发送指令
+            sendCmdInFor(() -> {
+                // 通过Nett框架进行发送
+                if (handlerContext != null) {
                     handlerContext.writeAndFlush(Unpooled.copiedBuffer(EncodeAndDecode.getStrUnicode(s).getBytes()));
                     L.e("发送的数据-------------" + s);
-                });
-                /*for (int i = 0; i < maxSend; i++) {
-                    handlerContext.writeAndFlush(Unpooled.copiedBuffer(EncodeAndDecode.getStrUnicode(s).getBytes()));
-                }*/
-            }
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+            L.e(tag, "连接有问题，发送数据失败");
         }
     }
 
@@ -147,22 +128,22 @@ public class ValueUtil {
      * @param tag              识别标签
      */
     public static void sendCurtainOpenOrCloseCmd(CurtainAndAcBean curtainAndAcBean, String tag) {
-        CustomerHandlerBase customerHandler = getHandlerHashMap().get(tag);
-        if (customerHandler != null) {
-            ChannelHandlerContext handlerContext = customerHandler.getHandlerContext();
-            if (handlerContext != null) {
-                HashMap<String, List<Integer>> hashMap = new HashMap<>(2);
-                hashMap.put("curtain_C", curtainAndAcBean.getCurtain_C());
-                JSONObject jsonObject = new JSONObject(hashMap);
-                String s = jsonObject.toString();
-                sendCmdInFor(() -> {
+        try {
+            BaseNettyHandler baseNettyHandler = Constant.getLinkBeanByTag(tag).getBaseNettyHandler();
+            ChannelHandlerContext handlerContext = baseNettyHandler.getHandlerContext();
+            HashMap<String, List<Integer>> hashMap = new HashMap<>(2);
+            hashMap.put("curtain_C", curtainAndAcBean.getCurtain_C());
+            JSONObject jsonObject = new JSONObject(hashMap);
+            String s = jsonObject.toString();
+            sendCmdInFor(() -> {
+                if (handlerContext != null) {
+                    handlerContext.writeAndFlush(Unpooled.copiedBuffer(EncodeAndDecode.getStrUnicode(s).getBytes()));
                     L.e(s);
-                    handlerContext.writeAndFlush(Unpooled.copiedBuffer(EncodeAndDecode.getStrUnicode(s).getBytes()));
-                });
-                /*for (int i = 0; i < maxSend + 10; i++) {
-                    handlerContext.writeAndFlush(Unpooled.copiedBuffer(EncodeAndDecode.getStrUnicode(s).getBytes()));
-                }*/
-            }
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+            L.e(tag, "连接有问题，发送数据失败");
         }
     }
 
@@ -174,7 +155,7 @@ public class ValueUtil {
     private static void sendCmdInFor(Loop loop) {
         CustomerThread.poolExecutor.execute(() -> {
             int i = 0;
-            while (i < 1) {
+            while (i < maxSend) {
                 loop.loopCmd();
                 SystemClock.sleep(200);
                 i++;
@@ -198,57 +179,52 @@ public class ValueUtil {
      * @param tag      标签
      */
     public static void sendDoorCmd(int door, int key, int password, String tag) {
-        CustomerHandlerBase customerHandler = getHandlerHashMap().get(tag);
-        if (customerHandler != null) {
-            ChannelHandlerContext handlerContext = customerHandler.getHandlerContext();
-            if (handlerContext != null) {
-                HashMap<String, Object> parentMap = new HashMap<>(1);
-                ArrayList<Object> value = new ArrayList<>();
-                HashMap<Object, Object> hashMap = new HashMap<>();
-                value.add(hashMap);
-                if (door != -1) {
-                    hashMap.put("doorSwitch", door);
-                }
-                if (key != -1) {
-                    hashMap.put("doorLock", key);
-                }
-                if (password != -1) {
-                    hashMap.put("setPassword", password);
-                }
-                parentMap.put("doors_C", value);
-                JSONObject jsonObject = new JSONObject(parentMap);
-                String s = jsonObject.toString();
-                L.e("msg:" + s);
-                for (int i = 0; i < maxSend; i++) {
-                    handlerContext.writeAndFlush(Unpooled.copiedBuffer(EncodeAndDecode.getStrUnicode(s).getBytes()));
-                }
+        try {
+            BaseNettyHandler baseNettyHandler = Constant.getLinkBeanByTag(tag).getBaseNettyHandler();
+            ChannelHandlerContext handlerContext = baseNettyHandler.getHandlerContext();
+            HashMap<String, Object> parentMap = new HashMap<>(1);
+            ArrayList<Object> value = new ArrayList<>();
+            HashMap<Object, Object> hashMap = new HashMap<>();
+            value.add(hashMap);
+            if (door != -1) {
+                hashMap.put("doorSwitch", door);
             }
+            if (key != -1) {
+                hashMap.put("doorLock", key);
+            }
+            if (password != -1) {
+                hashMap.put("setPassword", password);
+            }
+            parentMap.put("doors_C", value);
+            JSONObject jsonObject = new JSONObject(parentMap);
+            String s = jsonObject.toString();
+            L.e("msg:" + s);
+            for (int i = 0; i < maxSend; i++) {
+                handlerContext.writeAndFlush(Unpooled.copiedBuffer(EncodeAndDecode.getStrUnicode(s).getBytes()));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            L.e(tag, "连接有问题，发送数据失败");
         }
-
     }
 
     /**
      * 发送停止获取摄像头拍摄信心的指令
+     *
+     * @param tag 标签
      */
-    public static void sendStopCmd() {
+    public static void sendStopCmd(String tag) {
         try {
-            CustomerHandlerBase customerHandler = getHandlerHashMap().get("camera");
-            if (customerHandler == null) {
-                return;
-            }
+            BaseNettyHandler baseNettyHandler = Constant.getLinkBeanByTag(tag).getBaseNettyHandler();
 
-            ChannelHandlerContext handlerContext = customerHandler.getHandlerContext();
-
-            if (handlerContext == null) {
-                return;
-            }
-
+            ChannelHandlerContext handlerContext = baseNettyHandler.getHandlerContext();
             String command = "{\"cmd\": \"stop\"}";
             for (int i = 0; i < maxSend; i++) {
                 handlerContext.writeAndFlush(Unpooled.copiedBuffer(option(EncodeAndDecode.getStrUnicode(command), (byte) 0x02)));
             }
         } catch (Exception e) {
             e.printStackTrace();
+            L.e(tag, "连接有问题，发送数据失败");
         }
     }
 
@@ -258,19 +234,16 @@ public class ValueUtil {
      * @param tag 标签
      */
     public static void sendWeatherCmd(String tag) {
-        CustomerHandlerBase customerHandler = getHandlerHashMap().get(tag);
-        if (customerHandler == null) {
-            return;
-        }
-
-        ChannelHandlerContext handlerContext = customerHandler.getHandlerContext();
-
-        if (handlerContext == null) {
-            return;
-        }
-        String command = "{\"cmd\": \"pull\"}";
-        for (int i = 0; i < maxSend; i++) {
-            handlerContext.writeAndFlush(Unpooled.copiedBuffer(option(EncodeAndDecode.getStrUnicode(command), (byte) 0x83)));
+        try {
+            BaseNettyHandler baseNettyHandler = Constant.getLinkBeanByTag(tag).getBaseNettyHandler();
+            ChannelHandlerContext handlerContext = baseNettyHandler.getHandlerContext();
+            String command = "{\"cmd\": \"pull\"}";
+            for (int i = 0; i < maxSend; i++) {
+                handlerContext.writeAndFlush(Unpooled.copiedBuffer(option(EncodeAndDecode.getStrUnicode(command), (byte) 0x83)));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            L.e(tag, "连接有问题，发送数据失败");
         }
     }
 
@@ -298,23 +271,24 @@ public class ValueUtil {
      * @param tag     标签
      */
     public static void sendTvCmd(int tvPower, int tvShow, int volume, String tag) {
-        CustomerHandlerBase customerHandlerBase = getHandlerHashMap().get(tag);
-        if (customerHandlerBase != null) {
-            ChannelHandlerContext handlerContext = customerHandlerBase.getHandlerContext();
-            if (handlerContext != null) {
-                HashMap<String, Object> parent = new HashMap<>();
-                HashMap<String, Object> value = new HashMap<>();
-                value.put("tvPower", tvPower);
-                value.put("tvShow", tvShow);
-                value.put("volume", volume);
-                parent.put("tv_C", value);
-                JSONObject jsonObject = new JSONObject(parent);
-                String s = jsonObject.toString();
-                L.e("需要发送的消息-----------" + s);
-                for (int i = 0; i < maxSend; i++) {
-                    handlerContext.writeAndFlush(Unpooled.copiedBuffer(EncodeAndDecode.getStrUnicode(s).getBytes()));
-                }
+        try {
+            BaseNettyHandler baseNettyHandler = Constant.getLinkBeanByTag(tag).getBaseNettyHandler();
+            ChannelHandlerContext handlerContext = baseNettyHandler.getHandlerContext();
+            HashMap<String, Object> parent = new HashMap<>();
+            HashMap<String, Object> value = new HashMap<>();
+            value.put("tvPower", tvPower);
+            value.put("tvShow", tvShow);
+            value.put("volume", volume);
+            parent.put("tv_C", value);
+            JSONObject jsonObject = new JSONObject(parent);
+            String s = jsonObject.toString();
+            L.e("需要发送的消息-----------" + s);
+            for (int i = 0; i < maxSend; i++) {
+                handlerContext.writeAndFlush(Unpooled.copiedBuffer(EncodeAndDecode.getStrUnicode(s).getBytes()));
             }
+        } catch (Exception e) {
+            e.printStackTrace();
+            L.e(tag, "连接有问题，发送数据失败");
         }
     }
 
@@ -325,28 +299,29 @@ public class ValueUtil {
      * @param tag  标签
      */
     public static void sendAcCmd(List<AcAndTvAndMusicBean.AcSBean> ac_s, String tag) {
-        CustomerHandlerBase customerHandlerBase = getHandlerHashMap().get(tag);
-        if (customerHandlerBase != null) {
-            ChannelHandlerContext handlerContext = customerHandlerBase.getHandlerContext();
-            if (handlerContext != null) {
-                HashMap<String, Object> parent = new HashMap<>();
-                ArrayList<HashMap<String, Object>> value = new ArrayList<>();
-                for (AcAndTvAndMusicBean.AcSBean ac_ : ac_s) {
-                    HashMap<String, Object> e = new HashMap<>();
-                    e.put("acPower", ac_.getAcPower());
-                    e.put("mode", ac_.getMode());
-                    e.put("windSpeed", ac_.getWindSpeed());
-                    e.put("temperature", ac_.getTemperature());
-                    value.add(e);
-                }
-                parent.put("ac_C", value);
-                JSONObject jsonObject = new JSONObject(parent);
-                String s = jsonObject.toString();
-                L.e("发送的数据------------" + s);
-                for (int i = 0; i < maxSend; i++) {
-                    handlerContext.writeAndFlush(Unpooled.copiedBuffer(EncodeAndDecode.getStrUnicode(s).getBytes()));
-                }
+        try {
+            BaseNettyHandler baseNettyHandler = Constant.getLinkBeanByTag(tag).getBaseNettyHandler();
+            ChannelHandlerContext handlerContext = baseNettyHandler.getHandlerContext();
+            HashMap<String, Object> parent = new HashMap<>();
+            ArrayList<HashMap<String, Object>> value = new ArrayList<>();
+            for (AcAndTvAndMusicBean.AcSBean ac_ : ac_s) {
+                HashMap<String, Object> e = new HashMap<>();
+                e.put("acPower", ac_.getAcPower());
+                e.put("mode", ac_.getMode());
+                e.put("windSpeed", ac_.getWindSpeed());
+                e.put("temperature", ac_.getTemperature());
+                value.add(e);
             }
+            parent.put("ac_C", value);
+            JSONObject jsonObject = new JSONObject(parent);
+            String s = jsonObject.toString();
+            L.e("发送的数据------------" + s);
+            for (int i = 0; i < maxSend; i++) {
+                handlerContext.writeAndFlush(Unpooled.copiedBuffer(EncodeAndDecode.getStrUnicode(s).getBytes()));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            L.e(tag, "连接有问题，发送数据失败");
         }
     }
 
@@ -360,25 +335,26 @@ public class ValueUtil {
      * @param tag         标签
      */
     public static void sendSingleAc(int acPower, int mode, int windSpeed, int temperature, String tag) {
-        CustomerHandlerBase customerHandlerBase = getHandlerHashMap().get(tag);
-        if (customerHandlerBase != null) {
-            ChannelHandlerContext handlerContext = customerHandlerBase.getHandlerContext();
-            if (handlerContext != null) {
-                HashMap<String, Object> ac_C_Value = new HashMap<>();
-                ac_C_Value.put("acPower", acPower);
-                ac_C_Value.put("mode", mode);
-                ac_C_Value.put("windSpeed", windSpeed);
-                ac_C_Value.put("temperature", temperature);
+        try {
+            BaseNettyHandler baseNettyHandler = Constant.getLinkBeanByTag(tag).getBaseNettyHandler();
+            ChannelHandlerContext handlerContext = baseNettyHandler.getHandlerContext();
+            HashMap<String, Object> ac_C_Value = new HashMap<>();
+            ac_C_Value.put("acPower", acPower);
+            ac_C_Value.put("mode", mode);
+            ac_C_Value.put("windSpeed", windSpeed);
+            ac_C_Value.put("temperature", temperature);
 
-                HashMap<String, Object> ac_C = new HashMap<>();
-                ac_C.put("ac_C", ac_C_Value);
-                JSONObject jsonObject = new JSONObject(ac_C);
-                String s = jsonObject.toString();
-                L.e("发送的数据----------" + s);
-                for (int i = 0; i < maxSend; i++) {
-                    handlerContext.writeAndFlush(Unpooled.copiedBuffer(EncodeAndDecode.getStrUnicode(s).getBytes()));
-                }
+            HashMap<String, Object> ac_C = new HashMap<>();
+            ac_C.put("ac_C", ac_C_Value);
+            JSONObject jsonObject = new JSONObject(ac_C);
+            String s = jsonObject.toString();
+            L.e("发送的数据----------" + s);
+            for (int i = 0; i < maxSend; i++) {
+                handlerContext.writeAndFlush(Unpooled.copiedBuffer(EncodeAndDecode.getStrUnicode(s).getBytes()));
             }
+        } catch (Exception e) {
+            e.printStackTrace();
+            L.e(tag, "连接有问题，发送数据失败");
         }
     }
 

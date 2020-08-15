@@ -15,13 +15,14 @@ import androidx.appcompat.widget.SwitchCompat;
 
 import com.google.gson.Gson;
 import com.realmax.smarthomeversion2.App;
+import com.realmax.smarthomeversion2.Constant;
 import com.realmax.smarthomeversion2.R;
 import com.realmax.smarthomeversion2.activity.bean.LightBean;
 import com.realmax.smarthomeversion2.activity.bean.RoomBean;
+import com.realmax.smarthomeversion2.bean.LinkBean;
 import com.realmax.smarthomeversion2.mqtt.LightControl;
 import com.realmax.smarthomeversion2.mqtt.MqttControl;
 import com.realmax.smarthomeversion2.tcp.CustomerCallback;
-import com.realmax.smarthomeversion2.tcp.CustomerHandlerBase;
 import com.realmax.smarthomeversion2.util.L;
 import com.realmax.smarthomeversion2.util.ValueUtil;
 
@@ -126,7 +127,7 @@ public class LightActivity extends BaseActivity {
         lvList.setAdapter(customerAdapter);
 
         // 设置TCP数据接受监听，拿到当前连接的Handler用于接受消息
-        CustomerHandlerBase customerHandler = getCustomerHandler(tag);
+        LinkBean customerHandler = Constant.getLinkBeanByTag(tag);
         if (customerHandler != null) {
             customerHandler.setCustomerCallback(new CustomerCallback() {
                 /**
@@ -136,9 +137,6 @@ public class LightActivity extends BaseActivity {
                 public void disConnected() {
                     uiHandler.post(() -> App.showToast("小灯断开连接"));
                     L.e("小灯断开连接");
-                    // 获取控制器连接状态集合，并将当前控制器的状态设置上去
-                    ValueUtil.getIsConnected().put(tag, false);
-                    ValueUtil.getHandlerHashMap().put(tag, null);
                 }
 
                 /**
@@ -155,18 +153,21 @@ public class LightActivity extends BaseActivity {
                             String lightS = "lightList_S";
                             if (jsonObject.has(lightS)) {
                                 // 将灯的状态填充到JavaBean中
-                                lightBean = new Gson().fromJson(msg, LightBean.class);
-                                // 获取到数据刷新列表
-                                uiHandler.post(() -> {
-                                    // 清空当前界面中显示的部分灯状态的集合
-                                    currentLightStatus.clear();
-                                    // 根据当前房间内的等来填充currentLightStatus集合，用于列表显示
-                                    for (int i : roomBeans.get(currentPosition).getModel()) {
-                                        // i 为灯的ID
-                                        currentLightStatus.add(lightBean.getLightList_S().get(i - 1));
-                                    }
-                                    customerAdapter.notifyDataSetChanged();
-                                });
+                                LightBean bean = new Gson().fromJson(msg, LightBean.class);
+                                if (!lightBean.getLightList_S().equals(bean.getLightList_S())) {
+                                    lightBean = bean;
+                                    // 获取到数据刷新列表
+                                    uiHandler.post(() -> {
+                                        // 清空当前界面中显示的部分灯状态的集合
+                                        currentLightStatus.clear();
+                                        // 根据当前房间内的等来填充currentLightStatus集合，用于列表显示
+                                        for (int i : roomBeans.get(currentPosition).getModel()) {
+                                            // i 为灯的ID
+                                            currentLightStatus.add(LightActivity.this.lightBean.getLightList_S().get(i - 1));
+                                        }
+                                        customerAdapter.notifyDataSetChanged();
+                                    });
+                                }
                             }
                         }
                     } catch (JSONException e) {

@@ -16,11 +16,14 @@ import androidx.annotation.RequiresApi;
 
 import com.google.gson.Gson;
 import com.realmax.smarthomeversion2.App;
+import com.realmax.smarthomeversion2.Constant;
 import com.realmax.smarthomeversion2.R;
 import com.realmax.smarthomeversion2.activity.bean.RoomBean;
 import com.realmax.smarthomeversion2.bean.CameraBodyBean;
+import com.realmax.smarthomeversion2.bean.LinkBean;
+import com.realmax.smarthomeversion2.tcp.BaseNettyHandler;
 import com.realmax.smarthomeversion2.tcp.CustomerCallback;
-import com.realmax.smarthomeversion2.tcp.CustomerHandlerBase;
+import com.realmax.smarthomeversion2.tcp.CustomerHandler;
 import com.realmax.smarthomeversion2.util.EncodeAndDecode;
 import com.realmax.smarthomeversion2.util.L;
 import com.realmax.smarthomeversion2.util.MoveCamera;
@@ -30,6 +33,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 /**
  * @author ayuan
@@ -147,13 +151,11 @@ public class CameraActivity extends BaseActivity {
         }
 
         // 获取Netty的Hander
-        CustomerHandlerBase customerHandler = getCustomerHandler(tag);
+        CustomerHandler customerHandler = (CustomerHandler) Constant.getLinkBeanByTag(tag).getBaseNettyHandler();
         if (customerHandler != null) {
-            customerHandler.setCustomerCallback(new CustomerCallback() {
+            customerHandler.setCallback(new CustomerCallback() {
                 @Override
                 public void disConnected() {
-                    ValueUtil.getIsConnected().put(tag, false);
-                    ValueUtil.getHandlerHashMap().put(tag, null);
                     runOnUiThread(() -> App.showToast("摄像头断开连接"));
                 }
 
@@ -298,6 +300,6 @@ public class CameraActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        ValueUtil.sendStopCmd();
+        ValueUtil.sendStopCmd("camera");
     }
 }

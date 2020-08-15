@@ -9,13 +9,16 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
+import com.realmax.smarthomeversion2.Constant;
 import com.realmax.smarthomeversion2.R;
 import com.realmax.smarthomeversion2.activity.bean.AcAndTvAndMusicBean;
 import com.realmax.smarthomeversion2.activity.bean.CurtainAndAcBean;
 import com.realmax.smarthomeversion2.activity.bean.RoomBean;
 import com.realmax.smarthomeversion2.activity.bean.WeatherBean;
+import com.realmax.smarthomeversion2.bean.LinkBean;
+import com.realmax.smarthomeversion2.tcp.BaseNettyHandler;
 import com.realmax.smarthomeversion2.tcp.CustomerCallback;
-import com.realmax.smarthomeversion2.tcp.CustomerHandlerBase;
+import com.realmax.smarthomeversion2.tcp.CustomerHandler;
 import com.realmax.smarthomeversion2.util.L;
 import com.realmax.smarthomeversion2.util.ValueUtil;
 
@@ -23,6 +26,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 /**
  * @author ayuan
@@ -286,14 +290,12 @@ public class AirConditioningActivity extends BaseActivity {
      * 设置天气的TCP接收监听
      */
     private void setWeatherListener() {
-        CustomerHandlerBase virtualHandler = ValueUtil.getHandlerHashMap().get(tag);
+        LinkBean virtualHandler = Constant.getLinkBeanByTag(tag);
         if (virtualHandler != null) {
             virtualHandler.setCustomerCallback(new CustomerCallback() {
                 @Override
                 public void disConnected() {
                     L.e("连接断开");
-                    ValueUtil.getIsConnected().put(tag, false);
-                    ValueUtil.getHandlerHashMap().put(tag, null);
                 }
 
                 @Override
@@ -321,14 +323,12 @@ public class AirConditioningActivity extends BaseActivity {
      * 设置空调的监听
      */
     private void setAcListener() {
-        CustomerHandlerBase control2Handler = ValueUtil.getHandlerHashMap().get(control2);
+        LinkBean control2Handler = Constant.getLinkBeanByTag(control2);
         if (control2Handler != null) {
             control2Handler.setCustomerCallback(new CustomerCallback() {
                 @Override
                 public void disConnected() {
                     L.e("控制器2断开连接");
-                    ValueUtil.getIsConnected().put(control2, false);
-                    ValueUtil.getHandlerHashMap().put(control2, null);
                 }
 
                 @Override
@@ -358,14 +358,12 @@ public class AirConditioningActivity extends BaseActivity {
             });
         }
 
-        CustomerHandlerBase control4Handler = ValueUtil.getHandlerHashMap().get(control4);
+        LinkBean control4Handler = Constant.getLinkBeanByTag(control4);
         if (control4Handler != null) {
             control4Handler.setCustomerCallback(new CustomerCallback() {
                 @Override
                 public void disConnected() {
                     L.e("控制器4断开连接");
-                    ValueUtil.getIsConnected().put(control4, false);
-                    ValueUtil.getHandlerHashMap().put(control4, null);
                 }
 
                 @Override

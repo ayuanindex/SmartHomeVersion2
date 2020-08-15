@@ -14,7 +14,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.realmax.smarthomeversion2.bean.RoomBean;
-import com.realmax.smarthomeversion2.tcp.CustomerHandlerBase;
+import com.realmax.smarthomeversion2.tcp.CustomerHandler;
 import com.realmax.smarthomeversion2.util.ValueUtil;
 
 import java.util.ArrayList;
@@ -115,15 +115,5 @@ public abstract class BaseActivity extends AppCompatActivity {
      */
     public <T> void jump(Class<T> jump) {
         startActivity(new Intent(this, jump));
-    }
-
-    /**
-     * 通过TAG来过去对应的连接监听
-     *
-     * @param tag 标示符
-     * @return 返回自定义的handler
-     */
-    CustomerHandlerBase getCustomerHandler(String tag) {
-        return ValueUtil.getHandlerHashMap().get(tag);
     }
 }

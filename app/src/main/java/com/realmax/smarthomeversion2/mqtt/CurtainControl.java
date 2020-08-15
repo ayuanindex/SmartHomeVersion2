@@ -9,8 +9,11 @@ import com.google.gson.JsonSyntaxException;
 import com.qcloud.iot_explorer.common.Status;
 import com.qcloud.iot_explorer.data_template.TXDataTemplateDownStreamCallBack;
 import com.qcloud.iot_explorer.mqtt.TXMqttActionCallBack;
+import com.realmax.smarthomeversion2.Constant;
 import com.realmax.smarthomeversion2.activity.bean.CurtainAndAcBean;
-import com.realmax.smarthomeversion2.tcp.CustomerHandlerBase;
+import com.realmax.smarthomeversion2.bean.LinkBean;
+import com.realmax.smarthomeversion2.tcp.BaseNettyHandler;
+import com.realmax.smarthomeversion2.tcp.CustomerHandler;
 import com.realmax.smarthomeversion2.util.CustomerThread;
 import com.realmax.smarthomeversion2.util.ValueUtil;
 
@@ -18,6 +21,7 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -103,7 +107,7 @@ public class CurtainControl extends MqttControl {
             @Override
             public void run() {
                 try {
-                    CustomerHandlerBase customerHandlerBase = ValueUtil.getHandlerHashMap().get(tag);
+                    LinkBean customerHandlerBase = Constant.getLinkBeanByTag(tag);
                     if (customerHandlerBase != null) {
                         if (!customerHandlerBase.getCurrentCommand().equals(CurtainControl.this.currentCommand)) {
                             CurtainControl.this.currentCommand = customerHandlerBase.getCurrentCommand();
@@ -134,7 +138,7 @@ public class CurtainControl extends MqttControl {
     private void executeInstruction(JSONObject data) {
         CustomerThread.poolExecutor.execute(() -> {
             try {
-                CustomerHandlerBase light = ValueUtil.getHandlerHashMap().get(tag);
+                LinkBean light = Constant.getLinkBeanByTag(tag);
                 if (light != null) {
                     // 获取最近一次窗帘的状态
                     String currentCommand = light.getCurrentCommand();

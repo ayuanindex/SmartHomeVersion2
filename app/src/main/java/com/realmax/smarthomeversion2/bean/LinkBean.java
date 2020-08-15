@@ -1,9 +1,12 @@
 package com.realmax.smarthomeversion2.bean;
 
-import com.realmax.smarthomeversion2.tcp.CustomerHandlerBase;
+import androidx.annotation.NonNull;
+import android.util.Log;
+
+import com.realmax.smarthomeversion2.tcp.BaseNettyHandler;
+import com.realmax.smarthomeversion2.tcp.CustomerCallback;
 import com.realmax.smarthomeversion2.tcp.NettyLinkUtil;
 import com.realmax.smarthomeversion2.util.SpUtil;
-import com.realmax.smarthomeversion2.util.ValueUtil;
 
 /**
  * 连接对象
@@ -11,97 +14,165 @@ import com.realmax.smarthomeversion2.util.ValueUtil;
  * @author ayuan
  */
 public class LinkBean {
-    private String label;
-    private String des;
-    private String tag;
-    private String mHOST;
-    private int PORT;
-    private boolean connected;
+    private static final String TAG = "LinkBean";
+    private String linkName;
+    private String linkDes;
+    private String linkIp;
+    private int linkPort;
+    private String linkTag;
+    private BaseNettyHandler baseNettyHandler = null;
 
-    public LinkBean(String label, String des, String tag) {
-        this.label = label;
-        this.des = des;
-        this.tag = tag;
+    public LinkBean(String linkName, String linkDes) {
+        this.linkName = linkName;
+        this.linkDes = linkDes;
     }
 
-    public String getLabel() {
-        return label;
+    public LinkBean(String linkName, String linkDes, String linkTag) {
+        this.linkName = linkName;
+        this.linkDes = linkDes;
+        this.linkTag = linkTag;
     }
 
-    public void setLabel(String label) {
-        this.label = label;
+    public String getLinkName() {
+        return linkName;
     }
 
-    public String getDes() {
-        return des;
+    public void setLinkName(String linkName) {
+        this.linkName = linkName;
     }
 
-    public void setDes(String des) {
-        this.des = des;
+    public String getLinkDes() {
+        return linkDes;
     }
 
-    public String getTag() {
-        return tag;
+    public void setLinkDes(String linkDes) {
+        this.linkDes = linkDes;
     }
 
-    public void setTag(String tag) {
-        this.tag = tag;
+    public String getLinkIp() {
+        return linkIp;
     }
 
-    public String getmHOST() {
-        return SpUtil.getString(tag + "ip", "192.168.50.247");
+    public String getLinkIpBySp() {
+        return SpUtil.getString(linkTag + "IP", "192.168.50.247");
     }
 
-    public int getPORT() {
-        return SpUtil.getInt(tag + "port", 8527);
+    public void setLinkIp(String linkIp) {
+        this.linkIp = linkIp;
     }
 
-    public void setConnected(boolean connected) {
-        this.connected = connected;
-        ValueUtil.getIsConnected().put(this.tag, connected);
+    public int getLinkPort() {
+        return linkPort;
     }
 
-    public boolean isConnected() {
-        Boolean aBoolean = ValueUtil.getIsConnected().get(this.tag);
-        if (aBoolean != null) {
-            return aBoolean;
-        } else {
-            return false;
-        }
+    public int getLinkPortBySp() {
+        return SpUtil.getInt(linkTag + "PORT", 8527);
+    }
+
+    public void setLinkPort(int linkPort) {
+        this.linkPort = linkPort;
+    }
+
+    public String getLinkTag() {
+        return linkTag;
+    }
+
+    public void setLinkTag(String linkTag) {
+        this.linkTag = linkTag;
+    }
+
+    public BaseNettyHandler getBaseNettyHandler() {
+        return baseNettyHandler;
+    }
+
+    public void setBaseNettyHandler(BaseNettyHandler baseNettyHandler) {
+        this.baseNettyHandler = baseNettyHandler;
     }
 
     /**
      * 开启连接
      *
-     * @param ip              连接的IP
-     * @param port            连接的端口号
-     * @param customerHandler 接受/发送数据
-     * @param status          回调
+     * @param baseNettyHandler 数据回调
+     * @param connectedStatus  连接状态回调
      */
-    public void connected(String ip, String port, CustomerHandlerBase customerHandler, NettyLinkUtil.Callback status) {
+    public void startConnected(BaseNettyHandler baseNettyHandler, ConnectedStatus connectedStatus) {
         try {
-            ValueUtil.getHandlerHashMap().put(LinkBean.this.tag, customerHandler);
+            this.baseNettyHandler = baseNettyHandler;
 
-            int portInt = Integer.parseInt(port);
-            NettyLinkUtil nettyLinkUtil = new NettyLinkUtil(ip, portInt);
-            // 连接成功后将host和port存入sp中
-            LinkBean.this.mHOST = ip;
-            LinkBean.this.PORT = portInt;
-            SpUtil.putString(tag + "ip", LinkBean.this.mHOST);
-            SpUtil.putInt(tag + "port", LinkBean.this.PORT);
-            nettyLinkUtil.start(status, customerHandler);
+            SpUtil.putString(linkTag + "IP", linkIp);
+            SpUtil.putInt(linkTag + "PORT", linkPort);
+
+            NettyLinkUtil nettyLinkUtil = new NettyLinkUtil(linkIp, linkPort);
+            nettyLinkUtil.start(new NettyLinkUtil.Callback() {
+                @Override
+                public void success() {
+                    connectedStatus.success();
+
+                    Log.e(TAG, "success: 连接成功");
+                }
+
+                @Override
+                public void error() {
+                    connectedStatus.error();
+                    Log.e(TAG, "error: 连接出现问题");
+                }
+            }, baseNettyHandler);
         } catch (Exception e) {
             e.printStackTrace();
+            Log.e(TAG, "startConnected: 连接出现问题", e);
         }
-
     }
 
+    /**
+     * 获取数据回调
+     *
+     * @param customerCallback 数据回调
+     */
+    public void setCustomerCallback(CustomerCallback customerCallback) {
+        if (this.baseNettyHandler != null) {
+            this.baseNettyHandler.setCallback(customerCallback);
+        }
+    }
+
+    /**
+     * 获取了连接状态
+     *
+     * @return true：已连接，false：未连接
+     */
+    public boolean getLinkStatus() {
+        if (this.baseNettyHandler != null) {
+            return this.baseNettyHandler.isConnected();
+        }
+        return false;
+    }
+
+    public void closeTheConnection() {
+        this.baseNettyHandler.closeTheConnection();
+    }
+
+    public String getCurrentCommand() {
+        if (this.baseNettyHandler != null) {
+            return this.baseNettyHandler.getCurrentCommand();
+        }
+        return "";
+    }
+
+    public interface ConnectedStatus {
+        void success();
+
+        void error();
+    }
+
+    @NonNull
     @Override
     public String toString() {
         return "LinkBean{" +
-                "label='" + label + '\'' +
-                ", tag='" + tag + '\'' +
-                ", connected=" + connected +
+                "linkName='" + linkName + '\'' +
+                ", linkDes='" + linkDes + '\'' +
+                ", linkIp='" + linkIp + '\'' +
+                ", linkPort=" + linkPort +
+                ", linkTag='" + linkTag + '\'' +
+                ", baseNettyHandler=" + baseNettyHandler +
                 '}';
     }
 }

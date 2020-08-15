@@ -8,13 +8,16 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
+import com.realmax.smarthomeversion2.Constant;
 import com.realmax.smarthomeversion2.R;
 import com.realmax.smarthomeversion2.activity.bean.DoorAndAirQualityBean;
 import com.realmax.smarthomeversion2.activity.bean.HumenAndRobotAndAlarmBean;
 import com.realmax.smarthomeversion2.activity.bean.RoomBean;
 import com.realmax.smarthomeversion2.activity.bean.WeatherBean;
+import com.realmax.smarthomeversion2.bean.LinkBean;
+import com.realmax.smarthomeversion2.tcp.BaseNettyHandler;
 import com.realmax.smarthomeversion2.tcp.CustomerCallback;
-import com.realmax.smarthomeversion2.tcp.CustomerHandlerBase;
+import com.realmax.smarthomeversion2.tcp.CustomerHandler;
 import com.realmax.smarthomeversion2.util.L;
 import com.realmax.smarthomeversion2.util.ValueUtil;
 
@@ -23,6 +26,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author ayuan
@@ -114,14 +118,12 @@ public class TransducerActivity extends BaseActivity {
      */
     private void setWeatherListener() {
         ValueUtil.sendWeatherCmd(tag);
-        CustomerHandlerBase customerHandler = getCustomerHandler(tag);
+        LinkBean customerHandler = Constant.getLinkBeanByTag(tag);
         if (customerHandler != null) {
             customerHandler.setCustomerCallback(new CustomerCallback() {
                 @Override
                 public void disConnected() {
                     L.e("连接断开");
-                    ValueUtil.getIsConnected().put(tag, false);
-                    ValueUtil.getHandlerHashMap().put(tag, null);
                 }
 
                 @Override
@@ -147,14 +149,12 @@ public class TransducerActivity extends BaseActivity {
      * 设置传感器的TCP消息监听
      */
     private void setSensorListener() {
-        CustomerHandlerBase control5Handler = ValueUtil.getHandlerHashMap().get(control5);
+        LinkBean control5Handler = Constant.getLinkBeanByTag(control5);
         if (control5Handler != null) {
             control5Handler.setCustomerCallback(new CustomerCallback() {
                 @Override
                 public void disConnected() {
                     L.e("控制器5断开连接");
-                    ValueUtil.getIsConnected().put(control5, false);
-                    ValueUtil.getHandlerHashMap().put(control5, null);
                 }
 
                 @SuppressLint("SetTextI18n")
@@ -183,14 +183,12 @@ public class TransducerActivity extends BaseActivity {
             });
         }
 
-        CustomerHandlerBase control3Handler = ValueUtil.getHandlerHashMap().get(control3);
+        LinkBean control3Handler = Constant.getLinkBeanByTag(control3);
         if (control3Handler != null) {
             control3Handler.setCustomerCallback(new CustomerCallback() {
                 @Override
                 public void disConnected() {
                     L.e("控制器3断开连接");
-                    ValueUtil.getIsConnected().put(control3, false);
-                    ValueUtil.getHandlerHashMap().put(control3, null);
                 }
 
                 @SuppressLint("SetTextI18n")

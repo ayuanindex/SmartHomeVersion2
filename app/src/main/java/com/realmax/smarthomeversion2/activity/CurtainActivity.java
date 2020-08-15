@@ -15,13 +15,14 @@ import androidx.appcompat.widget.SwitchCompat;
 
 import com.google.gson.Gson;
 import com.realmax.smarthomeversion2.App;
+import com.realmax.smarthomeversion2.Constant;
 import com.realmax.smarthomeversion2.R;
 import com.realmax.smarthomeversion2.activity.bean.CurtainAndAcBean;
 import com.realmax.smarthomeversion2.activity.bean.RoomBean;
+import com.realmax.smarthomeversion2.bean.LinkBean;
 import com.realmax.smarthomeversion2.mqtt.CurtainControl;
 import com.realmax.smarthomeversion2.mqtt.MqttControl;
 import com.realmax.smarthomeversion2.tcp.CustomerCallback;
-import com.realmax.smarthomeversion2.tcp.CustomerHandlerBase;
 import com.realmax.smarthomeversion2.util.L;
 import com.realmax.smarthomeversion2.util.ValueUtil;
 
@@ -103,15 +104,13 @@ public class CurtainActivity extends BaseActivity {
         lvList.setAdapter(customerAdapter);
 
         // 拿到当前连接的Handler用于接受消息
-        CustomerHandlerBase customerHandler = getCustomerHandler(tag);
-        if (customerHandler != null) {
-            customerHandler.setCustomerCallback(new CustomerCallback() {
+        LinkBean baseNettyHandler = Constant.getLinkBeanByTag(tag);
+        if (baseNettyHandler != null) {
+            baseNettyHandler.setCustomerCallback(new CustomerCallback() {
                 @Override
                 public void disConnected() {
                     uiHandler.post(() -> App.showToast("窗帘断开连接"));
                     L.e("窗帘断开连接");
-                    ValueUtil.getIsConnected().put(tag, false);
-                    ValueUtil.getHandlerHashMap().put(tag, null);
                 }
 
                 @Override

@@ -6,6 +6,7 @@ import android.util.Log;
 import androidx.annotation.LayoutRes;
 
 import com.google.gson.Gson;
+import com.realmax.smarthomeversion2.Constant;
 import com.realmax.smarthomeversion2.R;
 import com.realmax.smarthomeversion2.activity.BaseActivity;
 import com.realmax.smarthomeversion2.activity.CurtainActivity;
@@ -15,8 +16,10 @@ import com.realmax.smarthomeversion2.activity.bean.CurtainAndAcBean;
 import com.realmax.smarthomeversion2.activity.bean.DoorAndAirQualityBean;
 import com.realmax.smarthomeversion2.activity.bean.LightBean;
 import com.realmax.smarthomeversion2.activity.bean.RoomBean;
+import com.realmax.smarthomeversion2.bean.LinkBean;
 import com.realmax.smarthomeversion2.bean.MessageBean;
-import com.realmax.smarthomeversion2.tcp.CustomerHandlerBase;
+import com.realmax.smarthomeversion2.tcp.BaseNettyHandler;
+import com.realmax.smarthomeversion2.tcp.CustomerHandler;
 import com.realmax.smarthomeversion2.tencentCloud.bean.InterlocutionBean;
 import com.realmax.smarthomeversion2.util.CustomerThread;
 import com.realmax.smarthomeversion2.util.L;
@@ -304,7 +307,7 @@ public abstract class AudioControl {
      */
     private void lightInstruction(boolean isOpen) {
         // 获取当前提到的房间的灯的状态
-        CustomerHandlerBase lightHandler = ValueUtil.getHandlerHashMap().get(tag);
+        LinkBean lightHandler = Constant.getLinkBeanByTag(tag);
         if (lightHandler == null) {
             mActivity.runOnUiThread(() -> {
                 feedBack("灯的连接尚未开启，请开启后再试吧……", R.layout.item_left_message);
@@ -346,7 +349,7 @@ public abstract class AudioControl {
      */
     private void curtainInstruction(boolean isOpen) {
         // 获取当前提到的房间的窗帘的状态
-        CustomerHandlerBase lightHandler = ValueUtil.getHandlerHashMap().get(tag);
+        LinkBean lightHandler = Constant.getLinkBeanByTag(tag);
         if (lightHandler == null) {
             mActivity.runOnUiThread(() -> {
                 feedBack("窗帘的连接尚未开启，请开启后再试吧", R.layout.item_left_message);
@@ -389,9 +392,10 @@ public abstract class AudioControl {
      */
     private void doorInstruction(boolean isOpen) {
         // 获取当前提到的房间的门的状态
-        CustomerHandlerBase doorHandler = ValueUtil.getHandlerHashMap().get("door");
+        LinkBean doorHandler = Constant.getLinkBeanByTag("door");
         if (doorHandler == null) {
             mActivity.runOnUiThread(() -> feedBack("门的连接尚未开启，请开启后再试吧", R.layout.item_left_message));
+            return;
         }
 
         String currentCommand = doorHandler.getCurrentCommand();

@@ -18,11 +18,14 @@ import androidx.cardview.widget.CardView;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.realmax.smarthomeversion2.App;
+import com.realmax.smarthomeversion2.Constant;
 import com.realmax.smarthomeversion2.R;
 import com.realmax.smarthomeversion2.activity.bean.DoorAndAirQualityBean;
 import com.realmax.smarthomeversion2.activity.bean.RoomBean;
+import com.realmax.smarthomeversion2.bean.LinkBean;
+import com.realmax.smarthomeversion2.tcp.BaseNettyHandler;
 import com.realmax.smarthomeversion2.tcp.CustomerCallback;
-import com.realmax.smarthomeversion2.tcp.CustomerHandlerBase;
+import com.realmax.smarthomeversion2.tcp.CustomerHandler;
 import com.realmax.smarthomeversion2.util.L;
 import com.realmax.smarthomeversion2.util.ValueUtil;
 
@@ -30,6 +33,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 /**
  * @author ayuan
@@ -146,12 +150,11 @@ public class DoorActivity extends BaseActivity {
         doorAndAirQualityBean = new DoorAndAirQualityBean();
         doorAndAirQualityBean.setDoors_S(new ArrayList<>());
 
-        CustomerHandlerBase customerHandlerBase = ValueUtil.getHandlerHashMap().get(tag);
+        LinkBean customerHandlerBase = Constant.getLinkBeanByTag(tag);
         if (customerHandlerBase != null) {
             customerHandlerBase.setCustomerCallback(new CustomerCallback() {
                 @Override
                 public void disConnected() {
-                    ValueUtil.getIsConnected().put(tag, false);
                     uiHandler.post(() -> App.showToast("门的连接断开"));
                     L.e("网络连接已断开");
                 }

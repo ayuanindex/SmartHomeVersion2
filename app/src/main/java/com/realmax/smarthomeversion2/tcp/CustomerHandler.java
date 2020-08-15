@@ -7,27 +7,19 @@ import org.json.JSONObject;
 
 import io.netty.channel.ChannelHandlerContext;
 
-public class CustomerHandlerBase extends BaseNettyHandler {
+public class CustomerHandler extends BaseNettyHandler {
     private static final String TAG = "CustomerHandlerBase";
-    private ChannelHandlerContext handlerContext;
-    private CustomerCallback customerCallback;
     private boolean flag = false;
     private StringBuffer strings = new StringBuffer();
-    private String currentCommand = "";
-
-    @Override
-    public void channelActive(ChannelHandlerContext ctx) throws Exception {
-        super.channelActive(ctx);
-        this.handlerContext = ctx;
-    }
+    private CustomerCallback callback = null;
 
     @Override
     public void callbackFunction(String jsonStr) {
-        if (customerCallback != null) {
+        if (callback != null) {
             try {
                 JSONObject jsonObject = new JSONObject(jsonStr);
-                currentCommand = jsonStr;
-                customerCallback.getResultData(jsonStr);
+                super.setCurrentCommand(jsonStr);
+                callback.getResultData(jsonStr);
             } catch (JSONException e) {
                 getJson(jsonStr);
             } catch (JsonSyntaxException e) {
@@ -55,33 +47,14 @@ public class CustomerHandlerBase extends BaseNettyHandler {
                 flag = false;
                 String json = strings.toString();
                 strings = new StringBuffer();
-                currentCommand = json;
-                customerCallback.getResultData(json);
+                super.setCurrentCommand(json);
+                callback.getResultData(json);
             }
         }
     }
 
-    public ChannelHandlerContext getHandlerContext() {
-        return handlerContext;
-    }
-
-    public void setHandlerContext(ChannelHandlerContext handlerContext) {
-        this.handlerContext = handlerContext;
-    }
-
-    public CustomerCallback getCustomerCallback() {
-        return customerCallback;
-    }
-
-    public void setCustomerCallback(CustomerCallback customerCallback) {
-        this.customerCallback = customerCallback;
-    }
-
-    public String getCurrentCommand() {
-        return currentCommand;
-    }
-
-    public void setCurrentCommand(String currentCommand) {
-        this.currentCommand = currentCommand;
+    @Override
+    public void setCallback(CustomerCallback callback) {
+        this.callback = callback;
     }
 }

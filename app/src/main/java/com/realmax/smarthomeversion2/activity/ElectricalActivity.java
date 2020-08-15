@@ -15,10 +15,13 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
+import com.realmax.smarthomeversion2.Constant;
 import com.realmax.smarthomeversion2.R;
 import com.realmax.smarthomeversion2.activity.bean.AcAndTvAndMusicBean;
+import com.realmax.smarthomeversion2.bean.LinkBean;
+import com.realmax.smarthomeversion2.tcp.BaseNettyHandler;
 import com.realmax.smarthomeversion2.tcp.CustomerCallback;
-import com.realmax.smarthomeversion2.tcp.CustomerHandlerBase;
+import com.realmax.smarthomeversion2.tcp.CustomerHandler;
 import com.realmax.smarthomeversion2.util.L;
 import com.realmax.smarthomeversion2.util.ValueUtil;
 
@@ -26,6 +29,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 /**
  * @author ayuan
@@ -170,14 +174,12 @@ public class ElectricalActivity extends BaseActivity {
         // 去除按钮点击效果
         gv_numbers.setSelector(new ColorDrawable(Color.TRANSPARENT));
 
-        CustomerHandlerBase customerHandlerBase = ValueUtil.getHandlerHashMap().get(tag);
+        LinkBean customerHandlerBase = Constant.getLinkBeanByTag(tag);
         if (customerHandlerBase != null) {
             customerHandlerBase.setCustomerCallback(new CustomerCallback() {
 
                 @Override
                 public void disConnected() {
-                    ValueUtil.getIsConnected().put(tag, false);
-                    ValueUtil.getHandlerHashMap().put(tag, null);
                 }
 
                 @Override
