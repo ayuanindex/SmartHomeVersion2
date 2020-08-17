@@ -1,12 +1,17 @@
 package com.realmax.smarthomeversion2.bean;
 
 import androidx.annotation.NonNull;
+
 import android.util.Log;
 
 import com.realmax.smarthomeversion2.tcp.BaseNettyHandler;
 import com.realmax.smarthomeversion2.tcp.CustomerCallback;
+import com.realmax.smarthomeversion2.tcp.CustomerHandler;
 import com.realmax.smarthomeversion2.tcp.NettyLinkUtil;
+import com.realmax.smarthomeversion2.util.CustomerThread;
 import com.realmax.smarthomeversion2.util.SpUtil;
+
+import io.netty.util.concurrent.FastThreadLocalThread;
 
 /**
  * 连接对象
@@ -147,7 +152,13 @@ public class LinkBean {
     }
 
     public void closeTheConnection() {
-        this.baseNettyHandler.closeTheConnection();
+        CustomerThread.poolExecutor.execute(() -> {
+            try {
+                baseNettyHandler.closeTheConnection();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        });
     }
 
     public String getCurrentCommand() {

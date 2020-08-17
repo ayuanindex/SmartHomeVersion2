@@ -151,8 +151,8 @@ public class CurtainControl extends MqttControl {
                                 // 判断获取到的key是否包含curtain
                                 if (next.matches("curtain.*")) {
                                     int curtainKey = Integer.parseInt(next.replace("curtain", ""));
-                                    curtainAndAcBean.getCurtain_S().set(curtainKey - 1, control.optInt(next));
-                                    Log.d(TAG, "在获取状态回复回电上：" + curtainAndAcBean.getCurtain_S().get(curtainKey - 1));
+                                    curtainAndAcBean.getCurtain_C().set(curtainKey - 1, control.optInt(next));
+                                    Log.d(TAG, "在获取状态回复回电上：" + curtainAndAcBean.getCurtain_C().get(curtainKey - 1));
                                 }
                             }
                             ValueUtil.sendCurtainOpenOrCloseCmd(curtainAndAcBean, tag);

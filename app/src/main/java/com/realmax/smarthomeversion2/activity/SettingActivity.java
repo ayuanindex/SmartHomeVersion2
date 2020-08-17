@@ -55,10 +55,10 @@ public class SettingActivity extends BaseActivity {
                 L.e("哈哈哈哈");
                 App.showToast("已连接");
                 Snackbar snackbar = Snackbar.make(view, "是否要断开连接", BaseTransientBottomBar.LENGTH_LONG);
-                snackbar.setAction("断开连接", (View view1) -> CustomerThread.poolExecutor.execute(() -> {
+                snackbar.setAction("断开连接", (View view1) -> {
                     item.closeTheConnection();
                     uiHandler.post(() -> customerAdapter.notifyDataSetChanged());
-                }));
+                });
                 snackbar.show();
             } else {
                 showDialog(item);

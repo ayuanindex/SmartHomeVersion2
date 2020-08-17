@@ -111,11 +111,7 @@ public abstract class BaseNettyHandler extends SimpleChannelInboundHandler<ByteB
     /**
      * 释放线程池资源
      */
-    public void closeTheConnection() {
-        try {
-            eventLoopGroup.shutdownGracefully().sync();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+    public void closeTheConnection() throws InterruptedException {
+        eventLoopGroup.shutdownGracefully().sync();
     }
 }
