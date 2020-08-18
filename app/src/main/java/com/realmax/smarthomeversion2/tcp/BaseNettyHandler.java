@@ -95,9 +95,6 @@ public abstract class BaseNettyHandler extends SimpleChannelInboundHandler<ByteB
         ByteBuf buf = msg.readBytes(msg.readableBytes());
         String s = buf.toString(StandardCharsets.UTF_8);
         currentCommand = s;
-        if (callback != null) {
-            callback.getResultData(s);
-        }
         callbackFunction(s);
     }
 

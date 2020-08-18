@@ -248,7 +248,7 @@ public class CameraActivity extends BaseActivity {
                 // 拿到手指放下是的坐标
                 initX = event.getX(0);
                 initY = event.getY(0);
-                MoveCamera.touchStart(currentCamera);
+                MoveCamera.touchStart(currentCamera,tag);
                 break;
             case MotionEvent.ACTION_MOVE:
                 // 获取移动是的坐标

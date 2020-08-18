@@ -150,8 +150,10 @@ public class MoveCamera {
      * 手指触摸图片时开始发送切换角度消息
      *
      * @param deviceId 需要切换角度的摄像头
+     * @param tag
      */
-    public static void touchStart(int deviceId) {
+    public static void touchStart(int deviceId, String tag) {
+        MoveCamera.tag = tag;
         if (MoveCamera.DEVICEID != deviceId) {
             HORIZONTAL = 0f;
             LONGITUDINAL = 45f;
@@ -161,7 +163,7 @@ public class MoveCamera {
         timerTask = new TimerTask() {
             @Override
             public void run() {
-                ValueUtil.sendCameraCmd(DEVICEID, HORIZONTAL, LONGITUDINAL, tag);
+                ValueUtil.sendCameraCmd(DEVICEID, HORIZONTAL, LONGITUDINAL, MoveCamera.tag);
             }
         };
         timer.schedule(timerTask, 0, 10);
