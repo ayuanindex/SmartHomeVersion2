@@ -269,7 +269,7 @@ public class LightActivity extends BaseActivity {
                 // 控制switch开关不会立即改变状态
                 swToggle.toggle();
                 // 在主界面中填存入集合中的灯的控制类，通过获取制定设备的mqtt连接，将设置指令同步至云端
-                MqttControl light = ValueUtil.getMqttControlHashMap().get("light");
+                /*MqttControl light = ValueUtil.getMqttControlHashMap().get("light");
                 if (light != null) {
                     // 因为LightControl是继承MqttControl的，所以可以直接进行强转
                     LightControl lightControl = (LightControl) light;
@@ -278,7 +278,7 @@ public class LightActivity extends BaseActivity {
                     copyFrom.put("light" + model[position], getItem(position) == OPEN ? CLOSE : OPEN);
                     JSONObject property = new JSONObject(copyFrom);
                     lightControl.publish(property);
-                }
+                }*/
 
                 // 向控制起发送控制灯的指令
                 ArrayList<Integer> lightC = new ArrayList<>(lightBean.getLightList_S());

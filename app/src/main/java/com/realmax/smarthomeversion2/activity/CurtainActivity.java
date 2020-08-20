@@ -241,7 +241,7 @@ public class CurtainActivity extends BaseActivity {
             swToggle.setOnClickListener((View v) -> {
                 swToggle.toggle();
                 // 将设置指令同步至云端
-                MqttControl curtain = ValueUtil.getMqttControlHashMap().get("Curtain");
+                /*MqttControl curtain = ValueUtil.getMqttControlHashMap().get("Curtain");
                 if (curtain != null) {
                     CurtainControl curtainControl = (CurtainControl) curtain;
                     // 包装json，发送MQTT指令
@@ -249,7 +249,7 @@ public class CurtainActivity extends BaseActivity {
                     copyFrom.put("curtain" + model[position], getItem(position) == OPEN ? CLOSE : OPEN);
                     JSONObject property = new JSONObject(copyFrom);
                     curtainControl.publish(property);
-                }
+                }*/
 
                 ArrayList<Integer> curtainC = new ArrayList<>(curtainAndAcBean.getCurtain_C());
                 curtainC.set(model[position] - 1, getItem(position) == OPEN ? CLOSE : OPEN);

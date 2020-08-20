@@ -6,12 +6,12 @@ import android.util.Log;
 
 import com.realmax.smarthomeversion2.tcp.BaseNettyHandler;
 import com.realmax.smarthomeversion2.tcp.CustomerCallback;
-import com.realmax.smarthomeversion2.tcp.CustomerHandler;
 import com.realmax.smarthomeversion2.tcp.NettyLinkUtil;
 import com.realmax.smarthomeversion2.util.CustomerThread;
 import com.realmax.smarthomeversion2.util.SpUtil;
 
-import io.netty.util.concurrent.FastThreadLocalThread;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 连接对象
@@ -26,16 +26,13 @@ public class LinkBean {
     private int linkPort;
     private String linkTag;
     private BaseNettyHandler baseNettyHandler = null;
+    private Class<? extends BaseNettyHandler> customerHandlerClass;
 
-    public LinkBean(String linkName, String linkDes) {
-        this.linkName = linkName;
-        this.linkDes = linkDes;
-    }
-
-    public LinkBean(String linkName, String linkDes, String linkTag) {
+    public LinkBean(String linkName, String linkDes, String linkTag, Class<? extends BaseNettyHandler> customerHandlerClass) {
         this.linkName = linkName;
         this.linkDes = linkDes;
         this.linkTag = linkTag;
+        this.customerHandlerClass = customerHandlerClass;
     }
 
     public String getLinkName() {
@@ -86,7 +83,7 @@ public class LinkBean {
         this.linkTag = linkTag;
     }
 
-    public BaseNettyHandler getBaseNettyHandler() {
+    public  BaseNettyHandler getBaseNettyHandler() {
         return baseNettyHandler;
     }
 
@@ -97,12 +94,11 @@ public class LinkBean {
     /**
      * 开启连接
      *
-     * @param baseNettyHandler 数据回调
-     * @param connectedStatus  连接状态回调
+     * @param connectedStatus 连接状态回调
      */
-    public void startConnected(BaseNettyHandler baseNettyHandler, ConnectedStatus connectedStatus) {
+    public void startConnected(ConnectedStatus connectedStatus) {
         try {
-            this.baseNettyHandler = baseNettyHandler;
+            this.baseNettyHandler = customerHandlerClass.newInstance();
 
             SpUtil.putString(linkTag + "IP", linkIp);
             SpUtil.putInt(linkTag + "PORT", linkPort);
@@ -121,7 +117,7 @@ public class LinkBean {
                     connectedStatus.error();
                     Log.e(TAG, "error: 连接出现问题");
                 }
-            }, baseNettyHandler);
+            }, this.baseNettyHandler);
         } catch (Exception e) {
             e.printStackTrace();
             Log.e(TAG, "startConnected: 连接出现问题", e);

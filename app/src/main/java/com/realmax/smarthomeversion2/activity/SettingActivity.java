@@ -21,7 +21,6 @@ import com.realmax.smarthomeversion2.App;
 import com.realmax.smarthomeversion2.Constant;
 import com.realmax.smarthomeversion2.R;
 import com.realmax.smarthomeversion2.bean.LinkBean;
-import com.realmax.smarthomeversion2.tcp.CustomerHandler;
 import com.realmax.smarthomeversion2.util.CustomerThread;
 import com.realmax.smarthomeversion2.util.L;
 
@@ -109,7 +108,7 @@ public class SettingActivity extends BaseActivity {
                 CustomerThread.poolExecutor.execute(() -> {
                     linkBean.setLinkIp(ip);
                     linkBean.setLinkPort(Integer.parseInt(port));
-                    linkBean.startConnected(new CustomerHandler(), new LinkBean.ConnectedStatus() {
+                    linkBean.startConnected(new LinkBean.ConnectedStatus() {
                         @Override
                         public void success() {
                             runOnUiThread(() -> runOnUiThread(() -> customerAdapter.notifyDataSetChanged()));

@@ -10,9 +10,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import com.realmax.smarthomeversion2.tcp.CustomerHandler;
-import com.realmax.smarthomeversion2.util.ValueUtil;
-
 /**
  * @author ayuan
  */

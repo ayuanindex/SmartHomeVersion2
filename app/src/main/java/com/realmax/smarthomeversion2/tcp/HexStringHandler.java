@@ -5,7 +5,7 @@ import com.google.gson.JsonSyntaxException;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class CustomerHandler extends BaseNettyHandler {
+public class HexStringHandler extends BaseNettyHandler {
     private static final String TAG = "CustomerHandlerBase";
     private boolean flag = false;
     private StringBuffer strings = new StringBuffer();

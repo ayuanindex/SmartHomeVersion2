@@ -20,8 +20,8 @@ import com.realmax.smarthomeversion2.Constant;
 import com.realmax.smarthomeversion2.R;
 import com.realmax.smarthomeversion2.activity.bean.RoomBean;
 import com.realmax.smarthomeversion2.bean.CameraBodyBean;
+import com.realmax.smarthomeversion2.tcp.BaseNettyHandler;
 import com.realmax.smarthomeversion2.tcp.CustomerCallback;
-import com.realmax.smarthomeversion2.tcp.CustomerHandler;
 import com.realmax.smarthomeversion2.util.EncodeAndDecode;
 import com.realmax.smarthomeversion2.util.L;
 import com.realmax.smarthomeversion2.util.MoveCamera;
@@ -148,7 +148,7 @@ public class CameraActivity extends BaseActivity {
         }
 
         // 获取Netty的Hander
-        CustomerHandler customerHandler = (CustomerHandler) Constant.getLinkBeanByTag(tag).getBaseNettyHandler();
+        BaseNettyHandler customerHandler = Constant.getLinkBeanByTag(tag).getBaseNettyHandler();
         if (customerHandler != null) {
             customerHandler.setCallback(new CustomerCallback() {
                 @Override
