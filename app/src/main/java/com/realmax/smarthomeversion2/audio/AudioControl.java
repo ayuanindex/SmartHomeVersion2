@@ -189,7 +189,7 @@ public abstract class AudioControl {
         mActivity.runOnUiThread(() -> {
             try {
                 SpeechMessage.getInstance()
-                        .initLongTextTtsController(1301676932, "AKIDYqrzrcNJHyjEagH3M4WbRWLsCJNBB3D8", "mIXEfKjz0sVstdQ2VjhPqAMSIwgCTSAc")
+                        .initLongTextTtsController(1251662113, "AKIDjowEDMeI6AjHpmcuyPlzjjrsDBzfYwUQ", "yvgnuZm4ZYIM0FM5kQIQQnoq9d1QQnyL")
                         .start(msg, (s, i) -> {
                             Log.d(TAG, "run: :::::::::" + s);
                         });

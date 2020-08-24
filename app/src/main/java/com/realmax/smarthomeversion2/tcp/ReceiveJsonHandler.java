@@ -6,6 +6,7 @@ public class ReceiveJsonHandler extends BaseNettyHandler {
     @Override
     public void callbackFunction(String jsonStr) {
         if (getCallback() != null) {
+            setCurrentCommand(jsonStr);
             getCallback().getResultData(jsonStr);
         }
     }

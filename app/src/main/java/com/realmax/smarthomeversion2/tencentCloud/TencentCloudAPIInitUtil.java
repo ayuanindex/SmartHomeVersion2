@@ -17,8 +17,8 @@ public class TencentCloudAPIInitUtil {
     private static final char[] encodeMap = initEncodeMap();
 
     // 请替换自己的腾讯云
-    private static String SecretKey = "mIXEfKjz0sVstdQ2VjhPqAMSIwgCTSAc";
-    private static String SecretId = "AKIDYqrzrcNJHyjEagH3M4WbRWLsCJNBB3D8";
+    private static String SecretKey = "yvgnuZm4ZYIM0FM5kQIQQnoq9d1QQnyL";
+    private static String SecretId = "AKIDjowEDMeI6AjHpmcuyPlzjjrsDBzfYwUQ";
     private static String IP = "iai.tencentcloudapi.com";
 
     public static TreeMap<String, Object> init(TreeMap<String, Object> params) throws Exception {

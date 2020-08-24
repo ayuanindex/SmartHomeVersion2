@@ -34,10 +34,10 @@ import java.util.concurrent.TimeUnit;
 public class VoiceToMessage {
     private static final String TAG = "VoiceToMessage";
     private static VoiceToMessage voiceToMessage;
-    private int appId = 1301676932;
+    private int appId = 1251662113;
     private int projectId = 0;
-    private String secretId = "AKIDYqrzrcNJHyjEagH3M4WbRWLsCJNBB3D8";
-    private String secretKey = "mIXEfKjz0sVstdQ2VjhPqAMSIwgCTSAc";
+    private String secretId = "AKIDjowEDMeI6AjHpmcuyPlzjjrsDBzfYwUQ";
+    private String secretKey = "yvgnuZm4ZYIM0FM5kQIQQnoq9d1QQnyL";
 
     private static final Logger logger = LoggerFactory.getLogger(VoiceToMessage.class);
 

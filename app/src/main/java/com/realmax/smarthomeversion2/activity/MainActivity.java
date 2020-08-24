@@ -112,8 +112,8 @@ public class MainActivity extends BaseActivity {
                 HashMap<String, MqttControl> mqttControllerHashMap = new HashMap<>();
                 // 将灯和窗帘等设备的MQTT控制类存放到一个静态集合中
                 // LightControl和CurtainControl都是继承于MqttControl类
-                mqttControllerHashMap.put("light", new LightControl(MainActivity.this, "Light.json", "ZJIJA6UHXP", "light", "L6yOvzW0qCbHG8pr0iKGYA=="));
-                mqttControllerHashMap.put("Curtain", new CurtainControl(MainActivity.this, "Curtain.json", "5KEF6G3TQW", "curtain", "0Xu8+JQPrVVljvdN29jV/Q=="));
+                mqttControllerHashMap.put("light", new LightControl(MainActivity.this, "Light.json", "QLZQ7J24H2", "light", "i+LNNHEORlOEFp95jQj8TA=="));
+                mqttControllerHashMap.put("Curtain", new CurtainControl(MainActivity.this, "Curtain.json", "59EZY05LD2", "curtain", "/WkiLPQKV3lvCHNjQYjezw=="));
                 // 将填充完成的map集合存入到设置到ValueUtil静态类中，并进行统一连接
                 ValueUtil.setMqttControlHashMap(mqttControllerHashMap);
             }

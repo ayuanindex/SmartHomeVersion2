@@ -8,8 +8,6 @@ import java.util.TreeMap;
 
 public class SmartConversationApi {
     /**
-     * 获取人员库列表
-     *
      * @param result  请求回调
      * @param message 需要发送的消息
      */
@@ -21,7 +19,7 @@ public class SmartConversationApi {
                 params.put("Action", "TextProcess");
                 // 公共参数
                 params.put("Version", "2019-06-27");
-                params.put("BotId", "3c1f934f-5655-4a8d-888c-721e8a3b4d13");
+                params.put("BotId", "6a656f68-deb8-41fa-b7d0-79a68d87893c");
                 params.put("BotEnv", "dev");
                 params.put("TerminalId", "1");
                 params.put("InputText", message);
